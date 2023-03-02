@@ -1,5 +1,23 @@
 import React, { useState } from 'react';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
+import {
+	Box,
+	Button,
+	IconButton,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemSecondaryAction,
+	ListItemText,
+	TextField
+} from '@mui/material';
+
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_TODOS } from './todolistqueries';
+
 
 interface ToDoItem {
 	id: string;
@@ -27,63 +45,10 @@ interface DeleteToDoData {
 	};
 }
 
-const GET_TODOS = gql`
-  query {
-    toDoInboxes {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-        }
-      }
-    }
-  }
-`;
 
-const ADD_TODO = gql`
-  mutation createToDoInbox($Title: String!) {
-    createToDoInbox(data: { Title: $Title, Completed: false }) {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-        }
-      }
-    }
-  }
-`;
 
-const DELETE_TODO = gql`
-  mutation deleteToDoInbox($id: ID!) {
-    deleteToDoInbox(id: $id) {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-        }
-      }
-    }
-  }
-`;
 
-const COMPLETE_UNCOMPLETE_TODO = gql`
-  mutation updateToDoInbox($id: ID!, $Completed: Boolean!) {
-    updateToDoInbox(id: $id, data: { Completed: $Completed }) {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-        }
-      }
-    }
-  }
-`;
-
-function ToDoList(): JSX.Element {
+export default function ToDoList(): JSX.Element {
 	const { loading, error, data, refetch } = useQuery<ToDoListData>(GET_TODOS);
 	const [newTodo, setNewTodo] = useState<string>('');
 	const [addTodo] = useMutation<AddToDoData>(ADD_TODO, {
@@ -124,29 +89,43 @@ function ToDoList(): JSX.Element {
 
 	return (
 		<>
-			<form onSubmit={handleSubmit}>
-				<input
-					type="text"
-					value={newTodo}
-					onChange={(e) => setNewTodo(e.target.value)}
-				/>
-				<button type="submit">Add Todo</button>
-			</form>
-			{data?.toDoInboxes?.data?.map(
-				({ id, attributes: { Title, Completed } }: ToDoItem) => (
-					<div key={id}>
-						<p>
-							<span onClick={() => handleComplete(id, !Completed)}>
-								{Completed ? "✅" : "❌"}
-							</span>
-							{Title}
-							<button onClick={() => handleDelete(id)}>Delete</button>
-						</p>
-					</div>
-				)
-			)}
+			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+				<Box
+					component="form"
+					sx={{
+						"& > :not(style)": { m: 1, width: "25ch" },
+					}}
+					noValidate
+					autoComplete="off"
+					onSubmit={handleSubmit}
+				>
+					<TextField
+						id="outlined-basic"
+						label="Add Todo"
+						variant="outlined"
+						value={newTodo}
+						onChange={(e) => setNewTodo(e.target.value)}
+					/>
+					<Button variant="contained" type="submit">
+						Add
+					</Button>
+				</Box>
+				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+					{data?.toDoInboxes?.data?.map(({ id, attributes: { Title, Completed } }: ToDoItem) => (
+						<ListItem key={id} disablePadding>
+							<ListItemButton onClick={() => handleComplete(id, !Completed)}>
+								<ListItemIcon>{Completed ? <CheckIcon /> : <CloseIcon />}</ListItemIcon>
+								<ListItemText primary={Title} />
+							</ListItemButton>
+							<ListItemSecondaryAction>
+								<IconButton edge="end" aria-label="delete" onClick={() => handleDelete(id)}>
+									<DeleteIcon />
+								</IconButton>
+							</ListItemSecondaryAction>
+						</ListItem>
+					))}
+				</List>
+			</Box>
 		</>
 	);
 }
-
-export default ToDoList;

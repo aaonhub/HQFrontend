@@ -1,29 +1,28 @@
-import { Box, CssBaseline } from '@mui/material';
+import { Box, CssBaseline, Divider, Toolbar } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import SubjectIcon from '@mui/icons-material/Subject';
+
 import HabitsPage from './pages/HabitsPage/HabitsPage';
 import InboxPage from './pages/InboxPage/InboxPage';
 import MainView from './pages/MainView/MainView';
-// import About from "./pages/About";
-// import Contact from "./pages/Contact";
+import Test from './pages/testpage';
+import LogPage from './pages/LogPage/LogPage';
+import RitualsPage from './pages/RitualsPage/RitualsPage';
 
 const drawerWidth = 240;
 
@@ -37,6 +36,7 @@ function App(props: { window?: () => Window }) {
 
 	const drawer = (
 		<div>
+			<Divider />
 			<List>
 				<ListItem key={"Today"} disablePadding>
 					<ListItemButton component={Link} to="/">
@@ -46,6 +46,17 @@ function App(props: { window?: () => Window }) {
 						<ListItemText primary={"Today"} />
 					</ListItemButton>
 				</ListItem>
+				<ListItem key={"Log"} disablePadding>
+					<ListItemButton component={Link} to="/log">
+						<ListItemIcon>
+							<SubjectIcon />
+						</ListItemIcon>
+						<ListItemText primary={"Log"} />
+					</ListItemButton>
+				</ListItem>
+
+				<Toolbar />
+
 				<ListItem key={"Inbox"} disablePadding>
 					<ListItemButton component={Link} to="/inbox">
 						<ListItemIcon>
@@ -70,6 +81,7 @@ function App(props: { window?: () => Window }) {
 						<ListItemText primary={"Rituals"} />
 					</ListItemButton>
 				</ListItem>
+
 			</List>
 		</div>
 	);
@@ -87,20 +99,6 @@ function App(props: { window?: () => Window }) {
 						ml: { sm: `${drawerWidth}px` },
 					}}
 				>
-					<Toolbar>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { sm: 'none' } }}
-						>
-							<MenuIcon />
-						</IconButton>
-						<Typography variant="h6" noWrap component="div">
-							Responsive drawer
-						</Typography>
-					</Toolbar>
 				</AppBar>
 				<Box
 					component="nav"
@@ -138,15 +136,17 @@ function App(props: { window?: () => Window }) {
 					component="main"
 					sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
 				>
-					<Toolbar />
 					<Box component="main" sx={{ flexGrow: 1, marginLeft: { sm: "0" } }}>
 						<Routes>
 							<Route path="/" element={<MainView />} />
 							<Route path="/inbox" element={<InboxPage />} />
 							<Route path="/habits" element={<HabitsPage />} />
-							{/* <Route path="/rituals" element={<RitualsPage />} /> */}
+							<Route path="/rituals" element={<RitualsPage />} />
+							<Route path="/log" element={<LogPage />} />
+							<Route path="test" element={<Test />} />
 						</Routes>
 					</Box>
+
 				</Box>
 			</Box>
 		</Router>

@@ -1,4 +1,5 @@
 import React from 'react';
+import ToDoList from '../../components/ToDoList';
 
 interface Props {
   // add any props here
@@ -7,8 +8,7 @@ interface Props {
 const InboxPage: React.FC<Props> = (props: Props) => {
   return (
     <div>
-      {/* Add your page content here */}
-      <h1>Inbox Page</h1>
+      <ToDoList />
     </div>
   );
 };

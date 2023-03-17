@@ -8,6 +8,7 @@ import { GET_HABITS } from "../HabitsPage/habitsQueries";
 
 const MainView: React.FC = () => {
 	const [events, setEvents] = useState([]);
+
 	const { loading, error, data } = useQuery(GET_HABITS);
 
 	const now = new Date().toLocaleTimeString('en-US', {

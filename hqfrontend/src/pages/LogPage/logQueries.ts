@@ -2,11 +2,8 @@ import { gql } from '@apollo/client';
 
 // Queries
 export const GET_LOGS = gql`
-	query logs($LogTime: DateTime!) {
-		logs(
-			filters: { LogTime: { gt: $LogTime } }
-			sort: "LogTime:desc"
-		) {
+	query {
+		logs(pagination: { page: 1, pageSize: 10 }, sort: "LogTime:desc") {
 			data {
 				id
 				attributes {
@@ -17,6 +14,7 @@ export const GET_LOGS = gql`
 		}
 	}
 `;
+
 
 
 

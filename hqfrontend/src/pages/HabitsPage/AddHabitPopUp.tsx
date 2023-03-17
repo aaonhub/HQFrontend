@@ -13,8 +13,11 @@ import {
 	InputLabel,
 	SelectChangeEvent,
 	Snackbar,
+	Fab,
+	Box,
 } from '@mui/material';
 import { Alert } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { ADD_HABIT } from './habitsQueries';
 
 interface AddHabitPopupProps {
@@ -45,29 +48,38 @@ export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JS
 		});
 		onClose();
 	};
-	
 
 	return (
 		<Dialog open={open} onClose={onClose}>
 			<DialogTitle>Add Habit</DialogTitle>
 			<DialogContent>
-				<TextField autoFocus margin="dense" label="Title" fullWidth onChange={handleTitleChange} />
-				<FormControl fullWidth margin="dense">
-					<InputLabel id="frequency-select-label">Frequency</InputLabel>
-					<Select
-						labelId="frequency-select-label"
-						id="frequency-select"
-						value={frequency}
-						label="Frequency"
-						onChange={handleFrequencyChange}
-					>
-						<MenuItem value="Daily">Daily</MenuItem>
-						<MenuItem value="Weekly">Weekly</MenuItem>
-						<MenuItem value="Monthly">Monthly</MenuItem>
-						<MenuItem value="Yearly">Yearly</MenuItem>
-
-					</Select>
-				</FormControl>
+				<Box mb={2}>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Title"
+						fullWidth
+						onChange={handleTitleChange}
+						variant="outlined"
+					/>
+				</Box>
+				<Box mb={2}>
+					<FormControl fullWidth margin="dense" variant="outlined">
+						<InputLabel id="frequency-select-label">Frequency</InputLabel>
+						<Select
+							labelId="frequency-select-label"
+							id="frequency-select"
+							value={frequency}
+							label="Frequency"
+							onChange={handleFrequencyChange}
+						>
+							<MenuItem value="Daily">Daily</MenuItem>
+							<MenuItem value="Weekly">Weekly</MenuItem>
+							<MenuItem value="Monthly">Monthly</MenuItem>
+							<MenuItem value="Yearly">Yearly</MenuItem>
+						</Select>
+					</FormControl>
+				</Box>
 
 				{error && (
 					<Snackbar open={!!error}>
@@ -78,9 +90,10 @@ export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JS
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onClose}>Cancel</Button>
-				<Button onClick={handleSubmit} disabled={!!error}>Add</Button>
+				<Fab onClick={handleSubmit} disabled={!!error} color="primary">
+					<AddIcon />
+				</Fab>
 			</DialogActions>
 		</Dialog>
-
 	);
 }

@@ -1,22 +1,33 @@
 import { gql } from '@apollo/client';
 
-// Queries
+// Get all habits for today and also if they are completed
 export const GET_HABITS = gql`
-	query {
-		habits {
-			data {
-				id
-				attributes {
-					Title
-					Active
-					Frequency
-					LastCompleted
-					Order
+query habits($Today: Date) {
+	habits {
+		data {
+			id
+			attributes {
+				Title
+				Active
+				Frequency
+				LastCompleted
+				Order
+				habit_histories(filters: {Date: {eq: $Today}}) {
+					data {
+						id
+						attributes {
+							Date
+							Completed
+						}
+					}
 				}
 			}
 		}
 	}
+}
 `;
+
+
 
 // Mutations
 export const ADD_HABIT = gql`
@@ -64,4 +75,28 @@ mutation updateHabit($id: ID!, $Active: Boolean, $Frequency: Enumeration, $LastC
 		}
 	}
 }
+`;
+
+export const CREATE_HABIT_HISTORY = gql`
+	mutation CreateHabitHistory($data: HabitHistoryInput!) {
+		createHabitHistory(data: $data) {
+			data {
+				id
+				attributes {
+				Date
+				habit {
+					data {
+						id
+						attributes {
+							Title
+							Frequency
+						}
+					}
+				}
+				Completed
+				createdAt
+				}
+			}
+		}
+	}
 `;

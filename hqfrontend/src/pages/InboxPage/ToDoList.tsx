@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
 import {
 	Box,
 	Button,
+	Divider,
 	IconButton,
 	List,
 	ListItem,
@@ -16,51 +18,50 @@ import {
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_TODOS } from './todolistqueries';
+import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_TODOS } from './toDoItemQueries';
+import { ToDoItem } from './InboxPage';
 
-
-interface ToDoItem {
-	id: string;
-	attributes: {
-		Title: string;
-		Completed: boolean;
-	};
-}
 
 interface ToDoListData {
-	toDoInboxes: {
+	toDoItems: {
 		data: ToDoItem[];
 	};
 }
 
 interface AddToDoData {
-	createToDoInbox: {
-		toDoInbox: ToDoItem;
+	createToDoItem: {
+		createToDoItem: ToDoItem;
 	};
 }
 
 interface DeleteToDoData {
-	deleteToDoInbox: {
+	createToDoItem: {
 		data: ToDoItem;
 	};
 }
 
 
+//add props
+interface Props {
+	setShowEditDialog: React.Dispatch<React.SetStateAction<boolean>>;
+	setToDoItem: React.Dispatch<React.SetStateAction<ToDoItem>>;
+}
 
 
-export default function ToDoList(): JSX.Element {
-	const { loading, error, data, refetch } = useQuery<ToDoListData>(GET_TODOS);
+export default function ToDoList(props: Props): JSX.Element {
+	const { setShowEditDialog, setToDoItem } = props;
+
+	const { loading, error, data } = useQuery<ToDoListData>(GET_TODOS);
 	const [newTodo, setNewTodo] = useState<string>('');
 	const [addTodo] = useMutation<AddToDoData>(ADD_TODO, {
-		onCompleted: () => refetch(),
 		onError: (error) => console.log(error.networkError),
 	});
+
 	const [deleteTodo] = useMutation<DeleteToDoData>(DELETE_TODO, {
-		onCompleted: () => refetch(),
 		onError: (error) => console.log(error.networkError),
 	});
+
 	const [completeTodo] = useMutation<AddToDoData>(COMPLETE_UNCOMPLETE_TODO, {
-		onCompleted: () => refetch(),
 		onError: (error) => console.log(error.networkError),
 	});
 
@@ -78,11 +79,19 @@ export default function ToDoList(): JSX.Element {
 		});
 	};
 
-	const handleComplete = (id: string, completed: boolean): void => {
+	const handleComplete = (id: string, completed: boolean, e: React.MouseEvent): void => {
+		e.stopPropagation();
 		completeTodo({
 			variables: { id, Completed: completed },
 		});
 	};
+
+	const handleEdit = (toDoItem: ToDoItem): void => {
+		setToDoItem(toDoItem);
+		console.log("to do list item ", toDoItem)
+		setShowEditDialog(true);
+	};
+
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error :(</p>;
@@ -111,20 +120,37 @@ export default function ToDoList(): JSX.Element {
 					</Button>
 				</Box>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-					{data?.toDoInboxes?.data?.map(({ id, attributes: { Title, Completed } }: ToDoItem) => (
-						<ListItem key={id} disablePadding>
-							<ListItemButton onClick={() => handleComplete(id, !Completed)}>
-								<ListItemIcon>{Completed ? <CheckIcon /> : <CloseIcon />}</ListItemIcon>
-								<ListItemText primary={Title} />
-							</ListItemButton>
-							<ListItemSecondaryAction>
-								<IconButton edge="end" aria-label="delete" onClick={() => handleDelete(id)}>
-									<DeleteIcon />
-								</IconButton>
-							</ListItemSecondaryAction>
-						</ListItem>
+					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, Description } }: ToDoItem) => (
+						<React.Fragment key={id}>
+							<ListItem key={id} disablePadding>
+								<ListItemButton onClick={() => handleEdit({
+									id,
+									attributes: {
+										Title,
+										Completed,
+										DueDate,
+										Description
+									}
+								})}>
+									<ListItemIcon>
+										<IconButton edge="start" aria-label="edit"
+											onClick={(e) => handleComplete(id, !Completed, e)}>
+											{Completed ? <CheckIcon /> : <CloseIcon />}
+										</IconButton>
+									</ListItemIcon>
+									<ListItemText primary={Title} />
+								</ListItemButton>
+								<ListItemSecondaryAction>
+									<IconButton edge="end" aria-label="delete" onClick={() => handleDelete(id)} className="delete-button">
+										<DeleteIcon />
+									</IconButton>
+								</ListItemSecondaryAction>
+							</ListItem>
+							<Divider key={`divider-${id}`} />
+						</React.Fragment>
 					))}
 				</List>
+
 			</Box>
 		</>
 	);

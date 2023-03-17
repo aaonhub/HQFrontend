@@ -9,6 +9,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link } from 'react-router-dom';
 
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -23,6 +24,7 @@ import MainView from './pages/MainView/MainView';
 import Test from './pages/testpage';
 import LogPage from './pages/LogPage/LogPage';
 import RitualsPage from './pages/RitualsPage/RitualsPage';
+import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 
 const drawerWidth = 240;
 
@@ -54,15 +56,25 @@ function App(props: { window?: () => Window }) {
 						<ListItemText primary={"Log"} />
 					</ListItemButton>
 				</ListItem>
+			</List>
 
-				<Toolbar />
-
-				<ListItem key={"Inbox"} disablePadding>
+			<Divider />
+			
+			<List>
+			<ListItem key={"Inbox"} disablePadding>
 					<ListItemButton component={Link} to="/inbox">
 						<ListItemIcon>
 							<InboxIcon />
 						</ListItemIcon>
 						<ListItemText primary={"Inbox"} />
+					</ListItemButton>
+				</ListItem>
+				<ListItem key={"Projects"} disablePadding>
+					<ListItemButton component={Link} to="/projects">
+						<ListItemIcon>
+							<ListAltIcon />
+						</ListItemIcon>
+						<ListItemText primary={"Projects"} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={"Habits"} disablePadding>
@@ -139,10 +151,11 @@ function App(props: { window?: () => Window }) {
 					<Box component="main" sx={{ flexGrow: 1, marginLeft: { sm: "0" } }}>
 						<Routes>
 							<Route path="/" element={<MainView />} />
+							<Route path="/log" element={<LogPage />} />
 							<Route path="/inbox" element={<InboxPage />} />
 							<Route path="/habits" element={<HabitsPage />} />
 							<Route path="/rituals" element={<RitualsPage />} />
-							<Route path="/log" element={<LogPage />} />
+							<Route path="/projects" element={<ProjectsPage />} />
 							<Route path="test" element={<Test />} />
 						</Routes>
 					</Box>

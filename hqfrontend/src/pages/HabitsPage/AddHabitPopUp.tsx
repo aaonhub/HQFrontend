@@ -28,7 +28,7 @@ interface AddHabitPopupProps {
 export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JSX.Element {
 	const [title, setTitle] = useState('');
 	const [frequency, setFrequency] = useState<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>('Daily');
-	const [addHabit, { error, data }] = useMutation(ADD_HABIT);
+	const [addHabit, { error }] = useMutation(ADD_HABIT);
 
 	const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(event.target.value);
@@ -39,7 +39,7 @@ export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JS
 	};
 
 	const handleSubmit = async () => {
-		const result = await addHabit({
+		await addHabit({
 			variables: {
 				Title: title,
 				Active: true,

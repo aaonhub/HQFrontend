@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
 import {
@@ -18,7 +18,7 @@ import {
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_TODOS } from './toDoItemQueries';
+import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_INCOMPLETE_TODOS } from './toDoItemQueries';
 import { ToDoItem } from './InboxPage';
 
 
@@ -50,9 +50,12 @@ interface Props {
 
 export default function ToDoList(props: Props): JSX.Element {
 	const { setShowEditDialog, setToDoItem } = props;
-
-	const { loading, error, data } = useQuery<ToDoListData>(GET_TODOS);
 	const [newTodo, setNewTodo] = useState<string>('');
+
+	const { loading, error, data } = useQuery<ToDoListData>(GET_INCOMPLETE_TODOS,{
+		onCompleted: (data) => console.log(data),
+	});
+	
 	const [addTodo] = useMutation<AddToDoData>(ADD_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
@@ -64,6 +67,10 @@ export default function ToDoList(props: Props): JSX.Element {
 	const [completeTodo] = useMutation<AddToDoData>(COMPLETE_UNCOMPLETE_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
+
+	const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		setNewTodo(e.target.value);
+	}, []);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
 		e.preventDefault();
@@ -92,6 +99,8 @@ export default function ToDoList(props: Props): JSX.Element {
 		setShowEditDialog(true);
 	};
 
+	console.log("reloading")
+
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error :(</p>;
@@ -113,14 +122,14 @@ export default function ToDoList(props: Props): JSX.Element {
 						label="Add Todo"
 						variant="outlined"
 						value={newTodo}
-						onChange={(e) => setNewTodo(e.target.value)}
+						onChange={handleInputChange}
 					/>
 					<Button variant="contained" type="submit">
 						Add
 					</Button>
 				</Box>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, Description } }: ToDoItem) => (
+					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }: ToDoItem) => (
 						<React.Fragment key={id}>
 							<ListItem key={id} disablePadding>
 								<ListItemButton onClick={() => handleEdit({
@@ -129,6 +138,7 @@ export default function ToDoList(props: Props): JSX.Element {
 										Title,
 										Completed,
 										DueDate,
+										StartDate,
 										Description
 									}
 								})}>

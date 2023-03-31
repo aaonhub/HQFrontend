@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC } from "react";
 import {
 	List,
 	ListItem,
@@ -7,13 +7,10 @@ import {
 	ListItemText,
 	IconButton,
 	Paper,
-	Box,
-	Typography,
 	Checkbox,
 } from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ReactSortable } from "react-sortablejs";
 import { useMutation } from "@apollo/client";
 
 import { DELETE_HABIT, CREATE_HABIT_HISTORY } from "./habitsQueries";

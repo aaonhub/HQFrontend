@@ -16,6 +16,41 @@ export const GET_TODOS = gql`
   }
 `;
 
+//get all completed to do items and limit it to the first 5
+export const GET_COMPLETED_TODOS = gql`
+	query {
+		toDoItems(filters: { Completed: { eq: true } }, limit: 5) {
+			data {
+				id
+				attributes {
+					Title
+					Completed
+					DueDate
+					Description
+				}
+			}
+		}
+	}
+`;
+
+
+export const GET_INCOMPLETE_TODOS = gql`
+  query {
+    toDoItems(filters: { Completed: { eq: false } }) {
+      data {
+        id
+        attributes {
+          Title
+          Completed
+          DueDate
+          Description
+        }
+      }
+    }
+  }
+`;
+
+
 export const ADD_TODO = gql`
   mutation createToDoItem($Title: String!) {
     createToDoItem(data: { Title: $Title, Completed: false }) {
@@ -33,8 +68,8 @@ export const ADD_TODO = gql`
 `;
 
 export const UPDATE_TODO = gql`
-	mutation updateToDoItem($id: ID!, $Title: String, $Completed: Boolean, $DueDate: DateTime, $Description: String) {
-		updateToDoItem(id: $id, data: { Title: $Title, Completed: $Completed, DueDate: $DueDate, Description: $Description }) {
+	mutation updateToDoItem($id: ID!, $data: ToDoItemInput!) {
+		updateToDoItem(id: $id, data: $data) {
 			data {
 				id
 				attributes {

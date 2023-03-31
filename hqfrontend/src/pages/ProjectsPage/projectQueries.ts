@@ -44,11 +44,13 @@ export const GET_PROJECT = gql`
 
 //make project
 export const CREATE_PROJECT = gql`
-	mutation CreateProject($codename: String!) {
-		createProject(codename: $codename) {
-			id
-			attributes {
-				Codename
+	mutation CreateProject($data: ProjectInput!) {
+		createProject(data: $data) {
+			data {
+				id
+				attributes {
+					Codename
+				}
 			}
 		}
 	}

@@ -60,7 +60,13 @@ const ProjectsPage: React.FC = () => {
 
 	const handleAddProject = async () => {
 		if (newProjectName.trim() !== '') {
-			await createProject({ variables: { codename: newProjectName } });
+			await createProject({
+				variables: {
+					data: {
+						Codename: newProjectName
+					}
+				}
+			});
 			setNewProjectName('');
 			refetch();
 		}

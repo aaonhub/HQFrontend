@@ -1,75 +1,56 @@
 import React from "react";
-import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import listPlugin from '@fullcalendar/list';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import { GET_HABITS } from "../HabitsPage/habitsQueries";
+import { Grid, Typography } from "@mui/material";
+import { useQuery } from "@apollo/client";
+
+import { GET_TODAY_LIST_ITEMS } from "./mainViewQueries";
+import Itinerary from "./Itinerary";
+import Log from "./Log";
+import Calendar from "./Calendar";
+
 
 const MainView: React.FC = () => {
-	const [events, setEvents] = useState([]);
 
-	const { loading, error, data } = useQuery(GET_HABITS);
+	function getCurrentLocalDate() {
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');
 
-	const now = new Date().toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
+		return `${year}-${month}-${day}`;
+	}
+
+	const localDate = getCurrentLocalDate();
+
+	const { loading, error, data } = useQuery(GET_TODAY_LIST_ITEMS, {
+		variables: {
+			Today: localDate,
+		},
 	});
 
-	useEffect(() => {
-		if (data && data.habits && data.habits.data) {
-			const habitEvents = data.habits.data
-				.map((habit: { attributes: { Title: any; LastCompleted: any; order: number } }) => ({
-					title: habit.attributes.Title,
-					start: new Date(),
-					end: new Date(),
-					allDay: true,
-					recurring: {
-						repeat: 'daily',
-						startDate: habit.attributes.LastCompleted,
-					},
-					order: habit.attributes.order, // add the order attribute to each event
-				}))
-				.sort((a: { order: number; }, b: { order: number; }) => a.order - b.order); // sort the events by order attribute
-
-			console.log('Habit List:', data.habits.data); // print the habit list to the console
-			setEvents(habitEvents);
-			console.log('Events:', habitEvents); // print the events to the console
-		}
-	}, [data]);
-
-
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error :(</p>;
 
 	return (
-		<div style={{ display: 'flex' }}>
-			{/* day view calendar */}
-			<div style={{ flex: '1', paddingRight: '16px' }}>
-				<FullCalendar
-					plugins={[timeGridPlugin]}
-					initialView="timeGridDay"
-					weekends={true}
-					events={events}
-					nowIndicator={true}
-					scrollTime={now}
-					// contentHeight="1200px"
-					height="90vh"
-				/>
-			</div>
+		<Grid container sx={{ height: "92vh" }}>
 
-			{/* list view calendar */}
-			<div style={{ flex: '1' }}>
-				<FullCalendar
-					plugins={[listPlugin]}
-					initialView="listDay"
-					headerToolbar={false}
-					weekends={true}
-					events={events}
-					height="90vh"
-				/>
-			</div>
-		</div>
+			<Grid item xs={6}>
+				{/* <Typography variant="h4">{new Date().toLocaleDateString()}</Typography> */}
+				<Calendar />
+			</Grid>
+
+			<Grid item xs={6} container direction="row">
+
+				<Grid item xs={12} style={{ flexGrow: 1 }}>
+					<Itinerary data={data} />
+				</Grid>
+
+				<Grid item xs={12} style={{ flexGrow: 1 }}>
+					<Log />
+				</Grid>
+
+			</Grid>
+
+		</Grid>
 	);
 };
 

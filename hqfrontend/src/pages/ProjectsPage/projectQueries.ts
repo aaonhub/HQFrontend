@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 
+// WORKING
 export const GET_PROJECTS = gql`
 	query GetProjects {
 		projects {
@@ -7,21 +8,13 @@ export const GET_PROJECTS = gql`
 				id
 				attributes {
 					Codename
-					to_do_items {
-						data {
-							id
-							attributes {
-								Title
-								Completed
-							}
-						}
-					}
 				}
 			}
 		}
 	}
 `;
 
+// WORKING
 export const GET_PROJECT = gql`
 	query GetProject($id: ID!) {
 		project(id: $id) {
@@ -43,6 +36,7 @@ export const GET_PROJECT = gql`
 `;
 
 //make project
+// WORKING
 export const CREATE_PROJECT = gql`
 	mutation CreateProject($data: ProjectInput!) {
 		createProject(data: $data) {
@@ -57,10 +51,13 @@ export const CREATE_PROJECT = gql`
 `;
 
 //delete project
+// WORKING
 export const DELETE_PROJECT = gql`
-	mutation DeleteProject($id: ID!) {
+	mutation deleteProject($id: ID!) {
 		deleteProject(id: $id) {
-			id
+			data {
+				id
+			}
 		}
 	}
 `;

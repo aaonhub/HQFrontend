@@ -31,6 +31,8 @@ import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import HelpIcon from '@mui/icons-material/Help';
 import HelpPage from './pages/HelpPage/HelpPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 
 const drawerWidth = 240;
 
@@ -185,6 +187,8 @@ function App(props: { window?: () => Window }) {
 								<Route path="/help" element={<HelpPage />} />
 								<Route path="/settings" element={<SettingsPage />} />
 								<Route path="test" element={<Test />} />
+								<Route path="login" element={<LoginPage />} />
+								<Route path="register" element={<RegistrationPage />} />
 							</Routes>
 						</Box>
 

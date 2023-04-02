@@ -5,6 +5,7 @@ import { Menu, MenuItem } from '@mui/material';
 import { Add, Delete, MoreVert } from '@mui/icons-material';
 import { GET_PROJECTS, ADD_TO_DO_TO_PROJECT, CREATE_PROJECT, DELETE_PROJECT } from './projectQueries';
 
+
 interface Project {
 	id: string;
 	attributes: {
@@ -96,6 +97,7 @@ const ProjectsPage: React.FC = () => {
 			<Typography variant="h3" gutterBottom>
 				Projects
 			</Typography>
+
 			<Grid container spacing={4}>
 				<Grid item xs={12} sm={6}>
 					<Paper elevation={1} sx={{ p: 2 }}>
@@ -104,6 +106,23 @@ const ProjectsPage: React.FC = () => {
 								fullWidth
 								label="Add project"
 								value={newProjectName}
+								variant="standard"
+								InputProps={{
+									disableUnderline: true,
+									sx: {
+										'&:hover': {
+											'&::before': {
+												borderBottom: 'none !important',
+											},
+										},
+										'&::before': {
+											borderBottom: 'none !important',
+										},
+										'&::after': {
+											borderBottom: 'none !important',
+										},
+									},
+								}}
 								onChange={(e) => setNewProjectName(e.target.value)}
 								onKeyDown={(e) => {
 									if (e.key === 'Enter') {
@@ -111,9 +130,6 @@ const ProjectsPage: React.FC = () => {
 									}
 								}}
 							/>
-							<IconButton onClick={handleAddProject}>
-								<Add />
-							</IconButton>
 						</Stack>
 						<List>
 							{data?.projects?.data?.map((project: Project) => (
@@ -149,15 +165,20 @@ const ProjectsPage: React.FC = () => {
 						</List>
 					</Paper>
 				</Grid>
+
+
+
 				{selectedProject && (
 					<Grid item xs={12} sm={6}>
 						<Paper elevation={1} sx={{ p: 2 }}>
 							<Typography variant="h5" gutterBottom>
 								{selectedProject.attributes.Codename}
 							</Typography>
+
 							<List>
 								{selectedProject.attributes.to_do_items?.data?.map((toDoItem) => (
-									<ListItem key={toDoItem.id} button onClick={() => handleToggleToDoItem(selectedProject.id, toDoItem.id, toDoItem.attributes.Completed)}>
+									<ListItem key={toDoItem.id} button onClick={() =>
+										handleToggleToDoItem(selectedProject.id, toDoItem.id, toDoItem.attributes.Completed)}>
 										<ListItemText primary={toDoItem.attributes.Title} />
 										<ListItemSecondaryAction>
 											<Checkbox
@@ -169,6 +190,7 @@ const ProjectsPage: React.FC = () => {
 									</ListItem>
 								))}
 							</List>
+
 						</Paper>
 					</Grid>
 				)}

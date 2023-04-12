@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { ThemeContext } from './ThemeContext';
 import { Button } from '@mui/material';
 
-const UserSettings: React.FC = () => {
+const UserSettings = () => {
 	const { toggleTheme } = useContext(ThemeContext);
 
 	return (

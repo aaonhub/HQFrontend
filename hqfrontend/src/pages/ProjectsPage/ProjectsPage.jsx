@@ -2,44 +2,22 @@ import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Grid, Paper, TextField, IconButton, Typography, Box, Stack } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
-import { Add, Delete, MoreVert } from '@mui/icons-material';
+import { Delete, MoreVert } from '@mui/icons-material';
 import { GET_PROJECTS, ADD_TO_DO_TO_PROJECT, CREATE_PROJECT, DELETE_PROJECT } from './projectQueries';
 
 
-interface Project {
-	id: string;
-	attributes: {
-		Codename: string;
-		to_do_items: {
-			data: {
-				id: string;
-				attributes: {
-					Title: string;
-					Completed: boolean;
-				};
-			}[];
-		};
-	};
-}
-
-interface ProjectListData {
-	projects: {
-		data: Project[];
-	};
-}
-
-const ProjectsPage: React.FC = () => {
-	const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-	const { loading, error, data, refetch } = useQuery<ProjectListData>(GET_PROJECTS);
+const ProjectsPage = () => {
+	const [selectedProject, setSelectedProject] = useState(null);
+	const { loading, error, data, refetch } = useQuery(GET_PROJECTS);
 	const [updateProject] = useMutation(ADD_TO_DO_TO_PROJECT);
 	const [createProject] = useMutation(CREATE_PROJECT);
 	const [deleteProject] = useMutation(DELETE_PROJECT);
 	const [newProjectName, setNewProjectName] = useState('');
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [anchorEl, setAnchorEl] = useState(null);
 
 	const menuOpen = Boolean(anchorEl);
 
-	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+	const handleMenuOpen = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -48,7 +26,7 @@ const ProjectsPage: React.FC = () => {
 	};
 
 
-	const handleToggleToDoItem = async (projectId: string, toDoItemId: string, completed: boolean) => {
+	const handleToggleToDoItem = async (projectId, toDoItemId, completed) => {
 		if (selectedProject) {
 			const toDoItems = selectedProject.attributes.to_do_items.data.map((item) =>
 				item.id === toDoItemId ? { ...item, attributes: { ...item.attributes, Completed: !completed } } : item,
@@ -73,7 +51,7 @@ const ProjectsPage: React.FC = () => {
 		}
 	};
 
-	const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
+	const handleDeleteProject = async (projectId, e) => {
 		e.stopPropagation();
 		await deleteProject({ variables: { id: projectId } });
 		if (selectedProject && selectedProject.id === projectId) {
@@ -132,7 +110,7 @@ const ProjectsPage: React.FC = () => {
 							/>
 						</Stack>
 						<List>
-							{data?.projects?.data?.map((project: Project) => (
+							{data?.projects?.data?.map((project) => (
 								<ListItem
 									key={project.id}
 									button

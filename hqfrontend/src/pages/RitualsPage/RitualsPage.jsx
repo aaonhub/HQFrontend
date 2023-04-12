@@ -1,10 +1,6 @@
 import React from 'react';
 
-interface Props {
-  // add any props here
-}
-
-const RitualPage: React.FC<Props> = (props: Props) => {
+const RitualPage = () => {
   return (
     <div>
       {/* Add your page content here */}

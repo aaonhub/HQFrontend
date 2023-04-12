@@ -2,28 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import { useMutation } from '@apollo/client';
 
-import DatePicker from '@mui/lab/DatePicker';
-import { TextFieldProps } from '@mui/material';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-
 import { UPDATE_TODO } from './toDoItemQueries';
-import { ToDoItem } from "./InboxPage"
 
-interface EditToDoItemDialogProps {
-	showEditDialog: boolean;
-	setShowEditDialog: React.Dispatch<React.SetStateAction<boolean>>;
-	toDoItem: ToDoItem;
-	setToDoItem: React.Dispatch<React.SetStateAction<ToDoItem>>;
-}
-
-export default function EditToDoItemDialog(props: EditToDoItemDialogProps): JSX.Element {
-	const { showEditDialog, setShowEditDialog, toDoItem } = props;
-
-	const [newTitle, setNewTitle] = useState(toDoItem.attributes.Title || '');
-	const [newDescription, setNewDescription] = useState(toDoItem.attributes.Description || '');
-	const [newStart, setNewStart] = useState(toDoItem.attributes.StartDate || '');
-
+const EditToDoItemDialog = ({ showEditDialog, setShowEditDialog, toDoItem = {} }) => {
+	const [newTitle, setNewTitle] = useState(toDoItem.attributes?.Title || '');
+	const [newDescription, setNewDescription] = useState(toDoItem.attributes?.Description || '');
+	const [newStart, setNewStart] = useState(toDoItem.attributes?.StartDate || '');
 
 	const [updateTodo] = useMutation(UPDATE_TODO, {
 		onError: (error) => console.log(error.networkError),
@@ -33,15 +17,15 @@ export default function EditToDoItemDialog(props: EditToDoItemDialogProps): JSX.
 		setShowEditDialog(false);
 	};
 
-	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTitleChange = (e) => {
 		setNewTitle(e.target.value);
 	};
 
-	const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleDescriptionChange = (e) => {
 		setNewDescription(e.target.value);
 	};
 
-	const handleStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleStartChange = (e) => {
 		setNewStart(e.target.value);
 	};
 
@@ -62,11 +46,11 @@ export default function EditToDoItemDialog(props: EditToDoItemDialogProps): JSX.
 	// Update state when showEditDialog changes to true
 	useEffect(() => {
 		if (showEditDialog) {
-			setNewTitle(toDoItem.attributes.Title || '');
-			setNewDescription(toDoItem.attributes.Description || '');
-			setNewStart(toDoItem.attributes.StartDate || '');
+			setNewTitle(toDoItem.attributes?.Title || '');
+			setNewDescription(toDoItem.attributes?.Description || '');
+			setNewStart(toDoItem.attributes?.StartDate || '');
 		}
-	}, [showEditDialog, toDoItem.attributes.Title, toDoItem.attributes.Description]);
+	}, [showEditDialog, toDoItem.attributes?.Title, toDoItem.attributes?.Description, toDoItem.attributes?.StartDate]);
 
 	return (
 		<Dialog open={showEditDialog} onClose={handleClose}>
@@ -99,7 +83,6 @@ export default function EditToDoItemDialog(props: EditToDoItemDialogProps): JSX.
 						onChange={handleStartChange}
 					/>
 				</div>
-
 			</DialogContent>
 
 			<DialogActions>
@@ -108,4 +91,6 @@ export default function EditToDoItemDialog(props: EditToDoItemDialogProps): JSX.
 			</DialogActions>
 		</Dialog>
 	);
-}
+};
+
+export default EditToDoItemDialog;

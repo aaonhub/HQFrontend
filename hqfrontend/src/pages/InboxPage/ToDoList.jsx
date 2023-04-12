@@ -19,60 +19,33 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_INCOMPLETE_TODOS } from './toDoItemQueries';
-import { ToDoItem } from './InboxPage';
 
 
-interface ToDoListData {
-	toDoItems: {
-		data: ToDoItem[];
-	};
-}
 
-interface AddToDoData {
-	createToDoItem: {
-		createToDoItem: ToDoItem;
-	};
-}
+export default function ToDoList({ setShowEditDialog, setToDoItem }) {
+	const [newTodo, setNewTodo] = useState('');
 
-interface DeleteToDoData {
-	createToDoItem: {
-		data: ToDoItem;
-	};
-}
-
-
-//add props
-interface Props {
-	setShowEditDialog: React.Dispatch<React.SetStateAction<boolean>>;
-	setToDoItem: React.Dispatch<React.SetStateAction<ToDoItem>>;
-}
-
-
-export default function ToDoList(props: Props): JSX.Element {
-	const { setShowEditDialog, setToDoItem } = props;
-	const [newTodo, setNewTodo] = useState<string>('');
-
-	const { loading, error, data } = useQuery<ToDoListData>(GET_INCOMPLETE_TODOS,{
+	const { loading, error, data } = useQuery(GET_INCOMPLETE_TODOS, {
 		onCompleted: (data) => console.log(data),
 	});
-	
-	const [addTodo] = useMutation<AddToDoData>(ADD_TODO, {
+
+	const [addTodo] = useMutation(ADD_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
 
-	const [deleteTodo] = useMutation<DeleteToDoData>(DELETE_TODO, {
+	const [deleteTodo] = useMutation(DELETE_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
 
-	const [completeTodo] = useMutation<AddToDoData>(COMPLETE_UNCOMPLETE_TODO, {
+	const [completeTodo] = useMutation(COMPLETE_UNCOMPLETE_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
 
-	const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = useCallback((e) => {
 		setNewTodo(e.target.value);
 	}, []);
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		addTodo({
 			variables: { Title: newTodo },
@@ -80,20 +53,20 @@ export default function ToDoList(props: Props): JSX.Element {
 		setNewTodo('');
 	};
 
-	const handleDelete = (id: string): void => {
+	const handleDelete = (id) => {
 		deleteTodo({
 			variables: { id },
 		});
 	};
 
-	const handleComplete = (id: string, completed: boolean, e: React.MouseEvent): void => {
+	const handleComplete = (id, completed, e) => {
 		e.stopPropagation();
 		completeTodo({
 			variables: { id, Completed: completed },
 		});
 	};
 
-	const handleEdit = (toDoItem: ToDoItem): void => {
+	const handleEdit = (toDoItem) => {
 		setToDoItem(toDoItem);
 		console.log("to do list item ", toDoItem)
 		setShowEditDialog(true);
@@ -129,7 +102,7 @@ export default function ToDoList(props: Props): JSX.Element {
 					</Button>
 				</Box>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }: ToDoItem) => (
+					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }) => (
 						<React.Fragment key={id}>
 							<ListItem key={id} disablePadding>
 								<ListItemButton onClick={() => handleEdit({

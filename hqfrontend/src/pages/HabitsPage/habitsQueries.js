@@ -25,7 +25,7 @@ query habits($Today: Date!) {
 		}
 	}
 }
-`;
+`
 
 
 
@@ -43,7 +43,7 @@ mutation createHabit($Title: String!, $Active: Boolean!, $Frequency: ENUM_HABIT_
 		}
 	}
 }
-`;
+`
 
 export const DELETE_HABIT = gql`
 mutation deleteHabit($id: ID!) {
@@ -59,18 +59,17 @@ mutation deleteHabit($id: ID!) {
 		}
 	}
 }
-`;
+`
 
 export const UPDATE_HABIT = gql`
 mutation updateHabit($id: ID!, $Active: Boolean, $Frequency: Enumeration, $LastCompleted: Date) {
 	updateHabit(id: $id, data: { Active: $Active, Frequency: $Frequency, LastCompleted: $LastCompleted }) {
 		data {
 			id
-				attributes {
+			attributes {
 				Title
 				Active
 				Frequency
-				LastCompleted
 			}
 		}
 	}

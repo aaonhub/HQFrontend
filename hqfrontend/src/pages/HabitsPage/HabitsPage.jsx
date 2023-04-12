@@ -7,9 +7,8 @@ import { useQuery } from '@apollo/client';
 import { GET_HABITS } from './habitsQueries';
 import HabitList from './HabitList';
 
-export default function HabitsPage() {
-	// State
-	const [habits, setHabits] = useState<any[]>([]);
+const HabitsPage = () => {
+	const [habits, setHabits] = useState([]);
 	const [today, setToday] = useState(new Date().toISOString().split("T")[0]);
 	const [open, setOpen] = React.useState(false);
 
@@ -91,5 +90,7 @@ export default function HabitsPage() {
 			<AddHabitPopup open={open} onClose={handleClose} />
 			<HabitList refetch={refetch} habits={habits} />
 		</Container>
-	);
+	)
 }
+
+export default HabitsPage

@@ -1,63 +1,54 @@
-import { FC } from "react";
+import React, { useState } from "react"
 import {
 	List,
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
-	IconButton,
 	Paper,
 	Checkbox,
 } from "@mui/material";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useMutation } from "@apollo/client";
+import InboxIcon from "@mui/icons-material/Inbox"
+import { useMutation } from "@apollo/client"
 
-import { DELETE_HABIT, CREATE_HABIT_HISTORY } from "./habitsQueries";
-
-interface ItemType {
-	id: number;
-	attributes: {
-		Title: string;
-		Active: boolean;
-		Frequency: string;
-		LastCompleted: string;
-		Order: number;
-		habit_histories: {
-			data: {
-				id: number;
-				attributes: {
-					Date: string;
-					Completed: boolean;
-				};
-			}[];
-		};
-	};
-}
-
-interface HabitListProps {
-	refetch: () => void;
-	habits: ItemType[];
-}
+import { CREATE_HABIT_HISTORY } from "./habitsQueries"
+import { UPDATE_HABIT } from "./habitsQueries"
+// import { DELETE_HABIT } from "./habitsQueries"
 
 
-const HabitList: FC<HabitListProps> = ({ refetch, habits }) => {
+const HabitList = ({ refetch, habits }) => {
+	const [showEditDialog, setShowEditDialog] = useState(false)
 
-	const [deleteHabit] = useMutation(DELETE_HABIT);
+	// const [deleteHabit] = useMutation(DELETE_HABIT);
 	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
+	const [updateHabit] = useMutation(UPDATE_HABIT);
 
-	const handleDelete = (id: number) => {
-		deleteHabit({
+	const handleUpdateHabit = (id, Title, Active, Frequency, LastCompleted) => {
+		updateHabit({
 			variables: {
 				id: id,
+				Title: Title,
+				Active: Active,
+				Frequency: Frequency
 			},
-		});
+		})
 		setTimeout(() => {
-			refetch();
-		}, 500);
-	};
+			refetch()
+		}, 500)
+	}
 
-	const handleHabitCompletion = (habitId: number) => {
+	// const handleDelete = (id) => {
+	// 	deleteHabit({
+	// 		variables: {
+	// 			id: id,
+	// 		},
+	// 	})
+	// 	setTimeout(() => {
+	// 		refetch()
+	// 	}, 500)
+	// }
+
+	const handleHabitCompletion = (habitId) => {
 		createHabitHistory({
 			variables: {
 				data: {
@@ -66,24 +57,24 @@ const HabitList: FC<HabitListProps> = ({ refetch, habits }) => {
 					Completed: true,
 				},
 			},
-		});
+		})
 		setTimeout(() => {
-			refetch();
-		}, 500);
-	};
+			refetch()
+		}, 500)
+	}
 
 	const sortedHabits = () => {
 		return [...habits].sort((a, b) => {
 			const aIsCompleted = a.attributes.habit_histories.data.some(
 				(history) => history.attributes.Completed
-			);
+			)
 			const bIsCompleted = b.attributes.habit_histories.data.some(
 				(history) => history.attributes.Completed
-			);
+			)
 
 			return aIsCompleted && !bIsCompleted ? 1 : !aIsCompleted && bIsCompleted ? -1 : 0;
-		});
-	};
+		})
+	}
 
 
 	return (
@@ -91,7 +82,7 @@ const HabitList: FC<HabitListProps> = ({ refetch, habits }) => {
 			{sortedHabits().map((item) => {
 				const isCompleted = item.attributes.habit_histories.data.some(
 					(history) => history.attributes.Completed
-				);
+				)
 
 				return (
 					<ListItem key={item.id} disablePadding>
@@ -114,16 +105,13 @@ const HabitList: FC<HabitListProps> = ({ refetch, habits }) => {
 									onChange={() => handleHabitCompletion(item.id)}
 									color="primary"
 								/>
-								<IconButton onClick={() => handleDelete(item.id)}>
-									<DeleteIcon />
-								</IconButton>
 							</ListItemButton>
 						</Paper>
 					</ListItem>
-				);
+				)
 			})}
 		</List>
-	);
-};
+	)
+}
 
-export default HabitList;
+export default HabitList

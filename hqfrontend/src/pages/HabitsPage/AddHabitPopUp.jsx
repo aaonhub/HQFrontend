@@ -11,7 +11,6 @@ import {
 	Select,
 	FormControl,
 	InputLabel,
-	SelectChangeEvent,
 	Snackbar,
 	Fab,
 	Box,
@@ -20,22 +19,19 @@ import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { ADD_HABIT } from './habitsQueries';
 
-interface AddHabitPopupProps {
-	open: boolean;
-	onClose: () => void;
-}
 
-export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JSX.Element {
+
+const AddHabitPopup = ({ open, onClose }) => {
 	const [title, setTitle] = useState('');
-	const [frequency, setFrequency] = useState<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>('Daily');
+	const [frequency, setFrequency] = useState('Daily');
 	const [addHabit, { error }] = useMutation(ADD_HABIT);
 
-	const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTitleChange = (event) => {
 		setTitle(event.target.value);
 	};
 
-	const handleFrequencyChange = (event: SelectChangeEvent<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>) => {
-		setFrequency(event.target.value as 'Daily' | 'Weekly' | 'Monthly' | 'Yearly');
+	const handleFrequencyChange = (event) => {
+		setFrequency(event.target.value);
 	};
 
 	const handleSubmit = async () => {
@@ -95,5 +91,7 @@ export default function AddHabitPopup({ open, onClose }: AddHabitPopupProps): JS
 				</Fab>
 			</DialogActions>
 		</Dialog>
-	);
+	)
 }
+
+export default AddHabitPopup

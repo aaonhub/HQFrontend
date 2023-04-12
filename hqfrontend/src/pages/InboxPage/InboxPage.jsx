@@ -11,20 +11,6 @@ import AddIcon from '@mui/icons-material/Add';
 import EditToDoItemDialog from './EditToDoItemDialog';
 import ToDoList from './ToDoList';
 
-interface Props {
-	// add any props here
-}
-
-export interface ToDoItem {
-	id: string;
-	attributes: {
-		Title: string;
-		Completed: boolean;
-		DueDate: string;
-		StartDate: string;
-		Description: string;
-	};
-}
 
 const StyledFab = styled(Fab)({
 	position: 'fixed',
@@ -32,9 +18,9 @@ const StyledFab = styled(Fab)({
 	right: 16,
 });
 
-const InboxPage: React.FC<Props> = (props: Props) => {
-	const [showEditDialog, setShowEditDialog] = useState<boolean>(false);
-	const [toDoItem, setToDoItem] = useState<ToDoItem>({
+const InboxPage = () => {
+	const [showEditDialog, setShowEditDialog] = useState(false);
+	const [toDoItem, setToDoItem] = useState({
 		id: '',
 		attributes: {
 			Title: '',
@@ -46,21 +32,11 @@ const InboxPage: React.FC<Props> = (props: Props) => {
 	});
 
 	const handleAddClick = () => {
-		setShowEditDialog(true);
-		setToDoItem({
-			id: '',
-			attributes: {
-				Title: '',
-				Completed: false,
-				DueDate: '',
-				StartDate: '',
-				Description: '',
-			},
-		});
 	};
 
 	return (
 		<Container maxWidth="md">
+
 			<Box mt={4} mb={4}>
 				<Typography variant="h4" align="center" gutterBottom>
 					Inbox
@@ -69,21 +45,23 @@ const InboxPage: React.FC<Props> = (props: Props) => {
 					Manage your tasks
 				</Typography>
 			</Box>
+
+			{/* To Do List */}
 			<Paper elevation={2}>
-				<ToDoList
-					setShowEditDialog={setShowEditDialog}
-					setToDoItem={setToDoItem}
-				/>
+				<ToDoList setShowEditDialog={setShowEditDialog} setToDoItem={setToDoItem} />
 			</Paper>
+
 			<StyledFab color="primary" aria-label="add" onClick={handleAddClick}>
 				<AddIcon />
 			</StyledFab>
+
+			{/* Edit To Do Item Dialog */}
 			<EditToDoItemDialog
 				showEditDialog={showEditDialog}
 				setShowEditDialog={setShowEditDialog}
 				toDoItem={toDoItem}
-				setToDoItem={setToDoItem}
 			/>
+
 		</Container>
 	);
 };

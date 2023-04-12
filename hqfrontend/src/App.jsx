@@ -36,8 +36,7 @@ import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 
 const drawerWidth = 240;
 
-function App(props: { window?: () => Window }) {
-	const { window } = props;
+function App({ window }) {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 
 	const handleDrawerToggle = () => {

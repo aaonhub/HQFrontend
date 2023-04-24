@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import {
-	Container,
-	Typography,
-	Box,
-	TextField,
-	Button,
-	Grid,
-	Paper,
-	Divider,
-	List,
-	ListItem,
-	ListItemText,
-} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from '@mui/material';
+import LogItem from './LogItem';
 
-import { GET_LOGS, ADD_LOG } from './logQueries';
-
-import { format } from 'date-fns';
+// Queries and Mutations
+import { GET_LOGS, ADD_LOG } from '../../models/log';
 
 // Models
 import Log from '../../models/log';
@@ -25,6 +14,9 @@ import Log from '../../models/log';
 const LogPage = () => {
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
+
+	const theme = useTheme();
+	const secondaryColor = theme.palette.secondary.main;
 
 	const { loading, error, refetch } = useQuery(GET_LOGS, {
 		variables: {
@@ -37,6 +29,7 @@ const LogPage = () => {
 					log.id,
 					log.attributes.Log,
 					log.attributes.LogTime,
+					log.attributes.Type,
 				)
 			})
 			setLogArray(logs)
@@ -50,7 +43,7 @@ const LogPage = () => {
 			addLog({ variables: { Log: logText, LogTime: new Date() } }).then(() => {
 				setLogText('')
 			});
-			logArray.unshift(new Log('', logText, new Date()))
+			logArray.unshift(new Log('', logText, new Date(), 'text'))
 			refetch()
 		}
 	};
@@ -102,42 +95,8 @@ const LogPage = () => {
 			<Box mt={4}>
 				<List>
 					{logArray.map((log: Log, index: number) => {
-						const logTime = new Date(log.logTime);
-						const prevLog = logArray[index - 1];
-						const prevLogTime = prevLog && new Date(prevLog.logTime);
-						const isSameDay =
-							prevLogTime && logTime.getDate() === prevLogTime.getDate();
-						const showDateHeader = !prevLog || !isSameDay;
-
 						return (
-							<React.Fragment key={log.id}>
-								{showDateHeader && (
-									<ListItem>
-										<Typography variant="subtitle1" fontWeight="bold">
-											{format(logTime, 'EEEE, MMMM d, yyyy')}
-										</Typography>
-									</ListItem>
-								)}
-								<ListItem alignItems="flex-start">
-									<ListItemText
-										primary={
-											<>
-												<Typography
-													variant="body2"
-													fontWeight="bold"
-													component="span"
-												>
-													{format(logTime, 'hh:mm a')}
-												</Typography>
-												<Typography component="span" pl={1}>
-													{log.log}
-												</Typography>
-											</>
-										}
-									/>
-								</ListItem>
-								<Divider />
-							</React.Fragment>
+							<LogItem key={log.id} log={log} index={index} prevLog={logArray[index - 1]} />
 						);
 					})}
 				</List>

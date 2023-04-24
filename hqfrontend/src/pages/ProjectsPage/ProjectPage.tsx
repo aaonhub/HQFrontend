@@ -101,6 +101,8 @@ const ProjectPage = () => {
 		<Box sx={{ flexGrow: 1 }}>
 
 
+
+			{/* Title */}
 			<Box sx={{ display: 'flex', marginBottom: 2 }}>
 				{/* Back arrow */}
 				<IconButton onClick={() => window.history.back()} edge="start" color="inherit" aria-label="back">
@@ -111,8 +113,6 @@ const ProjectPage = () => {
 					{project.codename}
 				</Typography>
 			</Box>
-
-
 
 			{/* Text input that adds to do list items to the project */}
 			<TextField
@@ -153,7 +153,10 @@ const ProjectPage = () => {
 										disableRipple
 									/>
 								</ListItemIcon>
-								<ListItemText primary={toDoItem.title} />
+								<ListItemText
+									primary={toDoItem.title}
+									onClick={() => console.log('ToDo item title clicked:', toDoItem.title)}
+								/>
 							</ListItemButton>
 
 
@@ -164,13 +167,13 @@ const ProjectPage = () => {
 			</List>
 
 
-
 			{/* Floating Action Button */}
 			<Box sx={{ position: 'fixed', bottom: '16px', right: '16px' }}>
 				<Fab color="primary" aria-label="add">
 					<Add />
 				</Fab>
 			</Box>
+
 
 		</Box>
 	);

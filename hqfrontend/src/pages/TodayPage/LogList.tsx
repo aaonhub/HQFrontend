@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Card, CardContent, Typography } from '@mui/material';
+import { format } from 'date-fns';
 
 // Queries and Mutations
 import { GET_TODAY_LOGS } from '../../models/log';
@@ -22,11 +23,16 @@ const LogList = () => {
 			Start: start.toISOString(),
 			End: end.toISOString(),
 		},
-		onCompleted: () => {
-			const logs: Log[] = data?.logs?.data;
+		onCompleted: (data1) => {
+			const logData = data1.logs.data;
+			const logs = logData.map((log: any) => {
+				return new Log(log.id, log.attributes.Log, log.attributes.LogTime, log.attributes.LogType);
+			});
 			setLogArray(logs);
 		}
 	});
+
+	console.log(logArray)
 
 
 	if (loading) return <p>Loading...</p>;
@@ -50,7 +56,7 @@ const LogList = () => {
 									{log.log}
 								</Typography>
 								<Typography variant="body2" gutterBottom>
-									{log.logTime.toLocaleTimeString()}
+									{format(new Date(log.logTime), 'hh:mm a').toString()}
 								</Typography>
 							</li>
 						))}

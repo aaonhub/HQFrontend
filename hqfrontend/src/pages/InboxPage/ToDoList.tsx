@@ -112,6 +112,8 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 						Add
 					</Button>
 				</Box>
+
+				
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
 					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }: any) => (
 						<React.Fragment key={id}>

@@ -65,7 +65,6 @@ const ProjectsPage = () => {
 	}
 
 	const handleClick = (event: any, projectId: string) => {
-		event.stopPropagation()
 		setAnchorEl(event.currentTarget)
 		setCurrentProjectId(projectId)
 	}
@@ -94,6 +93,7 @@ const ProjectsPage = () => {
 				Projects
 			</Typography>
 
+			{/* New Project Input Box */}
 			<TextField
 				fullWidth
 				label="Create New Project"
@@ -108,6 +108,7 @@ const ProjectsPage = () => {
 				}}
 			/>
 
+			{/* Project List */}
 			<List sx={{ width: '100%', maxWidth: 360 }}>
 				{projects.map((project) => (
 					<ListItem

@@ -51,6 +51,7 @@ const InboxPage = () => {
 				<ToDoList setShowEditDialog={setShowEditDialog} setToDoItem={setToDoItem} />
 			</Paper>
 
+			{/* Bottom Right Add Button */}
 			<StyledFab color="primary" aria-label="add" onClick={handleAddClick}>
 				<AddIcon />
 			</StyledFab>

@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import { useMutation } from '@apollo/client';
 
-import { UPDATE_TODO } from './toDoItemQueries';
+import { UPDATE_TODO } from '../../models/inboxitem';
 
-const EditToDoItemDialog = ({ showEditDialog, setShowEditDialog, toDoItem = {} }) => {
+
+interface EditToDoItemDialogProps {
+	showEditDialog: boolean;
+	setShowEditDialog: (show: boolean) => void;
+	toDoItem: any;
+}
+
+const EditToDoItemDialog: React.FC<EditToDoItemDialogProps> = ({ showEditDialog, setShowEditDialog, toDoItem = {} }) => {
 	const [newTitle, setNewTitle] = useState(toDoItem.attributes?.Title || '');
 	const [newDescription, setNewDescription] = useState(toDoItem.attributes?.Description || '');
 	const [newStart, setNewStart] = useState(toDoItem.attributes?.StartDate || '');
@@ -17,16 +24,16 @@ const EditToDoItemDialog = ({ showEditDialog, setShowEditDialog, toDoItem = {} }
 		setShowEditDialog(false);
 	};
 
-	const handleTitleChange = (e) => {
-		setNewTitle(e.target.value);
+	const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setNewTitle(event.target.value);
 	};
 
-	const handleDescriptionChange = (e) => {
-		setNewDescription(e.target.value);
+	const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setNewDescription(event.target.value);
 	};
 
-	const handleStartChange = (e) => {
-		setNewStart(e.target.value);
+	const handleStartChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setNewStart(event.target.value);
 	};
 
 	const handleSaveClick = () => {

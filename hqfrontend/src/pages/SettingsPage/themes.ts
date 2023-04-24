@@ -33,5 +33,13 @@ export const pinkTheme = createTheme({
 		secondary: {
 			main: "#ff80ab",
 		},
+		background: {
+			default: "#fce4ec",
+			paper: "#f8bbd0",
+		},
+		text: {
+			primary: "#880e4f",
+			secondary: "#ad1457",
+		},
 	},
 });

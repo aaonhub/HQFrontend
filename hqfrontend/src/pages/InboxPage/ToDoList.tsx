@@ -15,14 +15,26 @@ import {
 	TextField
 } from '@mui/material';
 
+// Icons
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ADD_TODO, COMPLETE_UNCOMPLETE_TODO, DELETE_TODO, GET_INCOMPLETE_TODOS } from './toDoItemQueries';
+
+// Queries and Mutations
+import {
+	ADD_TODO,
+	COMPLETE_UNCOMPLETE_TODO,
+	DELETE_TODO,
+	GET_INCOMPLETE_TODOS
+} from '../../models/inboxitem'
 
 
+interface ToDoListProps {
+	setShowEditDialog: (show: boolean) => void;
+	setToDoItem: (toDoItem: any) => void;
+}
 
-export default function ToDoList({ setShowEditDialog, setToDoItem }) {
+const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) => {
 	const [newTodo, setNewTodo] = useState('');
 
 	const { loading, error, data } = useQuery(GET_INCOMPLETE_TODOS, {
@@ -41,11 +53,11 @@ export default function ToDoList({ setShowEditDialog, setToDoItem }) {
 		onError: (error) => console.log(error.networkError),
 	});
 
-	const handleInputChange = useCallback((e) => {
+	const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewTodo(e.target.value);
 	}, []);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		addTodo({
 			variables: { Title: newTodo },
@@ -53,22 +65,21 @@ export default function ToDoList({ setShowEditDialog, setToDoItem }) {
 		setNewTodo('');
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: string) => {
 		deleteTodo({
 			variables: { id },
 		});
 	};
 
-	const handleComplete = (id, completed, e) => {
+	const handleComplete = (id: string, completed: boolean, e: React.MouseEvent<HTMLButtonElement>) => {
 		e.stopPropagation();
 		completeTodo({
 			variables: { id, Completed: completed },
 		});
 	};
 
-	const handleEdit = (toDoItem) => {
+	const handleEdit = (toDoItem: any) => {
 		setToDoItem(toDoItem);
-		console.log("to do list item ", toDoItem)
 		setShowEditDialog(true);
 	};
 
@@ -102,7 +113,7 @@ export default function ToDoList({ setShowEditDialog, setToDoItem }) {
 					</Button>
 				</Box>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }) => (
+					{data?.toDoItems?.data?.map(({ id, attributes: { Title, Completed, DueDate, StartDate, Description } }: any) => (
 						<React.Fragment key={id}>
 							<ListItem key={id} disablePadding>
 								<ListItemButton onClick={() => handleEdit({
@@ -138,3 +149,5 @@ export default function ToDoList({ setShowEditDialog, setToDoItem }) {
 		</>
 	);
 }
+
+export default ToDoList;

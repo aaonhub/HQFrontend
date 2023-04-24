@@ -16,8 +16,6 @@ export const GET_LOGS = gql`
 `;
 
 
-
-
 // Mutations
 export const ADD_LOG = gql`
 	mutation createLog($Log: String!, $LogTime: DateTime!) {

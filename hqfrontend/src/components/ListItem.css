@@ -1,0 +1,40 @@
+.list-item {
+	display         : flex;
+	justify-content : space-between;
+	align-items     : center;
+	padding         : 16px;
+	background-color: var(--palette-background-paper);
+	border          : 1px solid var(--palette-divider);
+	border-radius   : var(--shape-border-radius);
+	margin-bottom   : 8px;
+}
+
+.item-text {
+	flex-grow: 1;
+	cursor   : pointer;
+}
+
+.delete-button {
+	background-color: var(--palette-error-main);
+	color           : var(--palette-error-contrastText);
+	margin-right    : 8px;
+	border          : none;
+	border-radius   : var(--shape-border-radius);
+	padding         : 6px 16px;
+}
+
+.delete-button:hover {
+	background-color: var(--palette-error-dark);
+}
+
+.edit-button {
+	background-color: var(--palette-primary-main);
+	color           : var(--palette-primary-contrastText);
+	border          : none;
+	border-radius   : var(--shape-border-radius);
+	padding         : 6px 16px;
+}
+
+.edit-button:hover {
+	background-color: var(--palette-primary-dark);
+}

@@ -11,32 +11,34 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link } from 'react-router-dom';
-
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import SubjectIcon from '@mui/icons-material/Subject';
 import SettingsIcon from '@mui/icons-material/Settings';
-
 import ThemeProvider from './pages/SettingsPage/ThemeContext';
-
 import HabitsPage from './pages/HabitsPage/HabitsPage';
 import InboxPage from './pages/InboxPage/InboxPage';
-import MainView from './pages/MainView/MainView';
+import TodayPage from './pages/TodayPage/TodayPage';
 import Test from './pages/testpage';
 import LogPage from './pages/LogPage/LogPage';
 import RitualsPage from './pages/RitualsPage/RitualsPage';
-import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
+import ProjectsListPage from './pages/ProjectsPage/ProjectsListPage';
+import ProjectPage from './pages/ProjectsPage/ProjectPage';
 import HelpIcon from '@mui/icons-material/Help';
 import HelpPage from './pages/HelpPage/HelpPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 
+interface AppProps {
+	window?: () => Window;
+}
+
 const drawerWidth = 240;
 
-function App({ window }) {
+function App({ window }: AppProps): JSX.Element {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 
 	const handleDrawerToggle = () => {
@@ -177,12 +179,13 @@ function App({ window }) {
 					>
 						<Box component="main" sx={{ flexGrow: 1, marginLeft: { sm: "0" } }}>
 							<Routes>
-								<Route path="/" element={<MainView />} />
+								<Route path="/" element={<TodayPage />} />
 								<Route path="/log" element={<LogPage />} />
 								<Route path="/inbox" element={<InboxPage />} />
 								<Route path="/habits" element={<HabitsPage />} />
 								<Route path="/rituals" element={<RitualsPage />} />
-								<Route path="/projects" element={<ProjectsPage />} />
+								<Route path="/projects" element={<ProjectsListPage />} />
+								<Route path="/project/:projectId" element={<ProjectPage />} />
 								<Route path="/help" element={<HelpPage />} />
 								<Route path="/settings" element={<SettingsPage />} />
 								<Route path="test" element={<Test />} />

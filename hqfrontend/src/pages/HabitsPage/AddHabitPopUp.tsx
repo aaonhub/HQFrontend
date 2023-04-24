@@ -1,3 +1,4 @@
+import React, { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import {
@@ -17,20 +18,27 @@ import {
 } from '@mui/material';
 import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { ADD_HABIT } from './habitsQueries';
+
+// Queries and Mutations
+import { ADD_HABIT } from '../../models/habit';
 
 
+interface AddHabitPopupProps {
+	open: any
+	onClose: any
+}
 
-const AddHabitPopup = ({ open, onClose }) => {
+
+const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 	const [title, setTitle] = useState('');
 	const [frequency, setFrequency] = useState('Daily');
 	const [addHabit, { error }] = useMutation(ADD_HABIT);
 
-	const handleTitleChange = (event) => {
+	const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setTitle(event.target.value);
 	};
 
-	const handleFrequencyChange = (event) => {
+	const handleFrequencyChange = (event: any) => {
 		setFrequency(event.target.value);
 	};
 

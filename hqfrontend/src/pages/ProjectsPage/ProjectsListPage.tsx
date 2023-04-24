@@ -1,19 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
-import {
-	Box,
-	List,
-	ListItem,
-	ListItemText,
-	Typography,
-	TextField,
-	IconButton,
-	Menu,
-	MenuItem,
-} from '@mui/material'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { Link } from 'react-router-dom'
+import { Box, List, Typography, TextField } from '@mui/material'
+import ProjectListItem from './ProjectListItem'
 
 // Query
 import { GET_PROJECTS } from '../../models/project'
@@ -25,8 +13,6 @@ import Project from '../../models/project'
 
 const ProjectsPage = () => {
 	const [newProjectCodename, setNewProjectCodename] = useState('')
-	const [anchorEl, setAnchorEl] = useState(null)
-	const [currentProjectId, setCurrentProjectId] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
 
 
@@ -53,7 +39,6 @@ const ProjectsPage = () => {
 			refetch()
 		},
 	})
-
 	const handleCreateProject = async () => {
 		await createProject({
 			variables: {
@@ -64,20 +49,7 @@ const ProjectsPage = () => {
 		})
 	}
 
-	const handleClick = (event: any, projectId: string) => {
-		setAnchorEl(event.currentTarget)
-		setCurrentProjectId(projectId)
-	}
 
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
-
-	const handleDelete = () => {
-		console.log('Project ID:', currentProjectId)
-		// Add your delete function here
-		handleClose()
-	}
 
 	if (loading) {
 		return <div>Loading...</div>
@@ -89,9 +61,11 @@ const ProjectsPage = () => {
 
 	return (
 		<Box sx={{ flexGrow: 1 }}>
+			{/* Title */}
 			<Typography variant="h3" gutterBottom>
 				Projects
 			</Typography>
+
 
 			{/* New Project Input Box */}
 			<TextField
@@ -107,39 +81,15 @@ const ProjectsPage = () => {
 					}
 				}}
 			/>
+			
 
 			{/* Project List */}
 			<List sx={{ width: '100%', maxWidth: 360 }}>
 				{projects.map((project) => (
-					<ListItem
+					<ProjectListItem
 						key={project.id}
-						button
-						component={Link}
-						to={`/project/${project.id}`}
-						secondaryAction={
-							<>
-								<IconButton
-									edge="end"
-									onClick={(event) => handleClick(event, project.id)}
-								>
-									<MoreVertIcon />
-								</IconButton>
-								<Menu
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={handleClose}
-								>
-									<MenuItem onClick={handleDelete}>
-										<DeleteIcon />
-										Delete
-									</MenuItem>
-								</Menu>
-							</>
-						}
-					>
-						<ListItemText primary={project.codename} />
-					</ListItem>
+						project={project}
+					/>
 				))}
 			</List>
 		</Box>

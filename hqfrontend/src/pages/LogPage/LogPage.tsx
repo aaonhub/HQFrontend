@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { useTheme } from '@mui/material/styles';
 import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from '@mui/material';
 import LogItem from './LogItem';
 
@@ -15,9 +14,7 @@ const LogPage = () => {
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
 
-	const theme = useTheme();
-	const secondaryColor = theme.palette.secondary.main;
-
+	// Get logs query
 	const { loading, error, refetch } = useQuery(GET_LOGS, {
 		variables: {
 			limit: 100,
@@ -36,11 +33,17 @@ const LogPage = () => {
 		}
 	})
 
+	// Add log mutation
 	const [addLog] = useMutation(ADD_LOG)
-
 	const handleAddLog = () => {
 		if (logText.trim() !== '') {
-			addLog({ variables: { Log: logText, LogTime: new Date() } }).then(() => {
+			addLog({
+				variables: {
+					Log: logText,
+					LogTime: new Date(),
+					Type: 'text',
+				}
+			}).then(() => {
 				setLogText('')
 			});
 			logArray.unshift(new Log('', logText, new Date(), 'text'))
@@ -48,8 +51,10 @@ const LogPage = () => {
 		}
 	};
 
+
 	if (loading) return <div>Loading...</div>
 	if (error) return <div>Error! {error.message}</div>
+
 
 	return (
 		<Container maxWidth="md">

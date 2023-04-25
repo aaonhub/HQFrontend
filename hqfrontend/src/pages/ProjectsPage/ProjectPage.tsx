@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Fab, TextField } from '@mui/material';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+import ProjectToDoItem from './ProjectToDoItem';
+import EditInboxItemDialog from '../../components/EditInboxItemDialog';
 
 // Icons
 import { Add } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
-import CommentIcon from '@mui/icons-material/Comment';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Checkbox from '@mui/material/Checkbox';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 
 // Queries and Mutations
 import { GET_PROJECT } from '../../models/project';
 import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
+import { UPDATE_TODO } from '../../models/inboxitem';
 
 // Models
 import Project from '../../models/project';
@@ -29,32 +25,37 @@ const ProjectPage = () => {
 	const { projectId } = useParams();
 	const [newProjectItem, setNewProjectItem] = useState('');
 	const [project, setProject] = useState<Project>(new Project('', ''));
+	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
+
+	useEffect(() => {
+		console.log(selectedInboxItem)
+	}, [selectedInboxItem])
 
 	// Project Query
 	const { loading, error, refetch } = useQuery(GET_PROJECT, {
 		variables: { id: projectId },
 		onCompleted: (data) => {
-			const projectData = data.project.data;
+			const projectData = data.project.data
 			const project: Project = {
 				id: projectData.id,
 				codename: projectData.attributes.Codename,
 				to_do_items: projectData.attributes.to_do_items.data.map(
-					(item: any) => new InboxItem(
-						item.id,
-						item.attributes.Title,
-						'ToDo', // Set the appropriate type value here
-						item.attributes.Completed,
-						projectData, // Pass the entire project data
-						new Date(item.attributes.DueDate),
-						item.attributes.Description,
-						new Date(item.attributes.StartDate),
-						new Date(item.attributes.StartTime)
-					)
+					(item: any) => new InboxItem({
+						id: item.id,
+						title: item.attributes.Title,
+						completed: item.attributes.Completed,
+						project: item.attributes.Project,
+						dueDate: new Date(item.attributes.DueDate),
+						description: item.attributes.Description,
+						startDate: new Date(item.attributes.StartDate),
+						startTime: new Date(item.attributes.StartTime)
+					})
 				),
 			};
 			setProject(project);
 		},
 	});
+
 
 	// Add Inbox Item Mutation
 	const [addItemToProject] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT, {
@@ -89,6 +90,36 @@ const ProjectPage = () => {
 				Completed: !completed,
 			},
 		});
+	};
+
+	
+	const [updateToDo] = useMutation(UPDATE_TODO)
+	const handleUpdateToDo = (inboxItem: InboxItem) => {
+		updateToDo({
+			variables: {
+				id: inboxItem.id,
+				data: {
+					Title: inboxItem.title,
+					Completed: inboxItem.completed,
+				},
+			},
+		})
+	}
+	const handleClose = (inboxItem?: InboxItem) => {
+		if (inboxItem) {
+			// update index item in project
+			const newProject = { ...project }
+			const index = newProject.to_do_items?.findIndex(item => item.id === inboxItem.id)
+			if (index) {
+				newProject.to_do_items![index] = inboxItem
+			}
+			handleUpdateToDo(inboxItem)
+			setProject(newProject)
+			setSelectedInboxItem(undefined)
+		}
+		else {
+			setSelectedInboxItem(undefined)
+		}
 	};
 
 
@@ -132,39 +163,22 @@ const ProjectPage = () => {
 
 			{/* To-Do Items */}
 			<List sx={{ width: '100%', maxWidth: 360 }}>
-				{project.to_do_items && project.to_do_items.map((toDoItem) => (
-					<React.Fragment key={toDoItem.id}>
-						<ListItem
-							secondaryAction={
-								<IconButton edge="end" aria-label="openmenu">
-									<CommentIcon />
-								</IconButton>
-							}
-							disablePadding
-						>
-
-							<ListItemButton role={undefined} dense>
-								<ListItemIcon>
-									<Checkbox
-										edge="start"
-										checked={toDoItem.completed}
-										onChange={handleCheck(toDoItem.id, toDoItem.completed)}
-										tabIndex={-1}
-										disableRipple
-									/>
-								</ListItemIcon>
-								<ListItemText
-									primary={toDoItem.title}
-									onClick={() => console.log('ToDo item title clicked:', toDoItem.title)}
-								/>
-							</ListItemButton>
-
-
-						</ListItem>
-						<Divider />
-					</React.Fragment>
-				))}
+				{project.to_do_items &&
+					project.to_do_items.map((toDoItem) => (
+						<ProjectToDoItem
+							key={toDoItem.id}
+							toDoItem={toDoItem}
+							handleCheck={handleCheck}
+							setSelectedInboxItem={setSelectedInboxItem}
+						/>
+					))}
 			</List>
+
+
+			{/* dialog */}
+			{selectedInboxItem &&
+				<EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />
+			}
 
 
 			{/* Floating Action Button */}

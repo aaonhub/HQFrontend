@@ -53,8 +53,8 @@ export const GET_LOGS = gql`
 
 // Mutations
 export const ADD_LOG = gql`
-	mutation createLog($Log: String!, $LogTime: DateTime!) {
-		createLog(data: { Log: $Log, LogTime: $LogTime }) {
+	mutation createLog($Log: String!, $LogTime: DateTime!, $Type: ENUM_LOG_TYPE!) {
+		createLog(data: { Log: $Log, LogTime: $LogTime, Type: $Type }) {
 			data {
 				id
 				attributes {

@@ -16,7 +16,7 @@ const ProjectsPage = () => {
 	const [projects, setProjects] = useState<Project[]>([])
 
 
-	const { loading, error, data, refetch } = useQuery(GET_PROJECTS, {
+	const { loading, error, refetch } = useQuery(GET_PROJECTS, {
 		onCompleted: (data) => {
 			const projectsData = data.projects.data
 			const projects = projectsData.map((project: any) => {

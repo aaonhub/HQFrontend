@@ -1,24 +1,30 @@
 import { gql } from '@apollo/client';
+import Project from './project';
 
-interface Project {
-
+interface InboxItem {
+	id: string;
+	title: string;
+	completed: boolean;
+	project: Project | null;
+	dueDate: Date;
+	description: string;
+	startDate: Date;
+	startTime: Date;
 }
 
 class InboxItem {
-	constructor(
-		public id: string,
-		public title: string,
-		public type: string,
-		public completed: boolean,
-		public project: Project,
-		public dueDate: Date,
-		public description: string,
-		public startDate: Date,
-		public startTime: Date
-	) {
+	constructor({
+		id,
+		title,
+		completed,
+		project,
+		dueDate,
+		description,
+		startDate,
+		startTime,
+	}: InboxItem) {
 		this.id = id;
 		this.title = title;
-		this.type = type;
 		this.completed = completed;
 		this.project = project;
 		this.dueDate = dueDate;
@@ -31,7 +37,7 @@ class InboxItem {
 export default InboxItem;
 
 
-// Get all to do list items for today
+// Queries
 export const GET_TODAY_LIST_ITEMS = gql`
 	query GetTodaysToDoList($Today: Date!) {
 		toDoItems(filters: {StartDate: {eq: $Today}}) {
@@ -74,7 +80,6 @@ export const GET_TODOS = gql`
   }
 `;
 
-//get all completed to do items and limit it to the first 5
 export const GET_COMPLETED_TODOS = gql`
 	query {
 		toDoItems(filters: { Completed: { eq: true } }, limit: 5) {
@@ -92,21 +97,23 @@ export const GET_COMPLETED_TODOS = gql`
 `;
 
 export const GET_INCOMPLETE_TODOS = gql`
-  query {
-    toDoItems(filters: { Completed: { eq: false } }) {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-          DueDate
-          Description
-        }
-      }
-    }
-  }
+	query {
+		toDoItems(filters: { Completed: { eq: false } }) {
+			data {
+				id
+				attributes {
+					Title
+					Completed
+					DueDate
+					Description
+				}
+			}
+		}
+	}
 `;
 
+
+// Mutations
 export const ADD_TODO = gql`
   mutation createToDoItem($Title: String!) {
     createToDoItem(data: { Title: $Title, Completed: false }) {

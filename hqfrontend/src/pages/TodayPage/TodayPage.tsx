@@ -32,11 +32,7 @@ const TodayPage = () => {
 	const localDate = getCurrentLocalDate();
 
 	// Today Inbox Query
-	const {
-		loading: inboxLoading,
-		error: inboxError,
-		data: inboxData,
-	} = useQuery(GET_TODAY_LIST_ITEMS, {
+	const { loading: inboxLoading, error: inboxError, data: inboxData, } = useQuery(GET_TODAY_LIST_ITEMS, {
 		variables: {
 			Today: localDate,
 		},
@@ -52,6 +48,7 @@ const TodayPage = () => {
 					description: inboxItem.attributes.Description,
 					startDate: new Date(inboxItem.attributes.StartDate),
 					startTime: new Date(inboxItem.attributes.StartTime),
+					timeCompleted: new Date(inboxItem.attributes.TimeCompleted),
 				})
 			})
 			setInboxItems(inboxItems)

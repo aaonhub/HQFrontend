@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Fab, TextField } from '@mui/material';
@@ -15,6 +15,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import { GET_PROJECT } from '../../models/project';
 import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
 import { UPDATE_TODO } from '../../models/inboxitem';
+import { ADD_LOG } from '../../models/log';
 
 // Models
 import Project from '../../models/project';
@@ -27,9 +28,6 @@ const ProjectPage = () => {
 	const [project, setProject] = useState<Project>(new Project('', ''));
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 
-	useEffect(() => {
-		console.log(selectedInboxItem)
-	}, [selectedInboxItem])
 
 	// Project Query
 	const { loading, error, refetch } = useQuery(GET_PROJECT, {
@@ -48,7 +46,8 @@ const ProjectPage = () => {
 						dueDate: new Date(item.attributes.DueDate),
 						description: item.attributes.Description,
 						startDate: new Date(item.attributes.StartDate),
-						startTime: new Date(item.attributes.StartTime)
+						startTime: new Date(item.attributes.StartTime),
+						timeCompleted: new Date(item.attributes.TimeCompleted),
 					})
 				),
 			};
@@ -83,16 +82,27 @@ const ProjectPage = () => {
 			refetch()
 		},
 	});
-	const handleCheck = (value: string, completed: boolean) => () => {
+	const [addLog] = useMutation(ADD_LOG, {
+		onError: (error) => console.log(error.networkError),
+	});
+	const handleCheck = (toDoItem: InboxItem) => () => {
 		completeToDoItem({
 			variables: {
-				id: value,
-				Completed: !completed,
+				id: toDoItem.id,
+				Completed: !toDoItem.completed,
+			},
+		});
+		addLog({
+			variables: {
+				Log: `Completed "${toDoItem.title}" in project "${project.codename}"`,
+				LogTime: new Date().toISOString(),
+				Type: 'todoitem',
 			},
 		});
 	};
 
-	
+
+	// Edit to do item
 	const [updateToDo] = useMutation(UPDATE_TODO)
 	const handleUpdateToDo = (inboxItem: InboxItem) => {
 		updateToDo({
@@ -132,7 +142,6 @@ const ProjectPage = () => {
 		<Box sx={{ flexGrow: 1 }}>
 
 
-
 			{/* Title */}
 			<Box sx={{ display: 'flex', marginBottom: 2 }}>
 				{/* Back arrow */}
@@ -144,6 +153,7 @@ const ProjectPage = () => {
 					{project.codename}
 				</Typography>
 			</Box>
+
 
 			{/* Text input that adds to do list items to the project */}
 			<TextField
@@ -164,14 +174,16 @@ const ProjectPage = () => {
 			{/* To-Do Items */}
 			<List sx={{ width: '100%', maxWidth: 360 }}>
 				{project.to_do_items &&
-					project.to_do_items.map((toDoItem) => (
-						<ProjectToDoItem
-							key={toDoItem.id}
-							toDoItem={toDoItem}
-							handleCheck={handleCheck}
-							setSelectedInboxItem={setSelectedInboxItem}
-						/>
-					))}
+					project.to_do_items
+						.sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1))
+						.map((toDoItem) => (
+							<ProjectToDoItem
+								key={toDoItem.id}
+								toDoItem={toDoItem}
+								handleCheck={() => handleCheck(toDoItem)}
+								setSelectedInboxItem={setSelectedInboxItem}
+							/>
+						))}
 			</List>
 
 

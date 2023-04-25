@@ -24,8 +24,8 @@ import { ADD_HABIT } from '../../models/habit';
 
 
 interface AddHabitPopupProps {
-	open: any
-	onClose: any
+	open: boolean
+	onClose: () => void
 }
 
 

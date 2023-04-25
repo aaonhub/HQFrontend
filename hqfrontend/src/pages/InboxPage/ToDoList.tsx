@@ -52,7 +52,8 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 					dueDate: toDoItem.attributes.DueDate,
 					description: toDoItem.attributes.Description,
 					startDate: toDoItem.attributes.StartDate,
-					startTime: toDoItem.attributes.StartTime
+					startTime: toDoItem.attributes.StartTime,
+					timeCompleted: toDoItem.attributes.TimeCompleted,
 				})
 			})
 			setToDoItems(toDoItems)

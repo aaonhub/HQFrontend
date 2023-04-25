@@ -10,6 +10,7 @@ interface InboxItem {
 	description: string;
 	startDate: Date;
 	startTime: Date;
+	timeCompleted: Date;
 }
 
 class InboxItem {
@@ -22,6 +23,7 @@ class InboxItem {
 		description,
 		startDate,
 		startTime,
+		timeCompleted
 	}: InboxItem) {
 		this.id = id;
 		this.title = title;
@@ -31,6 +33,7 @@ class InboxItem {
 		this.description = description;
 		this.startDate = startDate;
 		this.startTime = startTime;
+		this.timeCompleted = timeCompleted;
 	}
 }
 

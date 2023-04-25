@@ -20,6 +20,40 @@ const HabitsPage = () => {
 	const [today, setToday] = useState(getCurrentLocalDate());
 	const [open, setOpen] = useState(false);
 
+	// Habits Query
+	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
+		variables: {
+			today: today,
+			daily: { "eq": "Daily" },
+			weekly: { "eq": "Weekly" },
+			monthly: { "eq": "Monthly" },
+			dayOfWeek: getCurrentDayOfWeek(),
+			dayOfMonth: getCurrentDayOfMonth(),
+		},
+		onCompleted: (data) => {
+			const habits1 = data.habits.data.map((habit: any) => {
+				const habit_histories = habit.attributes.habit_histories.data.map((history: { attributes: { Date: any; Completed: any; }; }) => {
+					return {
+						date: history.attributes.Date,
+						completed: history.attributes.Completed
+					};
+				});
+				return new Habit(
+					habit.id,
+					habit.attributes.Title,
+					habit.attributes.Active,
+					habit.attributes.Frequency,
+					habit.attributes.LastCompleted,
+					habit.Order,
+					habit.attributes.HabitFrequency,
+					habit_histories,
+					habit_histories.length > 0 ? habit_histories[habit_histories.length - 1].completed : false,
+				);
+			});
+			setHabits(habits1);
+		},
+	});
+
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -48,42 +82,6 @@ const HabitsPage = () => {
 		setToday(getCurrentLocalDate());
 	};
 
-
-	// Habits Query
-	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
-		variables: {
-			today: today,
-			daily: { "eq": "Daily" },
-			weekly: { "eq": "Weekly" },
-			monthly: { "eq": "Monthly" },
-			dayOfWeek: getCurrentDayOfWeek(),
-			dayOfMonth: getCurrentDayOfMonth(),
-		},
-		onCompleted: (data) => {
-			const habits1 = data.habits.data.map((habit: any) => {
-				const habit_histories = habit.attributes.habit_histories.data.map((history: { attributes: { Date: any; Completed: any; }; }) => {
-					return {
-						date: history.attributes.Date,
-						completed: history.attributes.Completed
-					};
-				});
-
-				return new Habit(
-					habit.id,
-					habit.attributes.Title,
-					habit.attributes.Active,
-					habit.attributes.Frequency,
-					habit.attributes.LastCompleted,
-					habit.Order,
-					habit.attributes.HabitFrequency,
-					habit_histories,
-					habit_histories.length > 0 ? habit_histories[habit_histories.length - 1].completed : false,
-				);
-			});
-			setHabits(habits1);
-		},
-	});
-	
 
 
 	if (loading) return <Typography>Loading...</Typography>;

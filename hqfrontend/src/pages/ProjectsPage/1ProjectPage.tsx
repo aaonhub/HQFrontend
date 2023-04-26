@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Fab, TextField } from '@mui/material';
 import List from '@mui/material/List';
-import ProjectToDoItem from './ProjectToDoItem';
+import ProjectToDoItem from './3ProjectToDoItem';
 import EditInboxItemDialog from '../../components/EditInboxItemDialog';
 
 // Icons
@@ -24,7 +24,7 @@ import InboxItem, { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
 
 const ProjectPage = () => {
 	const { projectId } = useParams();
-	const [newProjectItem, setNewProjectItem] = useState('');
+	const [newProjectItemTitle, setNewProjectItemTitle] = useState('');
 	const [project, setProject] = useState<Project>(new Project('', ''));
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 
@@ -60,14 +60,14 @@ const ProjectPage = () => {
 	const [addItemToProject] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
-			setNewProjectItem('')
+			setNewProjectItemTitle('')
 			refetch()
 		},
 	});
 	const handleAddProjectItem = () => {
 		addItemToProject({
 			variables: {
-				Title: newProjectItem,
+				Title: newProjectItemTitle,
 				projectid: projectId,
 			},
 		});
@@ -159,8 +159,8 @@ const ProjectPage = () => {
 			<TextField
 				fullWidth
 				label="Add Project Item"
-				value={newProjectItem}
-				onChange={(e) => setNewProjectItem(e.target.value)}
+				value={newProjectItemTitle}
+				onChange={(e) => setNewProjectItemTitle(e.target.value)}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {

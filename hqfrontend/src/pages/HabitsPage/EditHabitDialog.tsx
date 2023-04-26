@@ -17,13 +17,12 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 
 interface EditHabitDialogProps {
-	showEditDialog: boolean
 	onClose: () => void
-	habit: any
+	habit: Habit
 	refetch: () => void
 }
 
-const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ showEditDialog, onClose, habit, refetch }) => {
+const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => {
 	const [newHabit, setNewHabit] = useState<Habit>(habit);
 
 	const [deleteHabit] = useMutation(DELETE_HABIT);
@@ -54,7 +53,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ showEditDialog, onClo
 		setNewHabit({ ...newHabit, active: e.target.checked });
 	};
 
-	const handleFrequencyChange = (e: SelectChangeEvent<'Daily' | 'Weekly' | 'Monthly' | 'Yearly'>) => {
+	const handleFrequencyChange = (e: SelectChangeEvent) => {
 		setNewHabit({ ...newHabit, frequency: e.target.value as Frequency });
 	};
 
@@ -77,7 +76,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ showEditDialog, onClo
 	}
 
 	return (
-		<Dialog open={showEditDialog} onClose={onClose}>
+		<Dialog open={true} onClose={onClose}>
 			<DialogTitle>Edit Habit</DialogTitle>
 			<DialogContent>
 				<FormGroup>

@@ -30,7 +30,6 @@ interface HabitListProps {
 }
 
 const HabitList: React.FC<HabitListProps> = ({ refetch, habits }) => {
-	const [showEditDialog, setShowEditDialog] = useState(false);
 	const [habit, setHabit] = useState<Habit>();
 
 	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
@@ -52,7 +51,6 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits }) => {
 
 	const handleEdit = (habit: Habit) => {
 		setHabit(habit);
-		setShowEditDialog(true);
 	};
 
 	const sortedHabits = () => {
@@ -117,10 +115,9 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits }) => {
 				})}
 			</List>
 
-			{showEditDialog && (
+			{habit && (
 				<EditHabitDialog
-					showEditDialog={showEditDialog}
-					onClose={() => setShowEditDialog(false)}
+					onClose={() => setHabit(undefined)}
 					habit={habit}
 					refetch={refetch}
 				/>

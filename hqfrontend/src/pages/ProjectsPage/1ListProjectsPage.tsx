@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, List, Typography, TextField } from '@mui/material'
-import ProjectListItem from './ProjectListItem'
+import ProjectListItem from './3ListProjectItem'
 
-// Query
+// Queries and Mutations
 import { GET_PROJECTS } from '../../models/project'
 import { CREATE_PROJECT } from '../../models/project'
 
@@ -15,7 +15,7 @@ const ProjectsPage = () => {
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
 
-
+	// Projects Query
 	const { loading, error, refetch } = useQuery(GET_PROJECTS, {
 		onCompleted: (data) => {
 			const projectsData = data.projects.data
@@ -89,6 +89,7 @@ const ProjectsPage = () => {
 					<ProjectListItem
 						key={project.id}
 						project={project}
+						refetch={refetch}
 					/>
 				))}
 			</List>

@@ -1,10 +1,14 @@
 import { IconButton, ListItem, ListItemText, Menu, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 import { Link } from 'react-router-dom'
+import { useMutation } from "@apollo/client";
 
 // Icons
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete'
+
+// Queries and Mutations
+import { DELETE_PROJECT } from "../../models/project"
 
 // Models
 import Project from "../../models/project"
@@ -12,24 +16,40 @@ import Project from "../../models/project"
 
 interface ProjectListItemProps {
 	project: Project
+	refetch: any
 }
 
-const ProjectListItem = React.memo(({ project }: ProjectListItemProps) => {
+const ProjectListItem = React.memo(({ project, refetch }: ProjectListItemProps) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [currentProjectId, setCurrentProjectId] = useState('')
 
 
 	const handleClick = (event: any, projectId: string) => {
+		event.preventDefault()
 		setAnchorEl(event.currentTarget)
 		setCurrentProjectId(projectId)
 	}
 	const handleClose = () => {
 		setAnchorEl(null)
 	}
-	const handleDelete = () => {
-		console.log('Project ID:', currentProjectId)
-		// Add your delete function here
+
+	const [deleteProject] = useMutation(DELETE_PROJECT, {
+		onCompleted: (data) => {
+			console.log(data)
+		},
+		onError: (error) => {
+			console.log(error)
+		},
+	})
+	const handleDelete = (event: any) => {
+		event.preventDefault()
+		deleteProject({
+			variables: {
+				id: currentProjectId,
+			},
+		})
 		handleClose()
+		refetch()
 	}
 
 	return (
@@ -52,7 +72,7 @@ const ProjectListItem = React.memo(({ project }: ProjectListItemProps) => {
 						open={Boolean(anchorEl)}
 						onClose={handleClose}
 					>
-						<MenuItem onClick={handleDelete}>
+						<MenuItem onClick={(event) => handleDelete(event)}>
 							<DeleteIcon />
 							Delete
 						</MenuItem>

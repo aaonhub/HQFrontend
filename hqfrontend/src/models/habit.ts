@@ -18,7 +18,7 @@ export type HabitHistory = {
 	updatedAt: Date;
 };
 
-export type Frequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
+export type Frequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'RitualOnly';
 
 class Habit {
 	constructor(

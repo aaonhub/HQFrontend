@@ -37,6 +37,7 @@ const ProjectToDoItem = React.memo(({ toDoItem, handleCheck, setSelectedInboxIte
 					</ListItemIcon>
 					<ListItemText
 						primary={toDoItem.title}
+						onClick={() => setSelectedInboxItem(toDoItem)}
 						primaryTypographyProps={{
 							style: {
 								textDecoration: toDoItem.completed ? "line-through" : "none",
@@ -51,5 +52,5 @@ const ProjectToDoItem = React.memo(({ toDoItem, handleCheck, setSelectedInboxIte
 	)
 })
 
-
-export default ProjectToDoItem
+// memo
+export default React.memo(ProjectToDoItem)

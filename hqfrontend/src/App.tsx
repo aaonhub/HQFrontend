@@ -20,7 +20,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ThemeProvider from './pages/SettingsPage/ThemeContext';
 import HabitsPage from './pages/HabitsPage/1HabitsPage';
 import InboxPage from './pages/InboxPage/InboxPage';
-import TodayPage from './pages/TodayPage/TodayPage';
+import TodayPage from './pages/TodayPage/1TodayPage';
 import Test from './pages/testpage';
 import LogPage from './pages/LogPage/LogPage';
 import RitualsPage from './pages/RitualsPage/RitualsPage';

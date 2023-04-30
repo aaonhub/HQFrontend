@@ -31,6 +31,7 @@ const TodayPage = () => {
 
 	const localDate = getCurrentLocalDate();
 
+
 	// Today Inbox Query
 	const { loading: inboxLoading, error: inboxError, data: inboxData, } = useQuery(GET_TODAY_LIST_ITEMS, {
 		variables: {
@@ -54,6 +55,9 @@ const TodayPage = () => {
 			setInboxItems(inboxItems)
 		}
 	});
+
+
+
 
 	// Habits Query
 	const {
@@ -98,19 +102,25 @@ const TodayPage = () => {
 		}
 	});
 
-	console.log(habitsData)
+
 
 
 	useEffect(() => {
 		if (habitsData && inboxData) {
-			setSimpleItemArray(HabitInboxRosetta({ habits: habits, inboxItems: inboxItems }))
-			console.log(habits)
+			const combinedArray = HabitInboxRosetta({ habits: habits, inboxItems: inboxItems })
+			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
+				return !simpleItem.completedToday
+			})
+
+			setSimpleItemArray(simpleItemArrayFiltered)
 		}
 	}, [habitsData, inboxData, habits, inboxItems])
 
 
-	if (inboxLoading || habitsLoading) return <p>Loading...</p>;
-	if (inboxError || habitsError) return <p>Error :(</p>;
+	if (inboxLoading || habitsLoading) return <p>Loading...</p>
+	if (inboxError || habitsError) return <p>Error :(</p>
+
+
 
 
 	return (

@@ -26,7 +26,6 @@ interface ItineraryProps {
 }
 
 const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArray }) => {
-	console.log(simpleItemArray)
 	const hasData = simpleItemArray.length > 0
 
 	const [checkHabit] = useMutation(CHECK_HABIT)
@@ -49,11 +48,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		})
 
 		setSimpleItemArray((prevArray: SimpleItem[]) =>
-			prevArray.map((item) =>
-				item.id === habitId && item.type === 'habit'
-					? { ...item, completedToday: !item.completedToday }
-					: item
-			)
+		// remove the item from the array
+			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
 		)
 	}
 
@@ -65,11 +61,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		})
 
 		setSimpleItemArray((prevArray: any[]) =>
-			prevArray.map((item) =>
-				item.id === todoId && item.type === 'inbox'
-					? { ...item, completedToday: !item.completedToday }
-					: item
-			)
+			prevArray.filter((item) => item.id !== todoId && item.type === 'todo' && !item.completedToday)
 		)
 	}
 

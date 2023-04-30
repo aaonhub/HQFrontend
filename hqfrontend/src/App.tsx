@@ -18,7 +18,7 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import SubjectIcon from '@mui/icons-material/Subject';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ThemeProvider from './pages/SettingsPage/ThemeContext';
-import HabitsPage from './pages/HabitsPage/HabitsPage';
+import HabitsPage from './pages/HabitsPage/1HabitsPage';
 import InboxPage from './pages/InboxPage/InboxPage';
 import TodayPage from './pages/TodayPage/TodayPage';
 import Test from './pages/testpage';

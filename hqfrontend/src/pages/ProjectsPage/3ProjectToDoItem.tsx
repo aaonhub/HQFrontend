@@ -21,9 +21,9 @@ interface ProjectToDoItemProps {
 }
 
 const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem }: ProjectToDoItemProps) => {
-	
-	console.log("toDoItem: ", toDoItem);
 
+
+	
 	return (
 		<React.Fragment key={toDoItem.id}>
 			<ListItem

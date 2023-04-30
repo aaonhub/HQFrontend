@@ -66,18 +66,24 @@ const HabitsPage = () => {
 	};
 
 
+
+
 	const previousDay = () => {
 		const [year, month, day] = today.split("-");
-		const newDay = Number(day) - 1;
-		const newDateString = `${year}-${month}-${newDay.toString().padStart(2, "0")}`;
+		const currentDate = new Date(Number(year), Number(month) - 1, Number(day));
+		currentDate.setDate(currentDate.getDate() - 1);
+		const newDateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
 		setToday(newDateString);
 	};
+
 	const nextDay = () => {
 		const [year, month, day] = today.split("-");
-		const newDay = Number(day) + 1;
-		const newDateString = `${year}-${month}-${newDay.toString().padStart(2, "0")}`;
+		const currentDate = new Date(Number(year), Number(month) - 1, Number(day));
+		currentDate.setDate(currentDate.getDate() + 1);
+		const newDateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
 		setToday(newDateString);
 	};
+
 	const goToToday = () => {
 		setToday(getCurrentLocalDate());
 	};
@@ -123,7 +129,7 @@ const HabitsPage = () => {
 			</Box>
 
 			{/* Habit list */}
-			<HabitList refetch={refetch} habits={habits} />
+			<HabitList refetch={refetch} habits={habits} today={today} />
 
 			{/* Habit Popup */}
 			<AddHabitPopup open={open} onClose={handleClose} />

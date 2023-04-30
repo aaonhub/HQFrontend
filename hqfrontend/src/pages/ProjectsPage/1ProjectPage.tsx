@@ -32,12 +32,12 @@ const ProjectPage = () => {
 
 
 	// Project Query
-	const { data, loading, error, refetch } = useQuery(GET_INCOMPLETE_PROJECT_ITEMS, {
+	const { loading, error, refetch } = useQuery(GET_INCOMPLETE_PROJECT_ITEMS, {
 		variables: { id: projectId },
 		onCompleted: (data) => {
 			const projectData = data.project.data;
-			const item_order = projectData.attributes.ItemOrder;
-			const projectItems = projectData.attributes.to_do_items.data.map(
+			const item_order = projectData.attributes.ItemOrder || [];
+			const projectItems = projectData.attributes.to_do_items?.data?.map(
 				(item: any) => new InboxItem({
 					id: item.id,
 					title: item.attributes.Title,
@@ -49,18 +49,21 @@ const ProjectPage = () => {
 					startTime: new Date(item.attributes.StartTime),
 					timeCompleted: new Date(item.attributes.TimeCompleted),
 				})
-			);
+			) || [];
 
 			const orderedItems = item_order.map((itemId: string) => {
 				return projectItems.find((item: InboxItem) => item.id === itemId);
 			}).filter((item: InboxItem | undefined) => item !== undefined) as InboxItem[];
 
+			const unorderedItems = projectItems.filter((item: InboxItem) => !item_order.includes(item.id));
+
+			const finalItems = orderedItems.concat(unorderedItems);
 
 			changeProjectItemOrder({
 				variables: {
 					id: projectId,
 					data: {
-						ItemOrder: orderedItems.map((item: InboxItem) => item.id),
+						ItemOrder: finalItems.map((item: InboxItem) => item.id),
 					},
 				},
 			});
@@ -68,16 +71,19 @@ const ProjectPage = () => {
 			const project: Project = {
 				id: projectData.id,
 				codename: projectData.attributes.Codename,
-				to_do_items: orderedItems,
+				to_do_items: finalItems,
 				item_order: item_order,
 			};
 
 			setProject(project);
 			project.to_do_items
-				? setProjectItemArray(orderedItems)
+				? setProjectItemArray(finalItems)
 				: setProjectItemArray([]);
 		},
+
 	});
+
+
 
 
 	// Add Inbox Item
@@ -97,6 +103,8 @@ const ProjectPage = () => {
 		});
 
 	};
+
+
 
 
 	// Check off to do item
@@ -126,6 +134,8 @@ const ProjectPage = () => {
 	};
 
 
+
+
 	// Edit to do item
 	const [updateToDo] = useMutation(UPDATE_TODO)
 	const handleUpdateToDo = (inboxItem: InboxItem) => {
@@ -142,17 +152,20 @@ const ProjectPage = () => {
 	const handleClose = (inboxItem?: InboxItem) => {
 		if (inboxItem) {
 			// update index item in project
-			const index = projectItemArray?.findIndex(item => item.id === inboxItem.id)
+			const index = projectItemArray.findIndex(item => item.id === inboxItem.id);
 			if (index) {
-				setProjectItemArray(projectItemArray!.splice(index, 1, inboxItem))
+				const updatedProjectItemArray = [...projectItemArray];
+				updatedProjectItemArray.splice(index, 1, inboxItem);
+				setProjectItemArray(updatedProjectItemArray);
 			}
-			handleUpdateToDo(inboxItem)
-			setSelectedInboxItem(undefined)
+			handleUpdateToDo(inboxItem);
+			setSelectedInboxItem(undefined);
 		}
 		else {
-			setSelectedInboxItem(undefined)
+			setSelectedInboxItem(undefined);
 		}
 	};
+
 
 
 
@@ -192,9 +205,10 @@ const ProjectPage = () => {
 
 
 
-
 	if (loading) { return <div>Loading...</div> }
 	if (error) { return <div>Error! {error.message}</div> }
+
+
 
 
 	return (
@@ -252,10 +266,7 @@ const ProjectPage = () => {
 
 
 			{/* dialog */}
-			{
-				selectedInboxItem &&
-				<EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />
-			}
+			{selectedInboxItem && <EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />}
 
 
 			{/* Floating Action Button */}

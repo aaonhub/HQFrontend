@@ -27,9 +27,10 @@ import Habit from "../../models/habit";
 interface HabitListProps {
 	refetch: () => void;
 	habits: Habit[];
+	today: string;
 }
 
-const HabitList: React.FC<HabitListProps> = ({ refetch, habits }) => {
+const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 	const [habit, setHabit] = useState<Habit>();
 
 	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
@@ -38,12 +39,12 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits }) => {
 		createHabitHistory({
 			variables: {
 				data: {
-					Date: getCurrentLocalDate(),
+					Date: today,
 					habit: habit.id,
 					Completed: true,
 				},
 				habitId: habit.id,
-				lastCompleted: getCurrentLocalDate(),
+				lastCompleted: today === getCurrentLocalDate() ? today : habit.lastCompleted,
 			},
 		})
 		habit.completedToday = true;

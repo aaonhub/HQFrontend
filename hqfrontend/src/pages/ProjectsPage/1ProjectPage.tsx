@@ -25,14 +25,14 @@ import InboxItem, { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
 
 const ProjectPage = () => {
 	const { projectId } = useParams();
-	const [newProjectItemTitle, setNewProjectItemTitle] = useState('');
-	const [project, setProject] = useState<Project>(new Project('', ''));
+	const [newProjectItemTitle, setNewProjectItemTitle] = useState('')
+	const [project, setProject] = useState<Project>(new Project('', ''))
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 	const [projectItemArray, setProjectItemArray] = useState<InboxItem[]>([])
 
 
 	// Project Query
-	const { loading, error, refetch } = useQuery(GET_INCOMPLETE_PROJECT_ITEMS, {
+	const { data, loading, error, refetch } = useQuery(GET_INCOMPLETE_PROJECT_ITEMS, {
 		variables: { id: projectId },
 		onCompleted: (data) => {
 			const projectData = data.project.data;
@@ -53,6 +53,16 @@ const ProjectPage = () => {
 
 			const orderedItems = item_order.map((itemId: string) => {
 				return projectItems.find((item: InboxItem) => item.id === itemId);
+			}).filter((item: InboxItem | undefined) => item !== undefined) as InboxItem[];
+
+
+			changeProjectItemOrder({
+				variables: {
+					id: projectId,
+					data: {
+						ItemOrder: orderedItems.map((item: InboxItem) => item.id),
+					},
+				},
 			});
 
 			const project: Project = {
@@ -64,7 +74,7 @@ const ProjectPage = () => {
 
 			setProject(project);
 			project.to_do_items
-				? setProjectItemArray(project.to_do_items)
+				? setProjectItemArray(orderedItems)
 				: setProjectItemArray([]);
 		},
 	});
@@ -134,7 +144,7 @@ const ProjectPage = () => {
 			// update index item in project
 			const index = projectItemArray?.findIndex(item => item.id === inboxItem.id)
 			if (index) {
-				// setProjectItemArray(projectItemArray!.splice(index, 1, inboxItem))
+				setProjectItemArray(projectItemArray!.splice(index, 1, inboxItem))
 			}
 			handleUpdateToDo(inboxItem)
 			setSelectedInboxItem(undefined)

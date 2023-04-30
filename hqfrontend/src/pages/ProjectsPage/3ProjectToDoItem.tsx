@@ -20,7 +20,10 @@ interface ProjectToDoItemProps {
 	handleCheck: (InboxItem: InboxItem) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ProjectToDoItem = React.memo(({ toDoItem, handleCheck, setSelectedInboxItem }: ProjectToDoItemProps) => {
+const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem }: ProjectToDoItemProps) => {
+	
+	console.log("toDoItem: ", toDoItem);
+
 	return (
 		<React.Fragment key={toDoItem.id}>
 			<ListItem

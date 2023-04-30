@@ -23,7 +23,7 @@ class InboxItem {
 		description,
 		startDate,
 		startTime,
-		timeCompleted
+		timeCompleted,
 	}: InboxItem) {
 		this.id = id;
 		this.title = title;

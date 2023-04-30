@@ -7,18 +7,20 @@ class Project {
 	constructor(
 		public id: string,
 		public codename: string,
-		public to_do_items?: InboxItem[]
+		public to_do_items?: InboxItem[],
+		public item_order?: string[]
 	) {
 		this.id = id
 		this.codename = codename
 		this.to_do_items = to_do_items
+		this.item_order = item_order
 	}
 }
 
 export default Project
 
 
-
+// Queries
 export const GET_PROJECTS = gql`
 	query GetProjects {
 		projects {
@@ -32,14 +34,15 @@ export const GET_PROJECTS = gql`
 	}
 `;
 
-export const GET_PROJECT = gql`
+export const GET_COMPLETED_PROJECT_ITEMS = gql`
 	query GetProject($id: ID!) {
 		project(id: $id) {
-			data{
+			data {
 				id
 				attributes {
 					Codename
-					to_do_items {
+					ItemOrder
+					to_do_items(filters: {Completed: {eq: true}}) {
 						data {
 							id
 							attributes {
@@ -58,6 +61,35 @@ export const GET_PROJECT = gql`
 	}
 `;
 
+export const GET_INCOMPLETE_PROJECT_ITEMS = gql`
+	query GetProject($id: ID!) {
+		project(id: $id) {
+			data {
+				id
+				attributes {
+					Codename
+					ItemOrder
+					to_do_items(filters: {Completed: {eq: false}}) {
+						data {
+							id
+							attributes {
+								Title
+								Completed
+								DueDate
+								Description
+								StartDate
+								StartTime
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+`;
+
+
+// Mutations
 export const CREATE_PROJECT = gql`
 	mutation CreateProject($data: ProjectInput!) {
 		createProject(data: $data) {
@@ -120,4 +152,17 @@ mutation CreateProjectInboxItem($projectid: ID!, $Title: String) {
 		}
 	}
 }  
+`;
+
+export const UPDATE_PROJECT_ITEM_ORDER = gql`
+	mutation UpdateProject($id: ID!, $data: ProjectInput!) {
+		updateProject(id: $id, data: $data) {
+		data {
+			id
+			attributes {
+				ItemOrder
+			}
+		}
+	}
+}
 `;

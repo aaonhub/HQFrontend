@@ -1,36 +1,56 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import Sortable from 'sortablejs';
+import './Test.css';
 
-import ListItem from '../components/ListItem';
-
+interface ListItem {
+	id: number;
+	text: string;
+}
 
 export default function Test() {
-	const [items, setItems] = useState(['Item 1', 'Item 2', 'Item 3']);
+	const [listItems, setListItems] = useState<ListItem[]>([
+		{ id: 1, text: 'Item 1' },
+		{ id: 2, text: 'Item 2' },
+		{ id: 3, text: 'Item 3' },
+		{ id: 4, text: 'Item 4' },
+		{ id: 5, text: 'Item 5' },
+	]);
 
-	const handleDelete = (index: number) => {
-		const newItems = [...items];
-		newItems.splice(index, 1);
-		setItems(newItems);
-	};
+	
 
-	const handleEdit = (index: number) => {
-		const newItem = prompt('Enter a new item:');
-		if (newItem) {
+	const listRef = useRef<HTMLUListElement>(null);
+
+	const onSortEnd = (event: any) => {
+		const { oldIndex, newIndex } = event;
+		setListItems((items) => {
 			const newItems = [...items];
-			newItems[index] = newItem;
-			setItems(newItems);
-		}
+			const [removed] = newItems.splice(oldIndex, 1);
+			newItems.splice(newIndex, 0, removed);
+			return newItems;
+		});
 	};
+
+	React.useEffect(() => {
+		if (listRef.current) {
+			Sortable.create(listRef.current, {
+				onEnd: onSortEnd,
+				handle: '.drag-handle',
+				draggable: '.sortable-item',
+				onStart: (event: any) => {
+					event.item.querySelector('.drag-handle').style.cursor = 'grabbing';
+				},
+			});
+		}
+	}, []);
 
 	return (
-		<div className="list">
-			{items.map((item: string, index) => (
-				<ListItem
-					key={index}
-					item={item}
-					onDelete={() => handleDelete(index)}
-					onEdit={() => handleEdit(index)}
-				/>
+		<ul className="sortable-list" ref={listRef}>
+			{listItems.map((item) => (
+				<li key={item.id} className="sortable-item">
+					<span className="drag-handle">&#x2630;</span>
+					{item.text}
+				</li>
 			))}
-		</div>
+		</ul>
 	);
 };

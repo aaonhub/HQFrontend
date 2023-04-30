@@ -1,0 +1,43 @@
+/* ProjectPage.module.css */
+
+.listContainer {
+	padding        : 0;
+	margin         : 0;
+	list-style-type: none;
+}
+
+.listItem {
+	display         : flex;
+	align-items     : center;
+	padding         : 8px;
+	margin-bottom   : 8px;
+	background-color: #f3f3f3;
+	border-radius   : 4px;
+}
+
+.listItemCheckbox {
+	margin-right: 8px;
+}
+
+.listItemTitle {
+	flex-grow   : 1;
+	margin-right: 8px;
+}
+
+.listItem:hover {
+	cursor          : pointer;
+	background-color: #e0e0e0;
+}
+
+.listItemEditButton {
+	background-color: transparent;
+	border          : none;
+	outline         : none;
+	font-size       : 16px;
+	padding         : 4px;
+	cursor          : pointer;
+}
+
+.listItemEditButton:hover {
+	color: #1e88e5;
+}

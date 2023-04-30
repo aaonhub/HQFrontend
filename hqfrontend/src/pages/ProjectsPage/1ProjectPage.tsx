@@ -257,6 +257,7 @@ const ProjectPage = () => {
 							toDoItem={toDoItem}
 							handleCheck={handleCheck}
 							setSelectedInboxItem={setSelectedInboxItem}
+							refetch={refetch}
 							key={toDoItem.id}
 						/>
 					)}

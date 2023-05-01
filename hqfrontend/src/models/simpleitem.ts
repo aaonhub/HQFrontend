@@ -2,16 +2,16 @@
 
 export class SimpleItem {
 	constructor(
+		public id: string,
 		public completedToday: boolean,
 		public title: string,
 		public type: 'habit' | 'inbox',
-		public id: string,
-		public startTime: Date,
+		public startTime?: string,
 	) {
+		this.id = id;
 		this.completedToday = completedToday;
 		this.title = title;
 		this.type = type;
-		this.id = id;
 		this.startTime = startTime;
 	}
 }

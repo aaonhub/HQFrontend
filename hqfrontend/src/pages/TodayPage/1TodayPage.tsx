@@ -43,12 +43,12 @@ const TodayPage = () => {
 				return new InboxItem({
 					id: inboxItem.id,
 					title: inboxItem.attributes.Title,
+					description: inboxItem.attributes.Description,
 					completed: inboxItem.attributes.Completed,
 					project: inboxItem.attributes.Project,
-					dueDate: new Date(inboxItem.attributes.DueDate),
-					description: inboxItem.attributes.Description,
-					startDate: new Date(inboxItem.attributes.StartDate),
-					startTime: new Date(inboxItem.attributes.StartTime),
+					dueDateTime: inboxItem.attributes.DueDateTime,
+					startDate: inboxItem.attributes.StartDate,
+					startTime: inboxItem.attributes.startTime,
 					timeCompleted: new Date(inboxItem.attributes.TimeCompleted),
 				})
 			})

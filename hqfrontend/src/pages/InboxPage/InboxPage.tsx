@@ -24,10 +24,11 @@ const InboxPage = () => {
 		id: '',
 		attributes: {
 			Title: '',
-			Completed: false,
-			DueDate: '',
-			StartDate: '',
 			Description: '',
+			Completed: false,
+			DueDateTime: '',
+			StartDate: '',
+			StartTime: '',
 		},
 	});
 

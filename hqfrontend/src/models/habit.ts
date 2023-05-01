@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export type HabitFrequency = {
 	startDate: Date;
 	endDate: Date | null;
-	timeOfDay: Date;
+	timeOfDay: string;
 	repetitionFrequency: number;
 	daysOfTheWeek: Array<string>;
 	daysOfTheMonth: Array<number>;

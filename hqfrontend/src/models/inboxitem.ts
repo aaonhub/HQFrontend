@@ -1,43 +1,46 @@
 import { gql } from '@apollo/client';
 import Project from './project';
 
+
 interface InboxItem {
 	id: string;
 	title: string;
+	description?: string;
 	completed: boolean;
-	project: Project | null;
-	dueDate: Date;
-	description: string;
-	startDate: Date;
-	startTime: Date;
-	timeCompleted: Date;
+	project?: Project | null;
+	dueDateTime: Date | null;
+	startTime: string | null;
+	startDate: string | null;
+	timeCompleted: Date | null;
 }
 
 class InboxItem {
 	constructor({
 		id,
 		title,
+		description,
 		completed,
 		project,
-		dueDate,
-		description,
-		startDate,
+		dueDateTime,
 		startTime,
+		startDate,
 		timeCompleted,
+
 	}: InboxItem) {
 		this.id = id;
-		this.title = title;
-		this.completed = completed;
-		this.project = project;
-		this.dueDate = dueDate;
-		this.description = description;
-		this.startDate = startDate;
+		this.title = title || "";
+		this.description = description || "";
+		this.completed = completed || false;
+		this.project = project || null;
+		this.dueDateTime = dueDateTime;
 		this.startTime = startTime;
+		this.startDate = startDate;
 		this.timeCompleted = timeCompleted;
 	}
 }
 
 export default InboxItem;
+
 
 
 // Queries
@@ -57,7 +60,7 @@ export const GET_TODAY_LIST_ITEMS = gql`
 							}
 						}
 					}
-					DueDate
+					DueDateTime
 					Description
 					StartDate
 					StartTime
@@ -75,7 +78,7 @@ export const GET_TODOS = gql`
         attributes {
           Title
           Completed
-		  DueDate
+		  DueDateTime
 		  Description
         }
       }
@@ -91,7 +94,7 @@ export const GET_COMPLETED_TODOS = gql`
 				attributes {
 					Title
 					Completed
-					DueDate
+					DueDateTime
 					Description
 				}
 			}
@@ -107,7 +110,7 @@ export const GET_INCOMPLETE_TODOS = gql`
 				attributes {
 					Title
 					Completed
-					DueDate
+					DueDateTime
 					Description
 				}
 			}
@@ -125,7 +128,7 @@ export const ADD_TODO = gql`
         attributes {
           Title
           Completed
-		  DueDate
+		  DueDateTime
 		  Description
         }
       }
@@ -141,7 +144,7 @@ export const UPDATE_TODO = gql`
 				attributes {
 					Title
 					Completed
-					DueDate
+					DueDateTime
 					Description
 				}
 			}
@@ -167,7 +170,7 @@ export const COMPLETE_UNCOMPLETE_TODO = gql`
 				attributes {
 					Title
 					Completed
-					DueDate
+					DueDateTime
 					Description
 				}
 			}
@@ -188,7 +191,7 @@ export const ADD_TODO_TO_PROJECT = gql`
 							attributes {
 								Title
 								Completed
-								DueDate
+								DueDateTime
 								Description
 							}
 						}

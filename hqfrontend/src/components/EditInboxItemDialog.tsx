@@ -10,9 +10,11 @@ import {
 	Button,
 	Box,
 } from "@mui/material";
+import { dateToYYYYMMDD, yyyymmddToDate } from "./DateFunctions";
 
 // Models
 import InboxItem from "../models/inboxitem";
+import { ContactlessOutlined } from "@mui/icons-material";
 
 interface ProjectToDoItemProps {
 	handleClose: (inboxItem?: InboxItem) => void;
@@ -20,16 +22,25 @@ interface ProjectToDoItemProps {
 }
 
 const EditInboxItemDialog = React.memo(({ handleClose, inboxItem }: ProjectToDoItemProps) => {
-	const [newInboxItem, setNewInboxItem] = useState(inboxItem)
+	const [newInboxItem, setNewInboxItem] = useState(inboxItem);
 
 
-	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewInboxItem({ ...newInboxItem, title: e.target.value })
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		console.log(name, value);
+		setNewInboxItem((prev) => {
+			const updatedValue = name === 'startDate' || name === 'dueDateTime'
+				?
+				value === ''
+					? null
+					:
+					value
+				:
+				value
+			return { ...prev, [name]: updatedValue };
+		});
 	};
 
-	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewInboxItem({ ...newInboxItem, completed: e.target.checked })
-	};
 
 
 	return (
@@ -49,21 +60,40 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItem }: ProjectToDoI
 					}}
 				>
 					<TextField
-						id="outlined-basic"
+						name="title"
 						label="Title"
 						variant="outlined"
 						value={newInboxItem.title}
-						onChange={handleTitleChange}
+						onChange={handleInputChange}
 					/>
-					<FormControlLabel
-						control={
-							<Checkbox
-								checked={newInboxItem.completed}
-								onChange={handleCheckboxChange}
-								inputProps={{ "aria-label": "controlled" }}
-							/>
-						}
-						label="Completed"
+					<TextField
+						name="description"
+						label="Description"
+						variant="outlined"
+						value={newInboxItem.description}
+						onChange={handleInputChange}
+					/>
+					<TextField
+						name="startDate"
+						label="Start Date"
+						type="date"
+						variant="outlined"
+						InputLabelProps={{
+							shrink: true,
+						}}
+						value={newInboxItem.startDate ? newInboxItem.startDate : ''}
+						onChange={handleInputChange}
+					/>
+					<TextField
+						name="dueDateTime"
+						label="Due Date"
+						type="date"
+						variant="outlined"
+						InputLabelProps={{
+							shrink: true,
+						}}
+						value={newInboxItem.dueDateTime ? newInboxItem.dueDateTime : ''}
+						onChange={handleInputChange}
 					/>
 				</Box>
 			</DialogContent>

@@ -18,6 +18,8 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import SubjectIcon from '@mui/icons-material/Subject';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ThemeProvider from './pages/SettingsPage/ThemeContext';
+
+// Pages
 import HabitsPage from './pages/HabitsPage/1HabitsPage';
 import InboxPage from './pages/InboxPage/InboxPage';
 import TodayPage from './pages/TodayPage/1TodayPage';
@@ -31,6 +33,7 @@ import HelpPage from './pages/HelpPage/HelpPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import DemoPage from './pages/DemoPage/DemoPage';
 
 interface AppProps {
 	window?: () => Window;
@@ -189,6 +192,7 @@ function App({ window }: AppProps): JSX.Element {
 								<Route path="/help" element={<HelpPage />} />
 								<Route path="/settings" element={<SettingsPage />} />
 								<Route path="test" element={<Test />} />
+								<Route path="demo" element={<DemoPage />} />
 								<Route path="login" element={<LoginPage />} />
 								<Route path="register" element={<RegistrationPage />} />
 							</Routes>

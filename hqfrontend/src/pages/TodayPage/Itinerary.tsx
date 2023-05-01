@@ -92,7 +92,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 								/>
 								<ListItemText
 									primary={item.title}
-									secondary={item.startTime ? item.startTime.toLocaleTimeString() : null}
+									secondary={item.startTime}
 								/>
 							</ListItem>
 						))}

@@ -36,18 +36,19 @@ const ProjectPage = () => {
 		variables: { id: projectId },
 		onCompleted: (data) => {
 			const projectData = data.project.data;
+			console.log(projectData);
 			const item_order = projectData.attributes.ItemOrder || [];
 			const projectItems = projectData.attributes.to_do_items?.data?.map(
 				(item: any) => new InboxItem({
 					id: item.id,
 					title: item.attributes.Title,
+					description: item.attributes.Description,
 					completed: item.attributes.Completed,
 					project: item.attributes.Project,
-					dueDate: new Date(item.attributes.DueDate),
-					description: item.attributes.Description,
-					startDate: new Date(item.attributes.StartDate),
-					startTime: new Date(item.attributes.StartTime),
-					timeCompleted: new Date(item.attributes.TimeCompleted),
+					dueDateTime: item.attributes.DueDateTime ? new Date(item.attributes.DueDateTime) : null,
+					startDate: item.attributes.StartDate,
+					startTime: item.attributes.StartTime,
+					timeCompleted: item.attributes.TimeCompleted ? new Date(item.attributes.TimeCompleted) : null,
 				})
 			) || [];
 
@@ -83,7 +84,7 @@ const ProjectPage = () => {
 
 	});
 
-
+	console.log(projectItemArray)
 
 
 	// Add Inbox Item
@@ -139,12 +140,17 @@ const ProjectPage = () => {
 	// Edit to do item
 	const [updateToDo] = useMutation(UPDATE_TODO)
 	const handleUpdateToDo = (inboxItem: InboxItem) => {
+		console.log(inboxItem)
 		updateToDo({
 			variables: {
 				id: inboxItem.id,
 				data: {
 					Title: inboxItem.title,
+					Description: inboxItem.description,
 					Completed: inboxItem.completed,
+					DueDateTime: inboxItem.dueDateTime,
+					StartDate: inboxItem.startDate,
+					StartTime: inboxItem.startTime,
 				},
 			},
 		})

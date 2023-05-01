@@ -48,7 +48,7 @@ export const GET_COMPLETED_PROJECT_ITEMS = gql`
 							attributes {
 								Title
 								Completed
-								DueDate
+								DueDateTime
 								Description
 								StartDate
 								StartTime
@@ -75,7 +75,7 @@ export const GET_INCOMPLETE_PROJECT_ITEMS = gql`
 							attributes {
 								Title
 								Completed
-								DueDate
+								DueDateTime
 								Description
 								StartDate
 								StartTime

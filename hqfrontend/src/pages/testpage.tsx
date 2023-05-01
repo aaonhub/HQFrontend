@@ -1,56 +1,70 @@
-import React, { useRef, useState, useEffect } from 'react';
-import Sortable from 'sortablejs';
-import './Test.css';
+import React, { useState } from 'react';
+import {
+	dateToYYYYMMDD,
+	yyyymmddToDate,
+	dateTo24hTime,
+} from '../components/DateFunctions';
 
-interface ListItem {
-	id: number;
-	text: string;
-}
+const TestPage = () => {
+	const [inputDate, setInputDate] = useState(new Date());
 
-export default function Test() {
-	const [listItems, setListItems] = useState<ListItem[]>([
-		{ id: 1, text: 'Item 1' },
-		{ id: 2, text: 'Item 2' },
-		{ id: 3, text: 'Item 3' },
-		{ id: 4, text: 'Item 4' },
-		{ id: 5, text: 'Item 5' },
-	]);
-
-	
-
-	const listRef = useRef<HTMLUListElement>(null);
-
-	const onSortEnd = (event: any) => {
-		const { oldIndex, newIndex } = event;
-		setListItems((items) => {
-			const newItems = [...items];
-			const [removed] = newItems.splice(oldIndex, 1);
-			newItems.splice(newIndex, 0, removed);
-			return newItems;
-		});
+	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newDate = ISOtoDate(e.target.value);
+		setInputDate(newDate);
 	};
 
-	React.useEffect(() => {
-		if (listRef.current) {
-			Sortable.create(listRef.current, {
-				onEnd: onSortEnd,
-				handle: '.drag-handle',
-				draggable: '.sortable-item',
-				onStart: (event: any) => {
-					event.item.querySelector('.drag-handle').style.cursor = 'grabbing';
-				},
-			});
-		}
-	}, []);
+	const ISOtoDate = (isoString: string) => {
+		const fakeUtcTime = new Date(`${isoString}Z`);
+		return new Date(fakeUtcTime.getTime() + fakeUtcTime.getTimezoneOffset() * 60000);
+	}
+
+	const dateToISO = (date: Date) => {
+		const d = new Date();
+		const dateTimeLocalValue = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0, -1);
+		return dateTimeLocalValue
+	}
 
 	return (
-		<ul className="sortable-list" ref={listRef}>
-			{listItems.map((item) => (
-				<li key={item.id} className="sortable-item">
-					<span className="drag-handle">&#x2630;</span>
-					{item.text}
-				</li>
-			))}
-		</ul>
+		<div>
+			<h1>Date Conversion Demo</h1>
+
+			<div>
+				<label>
+					Select a date and time:
+					<input
+						type="datetime-local"
+						value={dateToISO(inputDate)}
+						onChange={handleDateTimeChange}
+					/>
+				</label>
+			</div>
+
+			<br />
+			<br />
+
+			<div>
+				<p>
+					Date object: <code>{inputDate.toString()}</code>
+				</p>
+
+				<hr />
+
+				<p>
+					24-hour time: <code>{dateTo24hTime(inputDate)}</code>
+				</p>
+
+
+				<hr />
+
+				<p>
+					YYYY-MM-DD: <code>{dateToYYYYMMDD(inputDate)}</code>
+				</p>
+				<p>
+					Date object: <code>{yyyymmddToDate(dateToYYYYMMDD(inputDate)).toString()}</code>
+				</p>
+			</div>
+		</div>
 	);
 };
+
+export default TestPage;

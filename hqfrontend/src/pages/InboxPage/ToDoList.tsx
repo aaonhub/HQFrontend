@@ -47,12 +47,12 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 				return new InboxItem({
 					id: toDoItem.id,
 					title: toDoItem.attributes.Title,
+					description: toDoItem.attributes.Description,
 					completed: toDoItem.attributes.Completed,
 					project: toDoItem.attributes.Project,
-					dueDate: toDoItem.attributes.DueDate,
-					description: toDoItem.attributes.Description,
+					dueDateTime: toDoItem.attributes.DueDateTime,
 					startDate: toDoItem.attributes.StartDate,
-					startTime: toDoItem.attributes.StartTime,
+					startTime: toDoItem.attributes.startTime,
 					timeCompleted: toDoItem.attributes.TimeCompleted,
 				})
 			})

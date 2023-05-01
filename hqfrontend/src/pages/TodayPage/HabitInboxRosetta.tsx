@@ -21,7 +21,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				completedToday: habit.completedToday,
 				title: habit.title ?? '',
 				type: 'habit',
-				id: habit.id ?? '',
+				id: habit.id + "h",
 				startTime: habit.habitFrequency?.timeOfDay ?? '',
 			});
 		});
@@ -30,11 +30,11 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 	if (inboxItems) {
 		inboxItems.forEach((inboxItem) => {
 			SimpleItemArray.push({
+				id: inboxItem.id + "i",
 				completedToday: inboxItem?.completed ?? false,
 				title: inboxItem.title ?? '',
 				type: 'inbox',
-				id: inboxItem.id,
-				startTime: inboxItem.startTime ?? '',
+				startTime: inboxItem.startTime ? inboxItem.startTime : undefined,
 			});
 		});
 	}

@@ -27,8 +27,6 @@ const TodayPage = () => {
 	const [simpleItemArray, setSimpleItemArray] = useState<SimpleItem[]>([]);
 	const [habits, setHabits] = useState<Habit[]>([]);
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
-
-
 	const localDate = getCurrentLocalDate();
 
 
@@ -127,20 +125,16 @@ const TodayPage = () => {
 		<Grid container sx={{ height: "92vh" }}>
 
 			<Grid item xs={6}>
-				<Typography variant="h4">{new Date().toLocaleDateString()}</Typography>
-				<Calendar />
-			</Grid>
-
-			<Grid item xs={6} container direction="row">
-
-				<Grid item xs={12} style={{ flexGrow: 1 }}>
+				<Grid item xs={12}>
+					<Typography variant="h4">{new Date().toLocaleDateString()}</Typography>
 					<Itinerary simpleItemArray={simpleItemArray} setSimpleItemArray={setSimpleItemArray} />
 				</Grid>
+			</Grid>
 
-				<Grid item xs={12} style={{ flexGrow: 1 }}>
+			<Grid item xs={6}>
+				<Grid item xs={12}>
 					<LogList />
 				</Grid>
-
 			</Grid>
 
 		</Grid>

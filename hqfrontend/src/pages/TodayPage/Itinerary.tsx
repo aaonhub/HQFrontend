@@ -71,6 +71,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 				borderRadius: 2,
 				boxShadow: 2,
 				height: '90%',
+				marginRight: 2,
 			}}
 		>
 			<CardContent

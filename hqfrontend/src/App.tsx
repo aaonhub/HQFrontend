@@ -11,13 +11,16 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link } from 'react-router-dom';
+import ThemeProvider from './pages/SettingsPage/ThemeContext';
+
+// Icons
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import SubjectIcon from '@mui/icons-material/Subject';
 import SettingsIcon from '@mui/icons-material/Settings';
-import ThemeProvider from './pages/SettingsPage/ThemeContext';
+import BookIcon from '@mui/icons-material/Book';
 
 // Pages
 import HabitsPage from './pages/HabitsPage/1HabitsPage';
@@ -34,6 +37,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import DemoPage from './pages/DemoPage/DemoPage';
+import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage';
 
 interface AppProps {
 	window?: () => Window;
@@ -103,6 +107,14 @@ function App({ window }: AppProps): JSX.Element {
 							<LocalFireDepartmentIcon />
 						</ListItemIcon>
 						<ListItemText primary={"Rituals"} />
+					</ListItemButton>
+				</ListItem>
+				<ListItem key={"DailyReviews"} disablePadding>
+					<ListItemButton component={Link} to="/dailyreview">
+						<ListItemIcon>
+							<BookIcon />
+						</ListItemIcon>
+						<ListItemText primary={"Reviews"} />
 					</ListItemButton>
 				</ListItem>
 			</List>
@@ -195,6 +207,7 @@ function App({ window }: AppProps): JSX.Element {
 								<Route path="demo" element={<DemoPage />} />
 								<Route path="login" element={<LoginPage />} />
 								<Route path="register" element={<RegistrationPage />} />
+								<Route path="/dailyreview" element={<DailyReviewPage />} />
 							</Routes>
 						</Box>
 

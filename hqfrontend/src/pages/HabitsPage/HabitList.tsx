@@ -9,6 +9,7 @@ import {
 	Checkbox,
 } from "@mui/material";
 import { useMutation } from "@apollo/client";
+import { useTheme } from "@mui/material/styles";
 
 // Icons
 import InboxIcon from "@mui/icons-material/Inbox";
@@ -33,8 +34,10 @@ interface HabitListProps {
 const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 	const [habit, setHabit] = useState<Habit>();
 
-	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
+	const theme = useTheme();
+	console.log(theme.palette);
 
+	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
 	const handleHabitCompletion = (habit: Habit) => {
 		createHabitHistory({
 			variables: {
@@ -94,14 +97,22 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 								sx={{
 									width: "100%",
 									mb: 1,
-									...(isCompleted && { backgroundColor: "lightgrey" }),
+									...(isCompleted && { backgroundColor: theme.palette.background.default }),
 								}}
 							>
 								<ListItemButton>
+									
 									<ListItemIcon>
 										<InboxIcon sx={{ color: isCompleted ? "grey" : "#3f51b5" }} />
 									</ListItemIcon>
-									<ListItemText primary={item.title} />
+
+									<ListItemText
+										primary={item.title}
+										sx={{
+											...(isCompleted && { textDecoration: "line-through" }),
+										}}
+									/>
+
 									<Checkbox
 										edge="end"
 										checked={isCompleted}

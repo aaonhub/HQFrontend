@@ -16,10 +16,18 @@ export const darkTheme = createTheme({
 	palette: {
 		mode: "dark",
 		primary: {
-			main: "#90caf9",
+			main: "#c4c4c4", // Light Grey
 		},
 		secondary: {
-			main: "#f48fb1",
+			main: "#e0e0e0", // Light Grey
+		},
+		background: {
+			paper: "#1f1f1f", // Dark Grey
+			default: "#0a0a0a", // Almost Black
+		},
+		text: {
+			primary: "#f5f5f5", // Off-White
+			secondary: "#c4c4c4", // Light Grey
 		},
 	},
 });

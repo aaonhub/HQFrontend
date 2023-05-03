@@ -42,3 +42,16 @@ export function dateTo24hTime(date: Date) {
 	const seconds = String(date.getSeconds()).padStart(2, '0');
 	return `${hours}:${minutes}:${seconds}`;
 }
+
+export function formatDateWithWeekday(dateString: string) {
+	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const [year, month, day] = dateString.split('-').map(Number);
+	const date = new Date(year, month - 1, day);
+	const dayOfWeekIndex = date.getDay();
+	const dayOfWeek = daysOfWeek[dayOfWeekIndex];
+	const formattedMonth = String(month).padStart(2, '0');
+	const formattedDay = String(day).padStart(2, '0');
+
+	return `${dayOfWeek}, ${formattedMonth}/${formattedDay}/${year}`;
+}
+

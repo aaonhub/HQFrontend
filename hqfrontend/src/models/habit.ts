@@ -47,7 +47,7 @@ class Habit {
 export default Habit;
 
 
-
+// Queries
 export const GET_HABITS_DUE_TODAY = gql`
 	query GetHabitsDueToday($today: Date!, $daily: StringFilterInput!, $weekly: StringFilterInput!, $monthly: StringFilterInput!, $dayOfWeek: String!, $dayOfMonth: Int!) {
 		habits(pagination: { pageSize: 50 }, filters: {
@@ -128,6 +128,8 @@ query habits($Today: Date!) {
 }
 `
 
+
+// Mutations
 export const ADD_HABIT = gql`
 mutation createHabit($Title: String!, $Active: Boolean!, $Frequency: ENUM_HABIT_FREQUENCY!, $LastCompleted: Date) {
 	createHabit(data: { Title: $Title, Active: $Active, Frequency: $Frequency }) {

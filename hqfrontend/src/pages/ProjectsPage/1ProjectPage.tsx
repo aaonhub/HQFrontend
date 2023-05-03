@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Fab, TextField, List } from '@mui/material';
@@ -25,7 +25,7 @@ import InboxItem, { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
 
 const ProjectPage = () => {
 	const { projectId } = useParams();
-	const [newProjectItemTitle, setNewProjectItemTitle] = useState('')
+	const newProjectItemTitleRef = useRef<HTMLInputElement>(null);
 	const [project, setProject] = useState<Project>(new Project('', ''))
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 	const [projectItemArray, setProjectItemArray] = useState<InboxItem[]>([])
@@ -91,18 +91,19 @@ const ProjectPage = () => {
 	const [addItemToProject] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
-			setNewProjectItemTitle('')
+			if (newProjectItemTitleRef.current) {
+				newProjectItemTitleRef.current.value = ''
+			}
 			refetch()
 		},
 	});
 	const handleAddProjectItem = () => {
 		addItemToProject({
 			variables: {
-				Title: newProjectItemTitle,
+				Title: newProjectItemTitleRef.current && newProjectItemTitleRef.current.value,
 				projectid: projectId,
 			},
 		});
-
 	};
 
 
@@ -236,10 +237,15 @@ const ProjectPage = () => {
 
 			{/* Text input that adds to do list items to the project */}
 			<TextField
+				inputRef={newProjectItemTitleRef}
 				fullWidth
 				label="Add Project Item"
-				value={newProjectItemTitle}
-				onChange={(e) => setNewProjectItemTitle(e.target.value)}
+				defaultValue=""
+				onChange={(e) => {
+					if (newProjectItemTitleRef.current) {
+						newProjectItemTitleRef.current.value = e.target.value;
+					}
+				}}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {
@@ -247,6 +253,7 @@ const ProjectPage = () => {
 						handleAddProjectItem();
 					}
 				}}
+				sx={{ marginBottom: 2 }}
 			/>
 
 

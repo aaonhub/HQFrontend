@@ -1,18 +1,32 @@
 import { gql } from '@apollo/client';
 
-export type Type = 'text' | 'habit' | 'todoitem';
+
+export type Type = 'text' | 'complete_habit' | 'complete_todoitem';
+
+interface Log {
+	id: string;
+	logTime: Date;
+	type?: Type;
+	text?: string;
+	habit?: string;
+	todoItem?: string;
+}
 
 class Log {
-	constructor(
-		public id: string,
-		public log: string,
-		public logTime: Date,
-		public type: Type
-	) {
-		this.id = id
-		this.log = log
-		this.logTime = logTime
-		this.type = type
+	constructor({
+		id,
+		text,
+		logTime,
+		type,
+		habit,
+		todoItem,
+	}: Log) {
+		this.id = id;
+		this.text = text;
+		this.logTime = logTime;
+		this.type = type;
+		this.habit = habit;
+		this.todoItem = todoItem;
 	}
 }
 
@@ -26,7 +40,7 @@ export const GET_TODAY_LOGS = gql`
 			data {
 				id
 				attributes {
-					Log
+					Text
 					LogTime
 					Type
 				}
@@ -41,7 +55,7 @@ export const GET_LOGS = gql`
 			data {
 				id
 				attributes {
-					Log
+					Text
 					LogTime
 					Type
 				}
@@ -52,15 +66,72 @@ export const GET_LOGS = gql`
 
 
 // Mutations
-export const ADD_LOG = gql`
-	mutation createLog($Log: String!, $LogTime: DateTime!, $Type: ENUM_LOG_TYPE!) {
-		createLog(data: { Log: $Log, LogTime: $LogTime, Type: $Type }) {
+export const ADD_TEXT_LOG = gql`
+	mutation createTextLog(
+		$Text: String!, 
+		$LogTime: DateTime!
+	) {
+		createLog(data: { 
+			Text: $Text, 
+			LogTime: $LogTime, 
+			Type: text 
+		}) {
 			data {
 				id
 				attributes {
-					Log
+					Text
 					LogTime
 					Type
+				}
+			}
+		}
+	}
+`;
+
+export const ADD_HABIT_LOG = gql`
+	mutation createHabitLog($Log: String!, $LogTime: DateTime!, $Habit: ID!) {
+		createLog(data: { LogTime: $LogTime, habit: $Habit, Type: complete_habit }) {
+			data {
+				id
+				attributes {
+					habit {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
+					LogTime
+					Type
+				}
+			}
+		}
+	}
+`;
+
+export const ADD_TODO_LOG = gql`
+	mutation createTodoLog(
+		$LogTime: DateTime!, 
+		$ToDoItem: ID!
+	) {
+		createLog(data: { 
+			LogTime: $LogTime, 
+			to_do_item: $ToDoItem, 
+			Type: complete_todoitem 
+		}) {
+			data {
+				id
+				attributes {
+					LogTime
+					to_do_item {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
 				}
 			}
 		}

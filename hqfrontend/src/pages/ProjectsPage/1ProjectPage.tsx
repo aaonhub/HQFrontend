@@ -15,7 +15,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import { GET_INCOMPLETE_PROJECT_ITEMS } from '../../models/project';
 import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
 import { UPDATE_TODO } from '../../models/inboxitem';
-import { ADD_LOG } from '../../models/log';
+import { ADD_TODO_LOG } from '../../models/log';
 import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
 
 // Models
@@ -36,7 +36,6 @@ const ProjectPage = () => {
 		variables: { id: projectId },
 		onCompleted: (data) => {
 			const projectData = data.project.data;
-			console.log(projectData);
 			const item_order = projectData.attributes.ItemOrder || [];
 			const projectItems = projectData.attributes.to_do_items?.data?.map(
 				(item: any) => new InboxItem({
@@ -84,7 +83,6 @@ const ProjectPage = () => {
 
 	});
 
-	console.log(projectItemArray)
 
 
 	// Add Inbox Item
@@ -116,7 +114,7 @@ const ProjectPage = () => {
 			console.log('completed')
 		},
 	});
-	const [addLog] = useMutation(ADD_LOG, {
+	const [addToDoLog] = useMutation(ADD_TODO_LOG, {
 		onError: (error) => console.log(error.networkError),
 	});
 	const handleCheck = (toDoItem: InboxItem) => () => {
@@ -126,11 +124,10 @@ const ProjectPage = () => {
 				Completed: !toDoItem.completed,
 			},
 		});
-		addLog({
+		addToDoLog({
 			variables: {
-				Log: `Completed "${toDoItem.title}" in project "${project.codename}"`,
 				LogTime: new Date().toISOString(),
-				Type: 'todoitem',
+				ToDoItem: toDoItem.id,
 			},
 		});
 	};
@@ -179,9 +176,6 @@ const ProjectPage = () => {
 	// Change order of to do items
 	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
 		onError: (error) => console.log(error.networkError),
-		onCompleted: (data) => {
-			console.log(data)
-		},
 	});
 	const handleProjectItemOrderChangeComplete = (evt: SortableEvent) => {
 		const newIndex = evt.newIndex;

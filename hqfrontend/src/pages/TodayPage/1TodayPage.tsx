@@ -122,11 +122,18 @@ const TodayPage = () => {
 
 
 	return (
-		<Grid container sx={{ height: "92vh" }}>
+		<Grid container> {/* Adjust the height value as needed */}
+
+
+			<Grid item xs={12}> {/* Adjust the height value as needed */}
+				<Typography variant="h4">
+					{new Date().toLocaleDateString()}
+				</Typography>
+			</Grid>
+
 
 			<Grid item xs={6}>
 				<Grid item xs={12}>
-					<Typography variant="h4">{new Date().toLocaleDateString()}</Typography>
 					<Itinerary simpleItemArray={simpleItemArray} setSimpleItemArray={setSimpleItemArray} />
 				</Grid>
 			</Grid>

@@ -15,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 // Queries and Mutations
-import { CREATE_HABIT_HISTORY } from "../../models/habit";
+import { CHECK_HABIT } from "../../models/habit";
 
 // Components
 import EditHabitDialog from "./EditHabitDialog";
@@ -34,10 +34,12 @@ interface HabitListProps {
 const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 	const [habit, setHabit] = useState<Habit>();
 
-	const theme = useTheme();
-	console.log(theme.palette);
+	const theme = useTheme()
+	
 
-	const [createHabitHistory] = useMutation(CREATE_HABIT_HISTORY);
+
+
+	const [createHabitHistory] = useMutation(CHECK_HABIT);
 	const handleHabitCompletion = (habit: Habit) => {
 		createHabitHistory({
 			variables: {
@@ -52,6 +54,9 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 		})
 		habit.completedToday = true;
 	};
+
+
+
 
 	const handleEdit = (habit: Habit) => {
 		setHabit(habit);

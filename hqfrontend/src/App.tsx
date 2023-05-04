@@ -121,6 +121,14 @@ function App({ window }: AppProps): JSX.Element {
 
 			<Box sx={{ flexGrow: 1 }} />
 			<List>
+				<ListItem key={"Profile"} disablePadding>
+					<ListItemButton component={Link} to="/profile">
+						<ListItemIcon>
+							<SettingsIcon />
+						</ListItemIcon>
+						<ListItemText primary={"Profile"} />
+					</ListItemButton>
+				</ListItem>
 				<ListItem key={"Settings"} disablePadding>
 					<ListItemButton component={Link} to="/settings">
 						<ListItemIcon>

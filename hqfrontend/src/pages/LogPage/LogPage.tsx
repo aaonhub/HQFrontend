@@ -4,7 +4,10 @@ import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from
 import LogItem from './LogItem';
 
 // Queries and Mutations
-import { GET_LOGS, ADD_LOG } from '../../models/log';
+import {
+	GET_LOGS,
+	ADD_TEXT_LOG
+} from '../../models/log';
 
 // Models
 import Log from '../../models/log';
@@ -22,34 +25,36 @@ const LogPage = () => {
 		onCompleted: (data) => {
 			const logData = data.logs.data
 			const logs = logData.map((log: any) => {
-				return new Log(
-					log.id,
-					log.attributes.Log,
-					log.attributes.LogTime,
-					log.attributes.Type,
-				)
+				return new Log({
+					id: log.id,
+					text: log.attributes.Text,
+					logTime: log.attributes.LogTime,
+					type: log.attributes.LogType
+				})
 			})
 			setLogArray(logs)
 		}
 	})
 
 	// Add log mutation
-	const [addLog] = useMutation(ADD_LOG)
+	const [addTextLog] = useMutation(ADD_TEXT_LOG)
 	const handleAddLog = () => {
 		if (logText.trim() !== '') {
-			addLog({
+
+			addTextLog({
 				variables: {
-					Log: logText,
+					Text: logText,
 					LogTime: new Date(),
-					Type: 'text',
 				}
 			}).then(() => {
 				setLogText('')
-			});
-			logArray.unshift(new Log('', logText, new Date(), 'text'))
+			})
+
+			logArray.unshift(new Log({ id: '', text: logText, logTime: new Date(), type: 'text' }))
+
 			refetch()
 		}
-	};
+	}
 
 
 	if (loading) return <div>Loading...</div>
@@ -64,11 +69,14 @@ const LogPage = () => {
 				</Typography>
 			</Box>
 
+
+			{/* Add Log Field */}
 			<Paper elevation={3} sx={{ p: 2 }}>
 				<Grid container spacing={2} alignItems="center">
-					<Grid item xs={10}>
 
-						{/* Add Log Field */}
+
+					{/* Add Log Field */}
+					<Grid item xs={10}>
 						<TextField
 							fullWidth
 							label="Add log"
@@ -82,8 +90,11 @@ const LogPage = () => {
 								}
 							}}
 						/>
-
 					</Grid>
+
+
+
+					{/* Add Log Button */}
 					<Grid item xs={2}>
 						<Button
 							fullWidth
@@ -97,11 +108,14 @@ const LogPage = () => {
 				</Grid>
 			</Paper>
 
+
+
+			{/* Log List */}
 			<Box mt={4}>
 				<List>
 					{logArray.map((log: Log, index: number) => {
 						return (
-							<LogItem key={log.id} log={log} index={index} prevLog={logArray[index - 1]} />
+							<LogItem key={log.id} log={log} prevLog={logArray[index - 1]} />
 						);
 					})}
 				</List>

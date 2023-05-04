@@ -13,8 +13,9 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 // Queries and Mutations
 import { useMutation } from '@apollo/client';
-import { CHECK_TODO } from './mainViewQueries';
-import { CHECK_HABIT } from './mainViewQueries';
+import { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
+import { CHECK_HABIT } from '../../models/habit';
+
 
 // Models
 import SimpleItem from '../../models/simpleitem';
@@ -29,7 +30,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 	const hasData = simpleItemArray.length > 0
 
 	const [checkHabit] = useMutation(CHECK_HABIT)
-	const [checkToDo] = useMutation(CHECK_TODO)
+	const [checkToDo] = useMutation(COMPLETE_UNCOMPLETE_TODO)
 
 	const handleCheckItem = (item: SimpleItem) => {
 		if (item.type === 'habit') {
@@ -42,7 +43,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 	const handleCheckHabit = async (habitId: string) => {
 		await checkHabit({
 			variables: {
-				habitId: habitId,
+				// get rid of the h at the end of the id
+				habitId: habitId.slice(0, -1),
 				date: getCurrentLocalDate(),
 			},
 		})
@@ -54,9 +56,12 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 	}
 
 	const handleCheckToDo = async (todoId: string) => {
+		console.log(todoId)
 		await checkToDo({
 			variables: {
-				todoId: todoId,
+				// get rid of the h at the end of the id
+				toDoId: todoId.slice(0, -1),
+				Completed: true,
 			},
 		})
 

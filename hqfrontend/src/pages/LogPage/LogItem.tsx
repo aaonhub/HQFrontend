@@ -2,21 +2,26 @@ import { Divider, ListItem, ListItemText, Typography } from "@mui/material";
 import { format } from "date-fns";
 import React from "react";
 
+// Models
+import Log from "../../models/log";
+
 
 interface LogItemProps {
-	log: any;
-	index: number;
+	log: Log;
 	prevLog: any;
 }
 
-const LogItem = React.memo(({ log, index, prevLog }: LogItemProps) => {
+const LogItem = React.memo(({ log, prevLog }: LogItemProps) => {
+	console.log(log)
 	const logTime = new Date(log.logTime);
 	const prevLogTime = prevLog && new Date(prevLog.logTime);
 	const isSameDay = prevLogTime && logTime.getDate() === prevLogTime.getDate();
 	const showDateHeader = !prevLog || !isSameDay;
 
 	return (
-		<>
+		<React.Fragment>
+
+			{/* Date display */}
 			{showDateHeader && (
 				<ListItem>
 					<Typography variant="subtitle1" fontWeight="bold">
@@ -24,10 +29,15 @@ const LogItem = React.memo(({ log, index, prevLog }: LogItemProps) => {
 					</Typography>
 				</ListItem>
 			)}
+
+
+			{/* Log display */}
 			<ListItem alignItems="flex-start">
 				<ListItemText
 					primary={
 						<>
+
+							{/* Timestamp */}
 							<Typography
 								variant="body2"
 								component="span"
@@ -40,15 +50,22 @@ const LogItem = React.memo(({ log, index, prevLog }: LogItemProps) => {
 							>
 								{format(logTime, 'hh:mm a')}
 							</Typography>
+
+							{/* Text */}
 							<Typography component="span" pl={1}>
-								{log.log}
+								{log.text}
 							</Typography>
+
+
 						</>
 					}
 				/>
 			</ListItem>
+
 			<Divider />
-		</>
+
+
+		</React.Fragment>
 	);
 });
 

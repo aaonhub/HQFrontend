@@ -15,6 +15,8 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 import { useMutation } from '@apollo/client';
 import { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
 import { CHECK_HABIT } from '../../models/habit';
+import { ADD_HABIT_LOG } from '../../models/log';
+import { ADD_TODO_LOG } from '../../models/log';
 
 
 // Models
@@ -31,6 +33,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 
 	const [checkHabit] = useMutation(CHECK_HABIT)
 	const [checkToDo] = useMutation(COMPLETE_UNCOMPLETE_TODO)
+	const [addHabitLog] = useMutation(ADD_HABIT_LOG)
+	const [addToDoLog] = useMutation(ADD_TODO_LOG)
 
 	const handleCheckItem = (item: SimpleItem) => {
 		if (item.type === 'habit') {
@@ -45,7 +49,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 			variables: {
 				// get rid of the h at the end of the id
 				habitId: habitId.slice(0, -1),
-				date: getCurrentLocalDate(),
+				currentDate: getCurrentLocalDate(),
 			},
 		})
 
@@ -53,6 +57,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		// remove the item from the array
 			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
 		)
+
+		await addHabitLog({
+			variables: {
+				LogTime: new Date().toISOString(),
+				Habit: habitId.slice(0, -1),
+			},
+		})
 	}
 
 	const handleCheckToDo = async (todoId: string) => {
@@ -68,6 +79,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		setSimpleItemArray((prevArray: any[]) =>
 			prevArray.filter((item) => item.id !== todoId && item.type === 'todo' && !item.completedToday)
 		)
+
+		await addToDoLog({
+			variables: {
+				LogTime: new Date().toISOString(),
+				ToDoItem: todoId.slice(0, -1),
+			},
+		})
+
 	}
 
 	return (

@@ -1,21 +1,24 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from '@mui/material';
-import LogItem from './LogItem';
+import { useState } from 'react'
+import { useQuery, useMutation } from '@apollo/client'
+import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from '@mui/material'
+import LogItem from './LogItem'
 
 // Queries and Mutations
 import {
 	GET_LOGS,
 	ADD_TEXT_LOG
-} from '../../models/log';
+} from '../../models/log'
 
 // Models
-import Log from '../../models/log';
+import Log from '../../models/log'
 
 
 const LogPage = () => {
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
+
+
+
 
 	// Get logs query
 	const { loading, error, refetch } = useQuery(GET_LOGS, {
@@ -25,16 +28,35 @@ const LogPage = () => {
 		onCompleted: (data) => {
 			const logData = data.logs.data
 			const logs = logData.map((log: any) => {
-				return new Log({
+				const newLog = new Log({
 					id: log.id,
-					text: log.attributes.Text,
 					logTime: log.attributes.LogTime,
-					type: log.attributes.LogType
+					type: log.attributes.Type,
 				})
+
+				if (log.attributes.Type === 'text') {
+					newLog.text = log.attributes.Text
+				} else if (log.attributes.Type === 'complete_todoitem') {
+					console.log(log)
+					newLog.toDoItem = {
+						id: log.attributes.to_do_item.id,
+						title: log.attributes.to_do_item.data.attributes.Title,
+					}
+				} else if (log.attributes.Type === 'complete_habit') {
+					newLog.habit = {
+						id: log.attributes.habit.id,
+						title: log.attributes.habit.data.attributes.Title,
+					}
+				}
+				return newLog
+				
 			})
 			setLogArray(logs)
 		}
 	})
+
+
+
 
 	// Add log mutation
 	const [addTextLog] = useMutation(ADD_TEXT_LOG)
@@ -57,10 +79,14 @@ const LogPage = () => {
 	}
 
 
+
+
 	if (loading) return <div>Loading...</div>
 	if (error) return <div>Error! {error.message}</div>
 
 
+
+	
 	return (
 		<Container maxWidth="md">
 			<Box mt={5} mb={3}>

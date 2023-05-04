@@ -53,7 +53,9 @@ const LogItem = React.memo(({ log, prevLog }: LogItemProps) => {
 
 							{/* Text */}
 							<Typography component="span" pl={1}>
-								{log.text}
+								{log.type === 'text' && log.text}
+								{log.type === 'complete_todoitem' && `Completed to do item: ${log.toDoItem && log.toDoItem.title}`}
+								{log.type === 'complete_habit' && `Completed habit: ${log.habit && log.habit.title}`}
 							</Typography>
 
 

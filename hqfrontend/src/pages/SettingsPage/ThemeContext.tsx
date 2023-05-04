@@ -5,10 +5,6 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { lightTheme, darkTheme, pinkTheme } from './themes';
 
 
-interface ThemeContextProps {
-	currentTheme: string;
-	setTheme: (theme: string) => void;
-}
 
 interface ThemeProviderProps {
 	children: React.ReactNode;

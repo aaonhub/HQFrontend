@@ -3,7 +3,7 @@ import { ThemeContext } from './ThemeContext';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 // Queries and Mutations
-import { GET_SETTINGS } from '../../models/settings';
+// import { GET_SETTINGS } from '../../models/settings';
 
 
 const SettingsPage = () => {

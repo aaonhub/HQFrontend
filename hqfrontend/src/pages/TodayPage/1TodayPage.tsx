@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import HabitInboxRosetta from './HabitInboxRosetta';
 import Itinerary from "./Itinerary";
 import LogList from "./LogList";
-import Calendar from "./Calendar";
+// import Calendar from "./Calendar";
 
 import {
 	getCurrentLocalDate,

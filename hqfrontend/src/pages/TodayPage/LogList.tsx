@@ -27,12 +27,28 @@ const LogList = () => {
 		onCompleted: (data1) => {
 			const logData = data1.logs.data
 			const logs = logData.map((log: any) => {
-				return new Log({
+				const newLog = new Log({
 					id: log.id,
-					text: log.attributes.Text,
 					logTime: log.attributes.LogTime,
 					type: log.attributes.Type,
 				})
+
+				if (log.attributes.Type === 'text') {
+					newLog.text = log.attributes.Text
+				} else if (log.attributes.Type === 'complete_todoitem') {
+					console.log(log)
+					newLog.toDoItem = {
+						id: log.attributes.to_do_item.id,
+						title: log.attributes.to_do_item.data.attributes.Title,
+					}
+				} else if (log.attributes.Type === 'complete_habit') {
+					newLog.habit = {
+						id: log.attributes.habit.id,
+						title: log.attributes.habit.data.attributes.Title,
+					}
+				}
+				return newLog
+
 			})
 			setLogArray(logs)
 		}
@@ -97,7 +113,9 @@ const LogList = () => {
 						{logArray.map((log) => (
 							<li key={log.id}>
 								<Typography variant="body1" gutterBottom>
-									{log.text}
+									{log.type === 'text' && log.text}
+									{log.type === 'complete_todoitem' && `Completed to do item: ${log.toDoItem && log.toDoItem.title}`}
+									{log.type === 'complete_habit' && `Completed habit: ${log.habit && log.habit.title}`}
 								</Typography>
 								<Typography variant="body2" gutterBottom>
 									{format(new Date(log.logTime), 'hh:mm a').toString()}

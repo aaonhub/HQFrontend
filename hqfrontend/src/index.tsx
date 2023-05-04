@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 import { ApolloClient, HttpLink, InMemoryCache, from, ApolloProvider } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 

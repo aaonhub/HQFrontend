@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import {
-	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	FormControlLabel,
 	TextField,
 	Button,
 	Box,
 } from "@mui/material";
-import { dateToYYYYMMDD, yyyymmddToDate } from "./DateFunctions";
 
 // Models
 import InboxItem from "../models/inboxitem";
-import { ContactlessOutlined } from "@mui/icons-material";
+
 
 interface ProjectToDoItemProps {
 	handleClose: (inboxItem?: InboxItem) => void;

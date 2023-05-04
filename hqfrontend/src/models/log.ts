@@ -1,15 +1,25 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
 
-export type Type = 'text' | 'complete_habit' | 'complete_todoitem';
+export type Type = 'text' | 'complete_habit' | 'complete_todoitem'
+
+interface LogHabit {
+	id: string
+	title: string
+}
+
+interface LogToDoItem {
+	id: string
+	title: string
+}
 
 interface Log {
-	id: string;
-	logTime: Date;
-	type?: Type;
-	text?: string;
-	habit?: string;
-	todoItem?: string;
+	id: string
+	logTime: Date
+	type?: Type
+	text?: string
+	habit?: LogHabit
+	toDoItem?: LogToDoItem
 }
 
 class Log {
@@ -19,14 +29,14 @@ class Log {
 		logTime,
 		type,
 		habit,
-		todoItem,
+		toDoItem,
 	}: Log) {
 		this.id = id;
 		this.text = text;
 		this.logTime = logTime;
 		this.type = type;
 		this.habit = habit;
-		this.todoItem = todoItem;
+		this.toDoItem = toDoItem;
 	}
 }
 
@@ -43,6 +53,22 @@ export const GET_TODAY_LOGS = gql`
 					Text
 					LogTime
 					Type
+					to_do_item {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
+					habit {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
 				}
 			}
 		}
@@ -58,6 +84,22 @@ export const GET_LOGS = gql`
 					Text
 					LogTime
 					Type
+					to_do_item {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
+					habit {
+						data {
+							id
+							attributes {
+								Title
+							}
+						}
+					}
 				}
 			}
 		}
@@ -89,7 +131,7 @@ export const ADD_TEXT_LOG = gql`
 `;
 
 export const ADD_HABIT_LOG = gql`
-	mutation createHabitLog($Log: String!, $LogTime: DateTime!, $Habit: ID!) {
+	mutation createHabitLog($LogTime: DateTime!, $Habit: ID!) {
 		createLog(data: { LogTime: $LogTime, habit: $Habit, Type: complete_habit }) {
 			data {
 				id

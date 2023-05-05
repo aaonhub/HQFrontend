@@ -1,52 +1,75 @@
-import { Box, CssBaseline, Divider } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import "./App.css";
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import { Link } from 'react-router-dom';
-import ThemeProvider from './pages/SettingsPage/ThemeContext';
+import { useState } from 'react'
+import { Box, CssBaseline, Divider } from '@mui/material'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import AppBar from '@mui/material/AppBar'
+import Drawer from '@mui/material/Drawer'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import ListAltIcon from '@mui/icons-material/ListAlt'
+import { Link } from 'react-router-dom'
+import ThemeProvider from './pages/SettingsPage/ThemeContext'
 
 // Icons
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import SubjectIcon from '@mui/icons-material/Subject';
-import SettingsIcon from '@mui/icons-material/Settings';
-import BookIcon from '@mui/icons-material/Book';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import InboxIcon from '@mui/icons-material/MoveToInbox'
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
+import SubjectIcon from '@mui/icons-material/Subject'
+import SettingsIcon from '@mui/icons-material/Settings'
+import BookIcon from '@mui/icons-material/Book'
 
 // Pages
-import HabitsPage from './pages/HabitsPage/1HabitsPage';
-import InboxPage from './pages/InboxPage/InboxPage';
-import TodayPage from './pages/TodayPage/1TodayPage';
-import Test from './pages/testpage';
-import LogPage from './pages/LogPage/LogPage';
-import RitualsPage from './pages/RitualsPage/RitualsPage';
-import ProjectsListPage from './pages/ProjectsPage/1ListProjectsPage';
-import ProjectPage from './pages/ProjectsPage/1ProjectPage';
-import HelpIcon from '@mui/icons-material/Help';
-import HelpPage from './pages/HelpPage/HelpPage';
-import SettingsPage from './pages/SettingsPage/SettingsPage';
-import LoginPage from './pages/LoginPage/LoginPage';
-import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
-import DemoPage from './pages/DemoPage/DemoPage';
-import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage';
+import HabitsPage from './pages/HabitsPage/1HabitsPage'
+import InboxPage from './pages/InboxPage/InboxPage'
+import TodayPage from './pages/TodayPage/1TodayPage'
+import Test from './pages/testpage'
+import LogPage from './pages/LogPage/LogPage'
+import RitualsPage from './pages/RitualsPage/RitualsPage'
+import ProjectsListPage from './pages/ProjectsPage/1ListProjectsPage'
+import ProjectPage from './pages/ProjectsPage/1ProjectPage'
+import HelpIcon from '@mui/icons-material/Help'
+import HelpPage from './pages/HelpPage/HelpPage'
+import SettingsPage from './pages/SettingsPage/SettingsPage'
+import LoginPage from './pages/LoginPage/LoginPage'
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage'
+import DemoPage from './pages/DemoPage/DemoPage'
+import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage'
 
-interface AppProps {
-	window?: () => Window;
-}
+
+
 
 const drawerWidth = 240;
 
-function App({ window }: AppProps): JSX.Element {
-	const [mobileOpen, setMobileOpen] = React.useState(false);
+
+function getAuth() {
+	let jwtToken = localStorage.getItem("jwtToken");
+	return !!jwtToken;
+}
+
+
+function RequireAuth({ children, redirectTo }: any) {
+	let isAuthenticated = getAuth()
+	return isAuthenticated ? children : <Navigate to={redirectTo} />
+}
+
+
+function App(): JSX.Element {
+
+	const [mobileOpen, setMobileOpen] = useState(false)
+
+
+
+	// logout
+	const handleLogout = () => {
+		localStorage.removeItem("jwtToken")
+		window.location.reload();
+	}
+
+
+
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);
@@ -121,6 +144,14 @@ function App({ window }: AppProps): JSX.Element {
 
 			<Box sx={{ flexGrow: 1 }} />
 			<List>
+				<ListItem key={"LogOut"} disablePadding>
+					<ListItemButton onClick={handleLogout}>
+						<ListItemIcon>
+							<SettingsIcon />
+						</ListItemIcon>
+						<ListItemText primary={"Log Out"} />
+					</ListItemButton>
+				</ListItem>
 				<ListItem key={"Profile"} disablePadding>
 					<ListItemButton component={Link} to="/profile">
 						<ListItemIcon>
@@ -149,7 +180,7 @@ function App({ window }: AppProps): JSX.Element {
 		</Box>
 	);
 
-	const container = window !== undefined ? () => window().document.body : undefined;
+	const container = window !== undefined ? window.document.body : undefined;
 
 	return (
 		<ThemeProvider>
@@ -202,20 +233,42 @@ function App({ window }: AppProps): JSX.Element {
 					>
 						<Box component="main" sx={{ flexGrow: 1, marginLeft: { sm: "0" } }}>
 							<Routes>
-								<Route path="/" element={<TodayPage />} />
-								<Route path="/log" element={<LogPage />} />
-								<Route path="/inbox" element={<InboxPage />} />
-								<Route path="/habits" element={<HabitsPage />} />
-								<Route path="/rituals" element={<RitualsPage />} />
-								<Route path="/projects" element={<ProjectsListPage />} />
-								<Route path="/project/:projectId" element={<ProjectPage />} />
+
+								<Route path="/" element={<RequireAuth redirectTo="/login">
+									<TodayPage />
+								</RequireAuth>} />
+								<Route path="/log" element={<RequireAuth redirectTo="/login">
+									<LogPage />
+								</RequireAuth>} />
+								<Route path="/inbox" element={<RequireAuth redirectTo="/login">
+									<InboxPage />
+								</RequireAuth>} />
+								<Route path="/habits" element={<RequireAuth redirectTo="/login">
+									<HabitsPage />
+								</RequireAuth>} />
+								<Route path="/rituals" element={<RequireAuth redirectTo="/login">
+									<RitualsPage />
+								</RequireAuth>} />
+								<Route path="/projects" element={<RequireAuth redirectTo="/login">
+									<ProjectsListPage />
+								</RequireAuth>} />
+								<Route path="/project/:projectId" element={<RequireAuth redirectTo="/login">
+									<ProjectPage />
+								</RequireAuth>} />
+								<Route path="/dailyreview" element={<RequireAuth redirectTo="/login">
+									<DailyReviewPage />
+								</RequireAuth>} />
+								<Route path="/settings" element={<RequireAuth redirectTo="/login">
+									<SettingsPage />
+								</RequireAuth>} />
+
+
 								<Route path="/help" element={<HelpPage />} />
-								<Route path="/settings" element={<SettingsPage />} />
-								<Route path="test" element={<Test />} />
-								<Route path="demo" element={<DemoPage />} />
-								<Route path="login" element={<LoginPage />} />
-								<Route path="register" element={<RegistrationPage />} />
-								<Route path="/dailyreview" element={<DailyReviewPage />} />
+								<Route path="/test" element={<Test />} />
+								<Route path="/demo" element={<DemoPage />} />
+
+								<Route path="/login" element={<LoginPage />} />
+								<Route path="/register" element={<RegistrationPage />} />
 							</Routes>
 						</Box>
 

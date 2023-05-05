@@ -1,58 +1,61 @@
-import React from 'react';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { useMutation, gql } from '@apollo/client';
 
-export default function LoginPage() {
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		// Add your submit logic here
+const LOGIN_MUTATION = gql`
+  mutation Login($identifier: String!, $password: String!) {
+    login(input: { identifier: $identifier, password: $password }) {
+      jwt
+      user {
+        id
+        username
+        email
+      }
+    }
+  }
+`;
+
+const LoginPage = () => {
+	const [identifier, setIdentifier] = useState('');
+	const [password, setPassword] = useState('');
+	const [login, { data, error, loading }] = useMutation(LOGIN_MUTATION);
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		try {
+			const { data } = await login({ variables: { identifier, password } });
+			localStorage.setItem('jwtToken', data.login.jwt);
+		} catch (error) {
+			console.error('Login error:', error);
+		}
 	};
 
 	return (
-		<Container maxWidth="xs">
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					marginTop: 8,
-				}}
-			>
-				<Typography component="h1" variant="h5">
-					Login
-				</Typography>
-				<Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
+		<div>
+			<h2>Login</h2>
+			<form onSubmit={handleSubmit}>
+				<div>
+					<label htmlFor="identifier">Email or Username:</label>
+					<input
+						id="identifier"
+						type="text"
+						value={identifier}
+						onChange={(e) => setIdentifier(e.target.value)}
 					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
+				</div>
+				<div>
+					<label htmlFor="password">Password:</label>
+					<input
 						id="password"
-						autoComplete="current-password"
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
 					/>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						sx={{ mt: 3, mb: 2 }}
-					>
-						Login
-					</Button>
-				</Box>
-			</Box>
-		</Container>
-	);
+				</div>
+				<button type="submit" disabled={loading}>Login</button>
+			</form>
+			{error && <p>Error: {error.message}</p>}
+		</div>
+	)
 }
+
+export default LoginPage

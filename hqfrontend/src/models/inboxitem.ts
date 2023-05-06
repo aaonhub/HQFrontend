@@ -70,22 +70,6 @@ export const GET_TODAY_LIST_ITEMS = gql`
 	}
 `;
 
-export const GET_TODOS = gql`
-  query {
-    toDoItems {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-		  DueDateTime
-		  Description
-        }
-      }
-    }
-  }
-`;
-
 export const GET_COMPLETED_TODOS = gql`
 	query {
 		toDoItems(filters: { Completed: { eq: true } }, limit: 5) {

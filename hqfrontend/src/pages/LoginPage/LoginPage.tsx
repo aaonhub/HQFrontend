@@ -24,6 +24,7 @@ const LoginPage = () => {
 		try {
 			const { data } = await login({ variables: { identifier, password } });
 			localStorage.setItem('jwtToken', data.login.jwt);
+			console.log(data.login.jwt);
 		} catch (error) {
 			console.error('Login error:', error);
 		}

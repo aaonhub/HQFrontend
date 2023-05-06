@@ -36,7 +36,6 @@ const LogList = () => {
 				if (log.attributes.Type === 'text') {
 					newLog.text = log.attributes.Text
 				} else if (log.attributes.Type === 'complete_todoitem') {
-					console.log(log)
 					newLog.toDoItem = {
 						id: log.attributes.to_do_item.id,
 						title: log.attributes.to_do_item.data.attributes.Title,

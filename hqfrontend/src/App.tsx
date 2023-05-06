@@ -37,6 +37,7 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage'
 import DemoPage from './pages/DemoPage/DemoPage'
 import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage'
+import ProfilePage from './pages/ProfilePage/ProfilePage'
 
 
 
@@ -260,6 +261,9 @@ function App(): JSX.Element {
 								</RequireAuth>} />
 								<Route path="/settings" element={<RequireAuth redirectTo="/login">
 									<SettingsPage />
+								</RequireAuth>} />
+								<Route path="/profile" element={<RequireAuth redirectTo="/login">
+									<ProfilePage />
 								</RequireAuth>} />
 
 

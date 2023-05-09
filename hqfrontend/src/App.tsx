@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, CssBaseline, Divider } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
@@ -11,6 +11,7 @@ import ListItemText from '@mui/material/ListItemText'
 import ListAltIcon from '@mui/icons-material/ListAlt'
 import { Link } from 'react-router-dom'
 import ThemeProvider from './pages/SettingsPage/ThemeContext'
+import { gql, useMutation } from '@apollo/client'
 
 // Icons
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -40,7 +41,14 @@ import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 
 
-
+const REFRESH_TOKEN_MUTATION = gql`
+	mutation refreshToken {
+		refreshToken {
+			payload
+			refreshToken
+		}
+	}
+`
 
 const drawerWidth = 240;
 
@@ -60,7 +68,30 @@ function RequireAuth({ children, redirectTo }: any) {
 function App(): JSX.Element {
 
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const [loggedIn, setLoggedIn] = useState(localStorage.getItem('loggedIn'))
 
+
+
+	// Refresh Mutation with onerror
+	const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION, {
+		onError: () => {
+			setLoggedIn("false")
+			localStorage.removeItem('loggedIn')
+		},
+		onCompleted: () => {
+			setLoggedIn("true")
+			localStorage.setItem('loggedIn', "true")
+		}
+	})
+	useEffect(() => {
+		// Run refresh token mutation every 4 minutes
+		refreshToken()
+		setInterval(() => {
+			refreshToken()
+			console.log("Refresh on interval")
+		}, 4 * 60 * 1000)
+		console.log("Refresh")
+	}, [refreshToken])
 
 
 	// logout
@@ -145,14 +176,16 @@ function App(): JSX.Element {
 
 			<Box sx={{ flexGrow: 1 }} />
 			<List>
-				<ListItem key={"LogOut"} disablePadding>
-					<ListItemButton onClick={handleLogout}>
-						<ListItemIcon>
-							<SettingsIcon />
-						</ListItemIcon>
-						<ListItemText primary={"Log Out"} />
-					</ListItemButton>
-				</ListItem>
+				{ loggedIn === "true" &&
+					<ListItem key={"LogOut"} disablePadding>
+						<ListItemButton onClick={handleLogout}>
+							<ListItemIcon>
+								<SettingsIcon />
+							</ListItemIcon>
+							<ListItemText primary={"Log Out"} />
+						</ListItemButton>
+					</ListItem>
+				}
 				<ListItem key={"Profile"} disablePadding>
 					<ListItemButton component={Link} to="/profile">
 						<ListItemIcon>

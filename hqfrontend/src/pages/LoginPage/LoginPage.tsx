@@ -2,29 +2,27 @@ import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
 const LOGIN_MUTATION = gql`
-  mutation Login($identifier: String!, $password: String!) {
-    login(input: { identifier: $identifier, password: $password }) {
-      jwt
-      user {
-        id
-        username
-        email
-      }
-    }
-  }
+	mutation Login($username: String!, $password: String!) {
+		tokenAuth(username: $username, password: $password) {
+			payload
+		}
+	}
 `;
 
 const LoginPage = () => {
-	const [identifier, setIdentifier] = useState('');
+	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-	const [login, { data, error, loading }] = useMutation(LOGIN_MUTATION);
+	const [login, { error, loading }] = useMutation(LOGIN_MUTATION, {
+		onCompleted: (data) => {
+			console.log(data);
+			localStorage.setItem('loggedIn', 'true');
+		},
+	});
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			const { data } = await login({ variables: { identifier, password } });
-			localStorage.setItem('jwtToken', data.login.jwt);
-			console.log(data.login.jwt);
+			await login({ variables: { username, password } });
 		} catch (error) {
 			console.error('Login error:', error);
 		}
@@ -35,12 +33,12 @@ const LoginPage = () => {
 			<h2>Login</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
-					<label htmlFor="identifier">Email or Username:</label>
+					<label htmlFor="username">Username:</label>
 					<input
-						id="identifier"
+						id="username"
 						type="text"
-						value={identifier}
-						onChange={(e) => setIdentifier(e.target.value)}
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
 					/>
 				</div>
 				<div>
@@ -52,11 +50,13 @@ const LoginPage = () => {
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</div>
-				<button type="submit" disabled={loading}>Login</button>
+				<button type="submit" disabled={loading}>
+					Login
+				</button>
 			</form>
 			{error && <p>Error: {error.message}</p>}
 		</div>
-	)
-}
+	);
+};
 
-export default LoginPage
+export default LoginPage;

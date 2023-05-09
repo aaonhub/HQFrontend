@@ -73,15 +73,11 @@ export const GET_TODAY_LIST_ITEMS = gql`
 export const GET_COMPLETED_TODOS = gql`
 	query {
 		toDoItems(filters: { Completed: { eq: true } }, limit: 5) {
-			data {
-				id
-				attributes {
-					Title
-					Completed
-					DueDateTime
-					Description
-				}
-			}
+			id
+			Title
+			Completed
+			DueDateTime
+			Description
 		}
 	}
 `;
@@ -89,15 +85,10 @@ export const GET_COMPLETED_TODOS = gql`
 export const GET_INCOMPLETE_TODOS = gql`
 	query {
 		toDoItems(filters: { Completed: { eq: false } }) {
-			data {
-				id
-				attributes {
-					Title
-					Completed
-					DueDateTime
-					Description
-				}
-			}
+			Title
+			Completed
+			DueDateTime
+			Description
 		}
 	}
 `;

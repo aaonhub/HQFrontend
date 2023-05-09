@@ -42,7 +42,6 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 	const { loading, error } = useQuery(GET_INCOMPLETE_TODOS, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: (data1) => {
-			console.log(data1)
 			const toDoItemsData = data1.toDoItems.data
 			const toDoItems = toDoItemsData.map((toDoItem: any) => {
 				return new InboxItem({

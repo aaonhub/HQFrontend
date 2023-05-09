@@ -3,26 +3,25 @@ import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 
 const REGISTER_USER = gql`
-  mutation Register($username: String!, $email: String!, $password: String!) {
-    register(input: { username: $username, email: $email, password: $password }) {
-      jwt
-      user {
-        id
-        username
-        email
-      }
-    }
-  }
+	mutation Register($username: String!, $email: String!, $password1: String!, $password2: String!) {
+		register(username: $username, email: $email, password1: $password1, password2: $password2) {
+			user {
+				id
+				email
+			}
+		}
+	}  
 `;
 
 const RegistrationPage: React.FC = () => {
 	const [values, setValues] = useState({
 		username: '',
 		email: '',
-		password: '',
+		password1: '',
+		password2: '',
 	});
 
-	const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+	const [registerUser] = useMutation(REGISTER_USER, {
 		update(_, { data: { register: userData } }) {
 			console.log(userData);
 		},
@@ -58,15 +57,22 @@ const RegistrationPage: React.FC = () => {
 				/>
 				<input
 					type="password"
-					name="password"
+					name="password1"
 					placeholder="Password"
-					value={values.password}
+					value={values.password1}
+					onChange={onChange}
+				/>
+				<input
+					type="password"
+					name="password2"
+					placeholder="Confirm Password"
+					value={values.password2}
 					onChange={onChange}
 				/>
 				<button type="submit">Register</button>
 			</form>
 		</div>
-	)
-}
+	);
+};
 
-export default RegistrationPage
+export default RegistrationPage;

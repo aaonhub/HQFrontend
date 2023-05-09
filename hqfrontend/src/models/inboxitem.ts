@@ -46,28 +46,20 @@ export default InboxItem;
 // Queries
 export const GET_TODAY_LIST_ITEMS = gql`
 	query GetTodaysToDoList($Today: Date!) {
-		toDoItems(filters: {StartDate: {eq: $Today}}) {
-			data {
+		toDoItems(Today: $Today) {
+			id
+			title
+			completed
+			project {
 				id
-				attributes {
-					Title
-					Completed
-					project {
-						data {
-							id
-							attributes {
-								Codename
-							}
-						}
-					}
-					DueDateTime
-					Description
-					StartDate
-					StartTime
-				}
+				codename
 			}
+			dueDateTime
+			description
+			startDate
+			startTime
 		}
-	}
+	}  
 `;
 
 export const GET_COMPLETED_TODOS = gql`

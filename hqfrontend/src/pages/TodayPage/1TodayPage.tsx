@@ -63,19 +63,9 @@ const TodayPage = () => {
 		error: habitsError,
 		data: habitsData,
 	} = useQuery(GET_HABITS_DUE_TODAY, {
-		variables: {
-			today: localDate,
-			daily: { "eq": "Daily" },
-			weekly: { "eq": "Weekly" },
-			monthly: { "eq": "Monthly" },
-			dayOfWeek: getCurrentDayOfWeek(),
-			dayOfMonth: getCurrentDayOfMonth(),
-		},
-		onCompleted: (data1) => {
-			const habitsData = data1.habits.data;
-			const habits = habitsData.map((habit: any) => {
-				const habitHistories = habit.attributes.habit_histories.data || [];
-
+		variables: { today: localDate },
+		onCompleted: (data) => {
+			const habits = data.habitsDueToday.map((habit: any) => {
 				return new Habit(
 					habit.id,
 					habit.title,

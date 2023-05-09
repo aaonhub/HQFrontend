@@ -23,7 +23,7 @@ const HabitsPage = () => {
 	const { data, loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: today, },
 		onCompleted: (data) => {
-			const habits1 = data.habitsDueToday.map((habit: any) => {
+			const habits = data.habitsDueToday.map((habit: any) => {
 				return new Habit(
 					habit.id,
 					habit.title,
@@ -40,7 +40,7 @@ const HabitsPage = () => {
 					habit.completedToday,
 				);
 			});
-			setHabits(habits1);
+			setHabits(habits);
 		},
 	});
 

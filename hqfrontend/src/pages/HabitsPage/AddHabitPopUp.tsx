@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 // Queries and Mutations
 import { ADD_HABIT } from '../../models/habit';
@@ -31,7 +32,7 @@ interface AddHabitPopupProps {
 
 const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 	const [title, setTitle] = useState('');
-	const [frequency, setFrequency] = useState('Daily');
+	const [frequency, setFrequency] = useState('DAILY');
 	const [addHabit, { error }] = useMutation(ADD_HABIT);
 
 	const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +49,7 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 				Title: title,
 				Active: true,
 				Frequency: frequency,
+				StartDate: getCurrentLocalDate(),
 			},
 		});
 		onClose();
@@ -77,10 +79,10 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 							label="Frequency"
 							onChange={handleFrequencyChange}
 						>
-							<MenuItem value="Daily">Daily</MenuItem>
-							<MenuItem value="Weekly">Weekly</MenuItem>
-							<MenuItem value="Monthly">Monthly</MenuItem>
-							<MenuItem value="Yearly">Yearly</MenuItem>
+							<MenuItem value="DAILY">Daily</MenuItem>
+							<MenuItem value="WEEKLY">Weekly</MenuItem>
+							<MenuItem value="MONTHLY">Monthly</MenuItem>
+							<MenuItem value="YEARLY">Yearly</MenuItem>
 						</Select>
 					</FormControl>
 				</Box>

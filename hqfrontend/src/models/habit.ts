@@ -108,34 +108,24 @@ query habits($Today: Date!) {
 
 // Mutations
 export const ADD_HABIT = gql`
-mutation createHabit($Title: String!, $Active: Boolean!, $Frequency: ENUM_HABIT_FREQUENCY!, $LastCompleted: Date) {
-	createHabit(data: { Title: $Title, Active: $Active, Frequency: $Frequency }) {
-		data {
-			id
-			attributes {
-				Title
-				Active
-				Frequency
+	mutation createHabit($Title: String!, $Active: Boolean!, $Frequency: String!, $StartDate: String!) {
+		createHabit(title: $Title, active: $Active, frequency: $Frequency, startDate: $StartDate ) {
+			habit {
+				id
+				title
 			}
 		}
 	}
-}
 `
 
 export const DELETE_HABIT = gql`
-mutation deleteHabit($id: ID!) {
-	deleteHabit(id: $id) {
-		data {
-			id
-				attributes {
-				Title
-				Active
-				Frequency
-				LastCompleted
+	mutation createHabit($id: ID!) {
+		deleteHabit(id: $id ) {
+			habit {
+				title
 			}
 		}
 	}
-}
 `
 
 export const UPDATE_HABIT = gql`

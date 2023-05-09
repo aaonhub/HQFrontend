@@ -76,21 +76,20 @@ const TodayPage = () => {
 			const habits = habitsData.map((habit: any) => {
 				const habitHistories = habit.attributes.habit_histories.data || [];
 
-				// Check if there is any habit_history with Completed set to true
-				const completedToday = habitHistories.some(
-					(history: any) => history.attributes.Completed
-				);
-
 				return new Habit(
 					habit.id,
-					habit.attributes.Title,
-					habit.attributes.Description,
-					habit.attributes.Active,
-					habit.attributes.Frequency,
-					habit.attributes.LastCompleted,
-					habit.attributes.Order,
-					habit.attributes.HabitFrequency,
-					completedToday
+					habit.title,
+					habit.active,
+					habit.frequency,
+					habit.lastCompleted,
+					habit.order,
+					habit.daysOfTheWeek,
+					habit.daysOfTheMonth,
+					habit.dayOfTheYear,
+					habit.startDate,
+					habit.endDate,
+					habit.timeOfDay,
+					habit.completedToday,
 				);
 			});
 			setHabits(habits);

@@ -24,7 +24,6 @@ import { getCurrentLocalDate } from "../../components/DateFunctions";
 // Models
 import Habit from "../../models/habit";
 
-
 interface HabitListProps {
 	refetch: () => void;
 	habits: Habit[];
@@ -34,10 +33,7 @@ interface HabitListProps {
 const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 	const [habit, setHabit] = useState<Habit>();
 
-	const theme = useTheme()
-	
-
-
+	const theme = useTheme();
 
 	const [createHabitHistory] = useMutation(CHECK_HABIT);
 	const handleHabitCompletion = (habit: Habit) => {
@@ -49,14 +45,14 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 					Completed: true,
 				},
 				habitId: habit.id,
-				lastCompleted: today === getCurrentLocalDate() ? today : habit.lastCompleted,
+				lastCompleted:
+					today === getCurrentLocalDate()
+						? today
+						: habit.lastCompleted,
 			},
-		})
+		});
 		habit.completedToday = true;
 	};
-
-
-
 
 	const handleEdit = (habit: Habit) => {
 		setHabit(habit);
@@ -66,15 +62,8 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 		if (!habits) return [];
 
 		return [...habits].sort((a, b) => {
-			const aHabitHistories = a?.habitHistories || [];
-			const bHabitHistories = b?.habitHistories || [];
-
-			const aIsCompleted = aHabitHistories.some(
-				(history) => history.completed
-			);
-			const bIsCompleted = bHabitHistories.some(
-				(history) => history.completed
-			);
+			const aIsCompleted = a.completedToday;
+			const bIsCompleted = b.completedToday;
 
 			return aIsCompleted && !bIsCompleted
 				? 1
@@ -84,15 +73,11 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 		});
 	};
 
-
 	return (
 		<>
 			<List>
 				{sortedHabits().map((item) => {
-
-					const isCompleted = item.habitHistories &&
-						item.habitHistories.length > 0 &&
-						item.habitHistories[0].completed
+					const isCompleted = item.completedToday;
 
 					return (
 						<ListItem key={item.id} disablePadding>
@@ -102,13 +87,16 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 								sx={{
 									width: "100%",
 									mb: 1,
-									...(isCompleted && { backgroundColor: theme.palette.background.default }),
+									...(isCompleted && {
+										backgroundColor: theme.palette.background.default,
+									}),
 								}}
 							>
 								<ListItemButton>
-									
 									<ListItemIcon>
-										<InboxIcon sx={{ color: isCompleted ? "grey" : "#3f51b5" }} />
+										<InboxIcon
+											sx={{ color: isCompleted ? "grey" : "#3f51b5" }}
+										/>
 									</ListItemIcon>
 
 									<ListItemText
@@ -139,7 +127,6 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 					refetch={refetch}
 				/>
 			)}
-
 		</>
 	);
 };

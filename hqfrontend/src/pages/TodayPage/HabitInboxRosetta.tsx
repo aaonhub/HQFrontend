@@ -22,7 +22,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				title: habit.title ?? '',
 				type: 'habit',
 				id: habit.id + "h",
-				startTime: habit.habitFrequency?.timeOfDay ?? '',
+				startTime: habit.timeOfDay ?? '',
 			});
 		});
 	}

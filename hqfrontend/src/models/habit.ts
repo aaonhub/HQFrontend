@@ -1,24 +1,16 @@
 import { gql } from '@apollo/client';
 
 export type HabitFrequency = {
-	startDate: Date;
-	endDate: Date | null;
-	timeOfDay: string;
-	repetitionFrequency: number;
-	daysOfTheWeek: Array<string>;
-	daysOfTheMonth: Array<number>;
-	dayOfTheYear: number;
-};
+	startDate: Date
+	endDate: Date | null
+	timeOfDay: string
+	repetitionFrequency: number
+	daysOfTheWeek: Array<string>
+	daysOfTheMonth: Array<number>
+	dayOfTheYear: number
+}
 
-export type HabitHistory = {
-	id: string;
-	date: Date;
-	completed: boolean;
-	createdAt: Date;
-	updatedAt: Date;
-};
-
-export type Frequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'RitualOnly';
+export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'RITUALONLY'
 
 class Habit {
 	constructor(
@@ -28,8 +20,12 @@ class Habit {
 		public frequency: Frequency | '',
 		public lastCompleted: Date,
 		public order: number,
-		public habitFrequency: HabitFrequency,
-		public habitHistories: Array<HabitHistory>,
+		public daysOfTheWeek: Array<string>,
+		public daysOfTheMonth: Array<number>,
+		public dayOfTheYear: number,
+		public startDate: Date,
+		public endDate: Date | null,
+		public timeOfDay: string,
 		public completedToday: boolean
 	) {
 		this.id = id;
@@ -38,58 +34,39 @@ class Habit {
 		this.frequency = frequency || '';
 		this.lastCompleted = lastCompleted;
 		this.order = order || 0;
-		this.habitFrequency = habitFrequency;
-		this.habitHistories = habitHistories || [];
-		this.completedToday = completedToday || false;
+		this.daysOfTheWeek = daysOfTheWeek || [];
+		this.daysOfTheMonth = daysOfTheMonth || [];
+		this.dayOfTheYear = dayOfTheYear || 0;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.timeOfDay = timeOfDay;
+		this.completedToday = completedToday;
 	}
 }
 
-export default Habit;
+export default Habit
 
 
 // Queries
 export const GET_HABITS_DUE_TODAY = gql`
-	query GetHabitsDueToday($today: Date!, $daily: StringFilterInput!, $weekly: StringFilterInput!, $monthly: StringFilterInput!, $dayOfWeek: String!, $dayOfMonth: Int!) {
-		habits(pagination: { pageSize: 50 }, filters: {
-			or: [
-				{ Frequency: $daily },
-				{ Frequency: $weekly, HabitFrequency: { DaysOfTheWeek: { eq: $dayOfWeek } } },
-				{ Frequency: $monthly, HabitFrequency: { DaysOfTheMonth: { eq: $dayOfMonth } } }
-			]
-		}) {
-			data {
-				id
-				attributes{
-					Title
-					Active
-					Frequency
-					LastCompleted
-					Order
-					HabitFrequency {
-						StartDate
-						EndDate
-						TimeOfDay
-						RepetitionFrequency
-						DaysOfTheWeek
-						DaysOfTheMonth
-						DayOfTheYear
-					}
-					habit_histories(filters: {Date: {eq: $today}}) {
-						data {
-							id
-							attributes {
-								Date
-								Completed
-								createdAt
-								updatedAt
-							}
-						}
-					}
-				}
-			}
+	query GetHabitsDueToday($today: Date!) {
+		habitsDueToday(date: $today) {
+			id
+			title
+			active
+			frequency
+			lastCompleted
+			order
+			daysOfTheWeek
+			daysOfTheMonth
+			dayOfTheYear
+			startDate
+			endDate
+			timeOfDay
+			completedToday
 		}
 	}
-`;
+`
 
 export const GET_HABITS = gql`
 query habits($Today: Date!) {
@@ -174,7 +151,7 @@ mutation updateHabit($id: ID!, $Title: String, $Active: Boolean, $Frequency: ENU
 		}
 	}
 }
-`;
+`
 
 export const CHECK_HABIT = gql`
 	mutation CreateHabitHistoryAndUpdateLastCompleted(
@@ -219,7 +196,7 @@ export const CHECK_HABIT = gql`
 		}
 
 	}
-`;
+`
 
 export const DELETE_HABIT_HISTORY = gql`
 	mutation DeleteHabitHistoryAndUpdateLastCompleted($id: ID!, $habitId: ID!, $lastCompleted: Date!) {
@@ -254,4 +231,4 @@ export const DELETE_HABIT_HISTORY = gql`
 			}
 		}
 	}
-`;
+`

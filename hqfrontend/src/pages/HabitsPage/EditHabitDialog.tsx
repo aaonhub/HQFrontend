@@ -107,9 +107,9 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 							label="Age"
 							onChange={handleFrequencyChange}
 						>
-							<MenuItem value={"Daily"}>Daily</MenuItem>
-							<MenuItem value={"Weekly"}>Weekly</MenuItem>
-							<MenuItem value={"Monthly"}>Monthly</MenuItem>
+							<MenuItem value={"DAILY"}>Daily</MenuItem>
+							<MenuItem value={"WEEKLY"}>Weekly</MenuItem>
+							<MenuItem value={"MONTHLY"}>Monthly</MenuItem>
 						</Select>
 					</FormControl>
 

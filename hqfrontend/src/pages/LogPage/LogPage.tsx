@@ -6,7 +6,7 @@ import LogItem from './LogItem'
 // Queries and Mutations
 import {
 	GET_LOGS,
-	ADD_TEXT_LOG
+	ADD_LOG
 } from '../../models/log'
 
 // Models
@@ -21,33 +21,29 @@ const LogPage = () => {
 
 
 	// Get logs query
-	const { loading, error, refetch } = useQuery(GET_LOGS, {
-		variables: {
-			limit: 100,
-		},
+	const { data, loading, error, refetch } = useQuery(GET_LOGS, {
 		onCompleted: (data) => {
-			const logData = data.logs.data
-			const logs = logData.map((log: any) => {
+			const logs = data.logs.map((log: any) => {
 				const newLog = new Log({
 					id: log.id,
-					logTime: log.attributes.LogTime,
-					type: log.attributes.Type,
+					logTime: log.logTime,
+					type: log.type,
 				})
 
-				if (log.attributes.Type === 'text') {
-					newLog.text = log.attributes.Text
-				} else if (log.attributes.Type === 'complete_todoitem') {
-					console.log(log)
+				if (log.type === "TEXT") {
+					newLog.text = log.text
+				} else if (log.type === 'COMPLETE_TODOITEM') {
 					newLog.toDoItem = {
-						id: log.attributes.to_do_item.id,
-						title: log.attributes.to_do_item.data.attributes.Title,
+						id: log.completeTodoitem.id,
+						title: log.completeTodoitem.title,
 					}
-				} else if (log.attributes.Type === 'complete_habit') {
+				} else if (log.type === 'COMPLETE_HABIT') {
 					newLog.habit = {
-						id: log.attributes.habit.id,
-						title: log.attributes.habit.data.attributes.Title,
+						id: log.completeHabit.id,
+						title: log.completeHabit.title,
 					}
 				}
+				console.log("end")
 				return newLog
 				
 			})
@@ -55,24 +51,25 @@ const LogPage = () => {
 		}
 	})
 
+	console.log(data)
 
 
 
 	// Add log mutation
-	const [addTextLog] = useMutation(ADD_TEXT_LOG)
+	const [addTextLog] = useMutation(ADD_LOG)
 	const handleAddLog = () => {
 		if (logText.trim() !== '') {
 
 			addTextLog({
 				variables: {
-					Text: logText,
-					LogTime: new Date(),
+					text: logText,
+					logTime: new Date(),
 				}
 			}).then(() => {
 				setLogText('')
 			})
 
-			logArray.unshift(new Log({ id: '', text: logText, logTime: new Date(), type: 'text' }))
+			logArray.unshift(new Log({ id: '', text: logText, logTime: new Date(), type: 'TEXT' }))
 
 			refetch()
 		}

@@ -15,7 +15,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import { GET_INCOMPLETE_PROJECT_ITEMS } from '../../models/project';
 import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
 import { UPDATE_TODO } from '../../models/inboxitem';
-import { ADD_TODO_LOG } from '../../models/log';
+import { ADD_LOG } from '../../models/log';
 import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
 
 // Models
@@ -114,7 +114,7 @@ const ProjectPage = () => {
 			console.log('completed')
 		},
 	});
-	const [addToDoLog] = useMutation(ADD_TODO_LOG, {
+	const [addToDoLog] = useMutation(ADD_LOG, {
 		onError: (error) => console.log(error.networkError),
 	});
 	const handleCheck = (toDoItem: InboxItem) => () => {
@@ -126,8 +126,8 @@ const ProjectPage = () => {
 		});
 		addToDoLog({
 			variables: {
-				LogTime: new Date().toISOString(),
-				ToDoItem: toDoItem.id,
+				logTime: new Date().toISOString(),
+				todoItemId: toDoItem.id,
 			},
 		});
 	};

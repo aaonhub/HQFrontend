@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
 	List,
 	ListItem,
@@ -7,22 +7,22 @@ import {
 	ListItemText,
 	Paper,
 	Checkbox,
-} from "@mui/material";
-import { useMutation } from "@apollo/client";
-import { useTheme } from "@mui/material/styles";
+} from "@mui/material"
+import { useMutation } from "@apollo/client"
+import { useTheme } from "@mui/material/styles"
 
 // Icons
-import InboxIcon from "@mui/icons-material/Inbox";
+import InboxIcon from "@mui/icons-material/Inbox"
 
 // Queries and Mutations
-import { CHECK_HABIT } from "../../models/habit";
+import { CHECK_HABIT } from "../../models/habit"
 
 // Components
-import EditHabitDialog from "./EditHabitDialog";
-import { getCurrentLocalDate } from "../../components/DateFunctions";
+import EditHabitDialog from "./EditHabitDialog"
 
 // Models
-import Habit from "../../models/habit";
+import Habit from "../../models/habit"
+
 
 interface HabitListProps {
 	refetch: () => void;
@@ -39,16 +39,8 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 	const handleHabitCompletion = (habit: Habit) => {
 		createHabitHistory({
 			variables: {
-				data: {
-					Date: today,
-					habit: habit.id,
-					Completed: true,
-				},
 				habitId: habit.id,
-				lastCompleted:
-					today === getCurrentLocalDate()
-						? today
-						: habit.lastCompleted,
+				currentDate: today,
 			},
 		});
 		habit.completedToday = true;

@@ -10,7 +10,7 @@ import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 // Components
 import HabitList from './HabitList';
 import AddHabitPopup from './AddHabitPopUp';
-import { getCurrentLocalDate, getCurrentDayOfWeek, getCurrentDayOfMonth } from '../../components/DateFunctions';
+import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 // Models
 import Habit from '../../models/habit';
@@ -20,7 +20,7 @@ const HabitsPage = () => {
 	const [today, setToday] = useState(getCurrentLocalDate());
 	const [open, setOpen] = useState(false);
 	// Habits Query
-	const { data, loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
+	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: today, },
 		onCompleted: (data) => {
 			const habits = data.habitsDueToday.map((habit: any) => {

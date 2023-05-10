@@ -15,8 +15,7 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 import { useMutation } from '@apollo/client';
 import { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
 import { CHECK_HABIT } from '../../models/habit';
-import { ADD_HABIT_LOG } from '../../models/log';
-import { ADD_TODO_LOG } from '../../models/log';
+import { ADD_LOG } from '../../models/log';
 
 
 // Models
@@ -30,12 +29,7 @@ interface ItineraryProps {
 
 const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArray }) => {
 	const hasData = simpleItemArray.length > 0
-
-	const [checkHabit] = useMutation(CHECK_HABIT)
-	const [checkToDo] = useMutation(COMPLETE_UNCOMPLETE_TODO)
-	const [addHabitLog] = useMutation(ADD_HABIT_LOG)
-	const [addToDoLog] = useMutation(ADD_TODO_LOG)
-
+	
 	const handleCheckItem = (item: SimpleItem) => {
 		if (item.type === 'habit') {
 			handleCheckHabit(item.id)
@@ -43,7 +37,9 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 			handleCheckToDo(item.id)
 		}
 	}
-
+	
+	const [checkHabit] = useMutation(CHECK_HABIT)
+	const [addHabitLog] = useMutation(ADD_LOG)
 	const handleCheckHabit = async (habitId: string) => {
 		await checkHabit({
 			variables: {
@@ -60,12 +56,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 
 		await addHabitLog({
 			variables: {
-				LogTime: new Date().toISOString(),
-				Habit: habitId.slice(0, -1),
+				logTime: new Date().toISOString(),
+				habitId: habitId.slice(0, -1),
 			},
 		})
 	}
 
+	const [checkToDo] = useMutation(COMPLETE_UNCOMPLETE_TODO)
+	const [addToDoLog] = useMutation(ADD_LOG)
 	const handleCheckToDo = async (todoId: string) => {
 		console.log(todoId)
 		await checkToDo({
@@ -82,8 +80,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 
 		await addToDoLog({
 			variables: {
-				LogTime: new Date().toISOString(),
-				ToDoItem: todoId.slice(0, -1),
+				logTime: new Date().toISOString(),
+				todoItemId: todoId.slice(0, -1),
 			},
 		})
 

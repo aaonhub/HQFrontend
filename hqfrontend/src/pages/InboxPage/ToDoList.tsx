@@ -22,7 +22,7 @@ import {
 	DELETE_TODO,
 	GET_INCOMPLETE_TODOS
 } from '../../models/inboxitem'
-import { ADD_TODO_LOG } from '../../models/log'
+import { ADD_LOG } from '../../models/log'
 
 // Models
 import InboxItem from '../../models/inboxitem'
@@ -81,7 +81,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 	const [completeTodo] = useMutation(COMPLETE_UNCOMPLETE_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
-	const [addLog] = useMutation(ADD_TODO_LOG, {
+	const [addLog] = useMutation(ADD_LOG, {
 		onCompleted: (data) => {
 			console.log(data)
 		},
@@ -97,8 +97,8 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 		});
 		addLog({
 			variables: {
-				LogTime: new Date(),
-				ToDoItem: toDoItem.id
+				todoItemId: toDoItem.id,
+				logTime: new Date().toISOString(),
 			}
 		});
 	};

@@ -144,47 +144,12 @@ mutation updateHabit($id: ID!, $Title: String, $Active: Boolean, $Frequency: ENU
 `
 
 export const CHECK_HABIT = gql`
-	mutation CreateHabitHistoryAndUpdateLastCompleted(
-		$habitId: ID!, 
-		$currentDate: Date!,
-	) {
-	
-		createHabitHistory(data: {
-			habit: $habitId,
-			Date: $currentDate,
-			Completed: true
-		}) {
-			data {
+	mutation createHabitHistoryAndUpdateLastCompleted($habitId: ID!, $currentDate: Date!) {
+		createHabitHistoryAndUpdateLastCompleted( habitId: $habitId, currentDate: $currentDate) {
+			habitHistory {
 				id
-				attributes {
-					Date
-					habit {
-						data {
-							id
-							attributes {
-								Title
-								Frequency
-							}
-						}
-					}
-					Completed
-					createdAt
-				}
 			}
 		}
-
-		updateHabit(id: $habitId, data: { LastCompleted: $currentDate }) {
-			data {
-				id
-				attributes {
-					Title
-					Active
-					Frequency
-					LastCompleted
-				}
-			}
-		}
-
 	}
 `
 

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 
-export type Type = 'text' | 'complete_habit' | 'complete_todoitem'
+export type Type = 'TEXT' | 'COMPLETE_HABIT' | 'COMPLETE_TODOITEM'
 
 interface LogHabit {
 	id: string
@@ -76,105 +76,41 @@ export const GET_TODAY_LOGS = gql`
 `;
 
 export const GET_LOGS = gql`
-	query {
-		logs(pagination: { page: 1, pageSize: 10 }, sort: "LogTime:desc") {
-			data {
+	query GetLogs {
+		logs {
+			text
+			id
+			completeHabit {
 				id
-				attributes {
-					Text
-					LogTime
-					Type
-					to_do_item {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-					habit {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-				}
+				title
 			}
+			completeTodoitem {
+				id
+				title
+			}
+			logTime
+			type
 		}
 	}
 `;
 
 
 // Mutations
-export const ADD_TEXT_LOG = gql`
-	mutation createTextLog(
-		$Text: String!, 
-		$LogTime: DateTime!
+export const ADD_LOG = gql`
+	mutation createLog(
+		$text: String, 
+		$todoItemId: ID,
+		$habitId: ID,
+		$logTime: DateTime!
 	) {
-		createLog(data: { 
-			Text: $Text, 
-			LogTime: $LogTime, 
-			Type: text 
-		}) {
-			data {
+		createLog(
+			text: $text,
+			habitId: $habitId,
+			todoItemId: $todoItemId,
+			logTime: $logTime
+		) {
+			log {
 				id
-				attributes {
-					Text
-					LogTime
-					Type
-				}
-			}
-		}
-	}
-`;
-
-export const ADD_HABIT_LOG = gql`
-	mutation createHabitLog($LogTime: DateTime!, $Habit: ID!) {
-		createLog(data: { LogTime: $LogTime, habit: $Habit, Type: complete_habit }) {
-			data {
-				id
-				attributes {
-					habit {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-					LogTime
-					Type
-				}
-			}
-		}
-	}
-`;
-
-export const ADD_TODO_LOG = gql`
-	mutation createTodoLog(
-		$LogTime: DateTime!, 
-		$ToDoItem: ID!
-	) {
-		createLog(data: { 
-			LogTime: $LogTime, 
-			to_do_item: $ToDoItem, 
-			Type: complete_todoitem 
-		}) {
-			data {
-				id
-				attributes {
-					LogTime
-					to_do_item {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-				}
 			}
 		}
 	}

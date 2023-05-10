@@ -4,7 +4,7 @@ import { Card, CardContent, TextField, Typography } from '@mui/material'
 import { format } from 'date-fns'
 
 // Queries and Mutations
-import { GET_TODAY_LOGS, ADD_TEXT_LOG } from '../../models/log'
+import { GET_TODAY_LOGS, ADD_LOG } from '../../models/log'
 
 // Models
 import Log from '../../models/log'
@@ -54,20 +54,20 @@ const LogList = () => {
 	})
 
 	// Add log mutation
-	const [addLog] = useMutation(ADD_TEXT_LOG)
+	const [addLog] = useMutation(ADD_LOG)
 	const handleAddLog = () => {
 		if (logText.trim() !== '') {
 
 			addLog({
 				variables: {
-					Text: logText,
-					LogTime: new Date(),
+					text: logText,
+					logTime: new Date(),
 				}
 			}).then(() => {
 				setLogText('')
 			})
 
-			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date(), type: 'text' }))
+			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date(), type: 'TEXT' }))
 
 			refetch()
 		}
@@ -112,9 +112,9 @@ const LogList = () => {
 						{logArray.map((log) => (
 							<li key={log.id}>
 								<Typography variant="body1" gutterBottom>
-									{log.type === 'text' && log.text}
-									{log.type === 'complete_todoitem' && `Completed to do item: ${log.toDoItem && log.toDoItem.title}`}
-									{log.type === 'complete_habit' && `Completed habit: ${log.habit && log.habit.title}`}
+									{log.type === 'TEXT' && log.text}
+									{log.type === 'COMPLETE_TODOITEM' && `Completed to do item: ${log.toDoItem && log.toDoItem.title}`}
+									{log.type === 'COMPLETE_HABIT' && `Completed habit: ${log.habit && log.habit.title}`}
 								</Typography>
 								<Typography variant="body2" gutterBottom>
 									{format(new Date(log.logTime), 'hh:mm a').toString()}

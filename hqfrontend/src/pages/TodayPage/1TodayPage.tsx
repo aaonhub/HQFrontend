@@ -7,11 +7,7 @@ import Itinerary from "./Itinerary";
 import LogList from "./LogList";
 // import Calendar from "./Calendar";
 
-import {
-	getCurrentLocalDate,
-	getCurrentDayOfWeek,
-	getCurrentDayOfMonth
-} from "../../components/DateFunctions";
+import { getCurrentLocalDate } from "../../components/DateFunctions";
 
 // Queries and Mutations
 import { GET_TODAY_LIST_ITEMS } from "../../models/inboxitem";

@@ -44,6 +44,7 @@ export default Log
 
 
 // Queries
+// Updated to django
 export const GET_TODAY_LOGS = gql`
 	query TodaysLogs {
 		todayLogs {
@@ -63,6 +64,7 @@ export const GET_TODAY_LOGS = gql`
 	}
 `;
 
+// Updated to django
 export const GET_LOGS = gql`
 	query GetLogs {
 		logs {
@@ -84,6 +86,7 @@ export const GET_LOGS = gql`
 
 
 // Mutations
+// Updated to django
 export const ADD_LOG = gql`
 	mutation createLog(
 		$text: String, 

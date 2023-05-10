@@ -48,6 +48,7 @@ export default Habit
 
 
 // Queries
+// Updated to django
 export const GET_HABITS_DUE_TODAY = gql`
 	query GetHabitsDueToday($today: Date!) {
 		habitsDueToday(date: $today) {
@@ -143,6 +144,7 @@ mutation updateHabit($id: ID!, $Title: String, $Active: Boolean, $Frequency: ENU
 }
 `
 
+// Updated to django
 export const CHECK_HABIT = gql`
 	mutation createHabitHistoryAndUpdateLastCompleted($habitId: ID!, $currentDate: Date!) {
 		createHabitHistoryAndUpdateLastCompleted( habitId: $habitId, currentDate: $currentDate) {

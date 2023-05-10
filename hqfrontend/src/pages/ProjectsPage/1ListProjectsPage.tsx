@@ -18,12 +18,11 @@ const ProjectsPage = () => {
 	// Projects Query
 	const { loading, error, refetch } = useQuery(GET_PROJECTS, {
 		onCompleted: (data) => {
-			const projectsData = data.projects.data
-			const projects = projectsData.map((project: any) => {
+			const projects = data.projects.map((project: any) => {
 				return new Project(
 					project.id,
-					project.attributes.Codename,
-					project.attributes.to_do_items?.data || []
+					project.codename,
+					project.to_do_items?.data || []
 				)
 			})
 			setProjects(projects)
@@ -42,9 +41,7 @@ const ProjectsPage = () => {
 	const handleCreateProject = async () => {
 		await createProject({
 			variables: {
-				data: {
-					Codename: newProjectCodename,
-				},
+				codename: newProjectCodename
 			},
 		})
 	}
@@ -81,7 +78,7 @@ const ProjectsPage = () => {
 					}
 				}}
 			/>
-			
+
 
 			{/* Project List */}
 			<List sx={{ width: '100%', maxWidth: 360 }}>

@@ -12,11 +12,11 @@ import IconButton from '@mui/material/IconButton';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 
 // Queries and Mutations
-import { GET_INCOMPLETE_PROJECT_ITEMS } from '../../models/project';
+import { GET_PROJECT_ITEMS } from '../../models/project';
 import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
+import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
 import { UPDATE_TODO } from '../../models/inboxitem';
 import { ADD_LOG } from '../../models/log';
-import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
 
 // Models
 import Project from '../../models/project';
@@ -32,45 +32,52 @@ const ProjectPage = () => {
 
 
 	// Project Query
-	const { loading, error, refetch } = useQuery(GET_INCOMPLETE_PROJECT_ITEMS, {
-		variables: { id: projectId },
+	const { loading, error, refetch } = useQuery(GET_PROJECT_ITEMS, {
+		variables: { projectId, completed: false },
 		onCompleted: (data) => {
-			const projectData = data.project.data;
-			const item_order = projectData.attributes.ItemOrder || [];
-			const projectItems = projectData.attributes.to_do_items?.data?.map(
-				(item: any) => new InboxItem({
+
+			// Define the project items
+			const projectItems = data.project.toDoItems?.map((item: any) =>
+				new InboxItem({
 					id: item.id,
-					title: item.attributes.Title,
-					description: item.attributes.Description,
-					completed: item.attributes.Completed,
-					project: item.attributes.Project,
-					dueDateTime: item.attributes.DueDateTime ? new Date(item.attributes.DueDateTime) : null,
-					startDate: item.attributes.StartDate,
-					startTime: item.attributes.StartTime,
-					timeCompleted: item.attributes.TimeCompleted ? new Date(item.attributes.TimeCompleted) : null,
+					title: item.title,
+					description: item.description,
+					completed: item.completed,
+					project: item.project,
+					dueDateTime: item.due_date_time ? new Date(item.due_date_time) : null,
+					startDate: item.start_date,
+					startTime: item.start_time,
+					timeCompleted: item.time_completed ? new Date(item.time_completed) : null,
 				})
 			) || [];
 
+			let item_order: string[] = [];
+			try {
+				item_order = JSON.parse(data.project.itemOrder);
+			} catch (error) {
+				console.error('Failed to parse itemOrder:', data.project.itemOrder);
+				item_order = [];
+			}
+
+			// Items with order and without
 			const orderedItems = item_order.map((itemId: string) => {
-				return projectItems.find((item: InboxItem) => item.id === itemId);
-			}).filter((item: InboxItem | undefined) => item !== undefined) as InboxItem[];
+				return projectItems.find((item: any) => item.id === itemId)
+			}).filter((item: any) => item !== undefined) as InboxItem[]
+			const unorderedItems = projectItems.filter((item: any) => !item_order.includes(item.id));
 
-			const unorderedItems = projectItems.filter((item: InboxItem) => !item_order.includes(item.id));
-
-			const finalItems = orderedItems.concat(unorderedItems);
+			// Combine ordered and unordered items
+			const finalItems = orderedItems.concat(unorderedItems)
 
 			changeProjectItemOrder({
 				variables: {
-					id: projectId,
-					data: {
-						ItemOrder: finalItems.map((item: InboxItem) => item.id),
-					},
+					id: data.project.id,
+					itemOrder: finalItems.map((item: InboxItem) => item.id),
 				},
 			});
 
 			const project: Project = {
-				id: projectData.id,
-				codename: projectData.attributes.Codename,
+				id: data.project.id,
+				codename: data.project.codename,
 				to_do_items: finalItems,
 				item_order: item_order,
 			};
@@ -80,7 +87,6 @@ const ProjectPage = () => {
 				? setProjectItemArray(finalItems)
 				: setProjectItemArray([]);
 		},
-
 	});
 
 
@@ -98,8 +104,8 @@ const ProjectPage = () => {
 	const handleAddProjectItem = () => {
 		addItemToProject({
 			variables: {
-				Title: newProjectItemTitleRef.current && newProjectItemTitleRef.current.value,
-				projectid: projectId,
+				title: newProjectItemTitleRef.current && newProjectItemTitleRef.current.value,
+				projectId: projectId,
 			},
 		});
 	};
@@ -196,9 +202,7 @@ const ProjectPage = () => {
 		changeProjectItemOrder({
 			variables: {
 				id: projectId,
-				data: {
-					ItemOrder: itemOrder,
-				},
+				itemOrder: itemOrder,
 			},
 		});
 	};

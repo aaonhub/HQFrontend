@@ -21,148 +21,81 @@ export default Project
 
 
 // Queries
+// Updated to django
 export const GET_PROJECTS = gql`
 	query GetProjects {
 		projects {
-				data {
-				id
-				attributes {
-					Codename
-				}
-			}
+			id
+			codename
 		}
 	}
 `;
 
-export const GET_COMPLETED_PROJECT_ITEMS = gql`
-	query GetProject($id: ID!) {
-		project(id: $id) {
-			data {
+// Updated to django
+export const GET_PROJECT_ITEMS = gql`
+	query GetProjectToDoItems($projectId: ID!, $completed: Boolean) {
+		project(id: $projectId) {
+			id
+			codename
+			toDoItems(completed: $completed) {
 				id
-				attributes {
-					Codename
-					ItemOrder
-					to_do_items(filters: {Completed: {eq: true}}) {
-						data {
-							id
-							attributes {
-								Title
-								Completed
-								DueDateTime
-								Description
-								StartDate
-								StartTime
-							}
-						}
-					}
-				}
+				title
+				completed
+				dueDateTime
+				description
+				startDate
+				startTime
 			}
+			itemOrder
 		}
-	}
+	}  
 `;
 
-export const GET_INCOMPLETE_PROJECT_ITEMS = gql`
-	query GetProject($id: ID!) {
-		project(id: $id) {
-			data {
-				id
-				attributes {
-					Codename
-					ItemOrder
-					to_do_items(filters: {Completed: {eq: false}}) {
-						data {
-							id
-							attributes {
-								Title
-								Completed
-								DueDateTime
-								Description
-								StartDate
-								StartTime
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-`;
 
 
 // Mutations
+// Updated to django
 export const CREATE_PROJECT = gql`
-	mutation CreateProject($data: ProjectInput!) {
-		createProject(data: $data) {
-			data {
+	mutation CreateProject($codename: String!) {
+		createProject(codename: $codename) {
+			project {
 				id
-				attributes {
-					Codename
-				}
+				codename
 			}
 		}
 	}
 `;
 
+// Updated to django
 export const DELETE_PROJECT = gql`
 	mutation deleteProject($id: ID!) {
 		deleteProject(id: $id) {
-			data {
-				id
-			}
+			success
 		}
 	}
 `;
 
-export const ADD_TO_DO_TO_PROJECT = gql`
-	mutation UpdateProject($id: ID!, $to_do_items: [ID!]) {
-		updateProject(id: $id, to_do_items: $to_do_items) {
-			id
-			attributes {
-				Codename
-				to_do_items {
-					data {
-						id
-						attributes {
-							Title
-							Completed
-						}
-					}
-				}
-			}
-		}
-	}
-`;
-
+// Updated to django
 export const CREATE_TO_DO_AND_ADD_TO_PROJECT = gql`
-mutation CreateProjectInboxItem($projectid: ID!, $Title: String) {
-	createToDoItem(data: { Title: $Title, Completed: false, project: $projectid }) {
-		data {
-			id
-			attributes {
-				Title
-				project {
-					data {
-						id
-						attributes {
-							Codename
-						}
-					}
-				}
+	mutation UpdateProject($projectId: ID!, $title: String!) {
+		createToDoItem(projectId: $projectId title: $title) {
+			toDoItem {
+				id
+				title
 			}
 		}
 	}
-}  
 `;
 
+// Updated to django
 export const UPDATE_PROJECT_ITEM_ORDER = gql`
-	mutation UpdateProject($id: ID!, $data: ProjectInput!) {
-		updateProject(id: $id, data: $data) {
-		data {
-			id
-			attributes {
-				ItemOrder
+	mutation UpdateProject($id: ID!, $itemOrder: [String!]!) {
+		updateProjectItemOrder(id: $id, itemOrder: $itemOrder) {
+			project {
+				id
+				codename
+				itemOrder
 			}
 		}
 	}
-}
 `;

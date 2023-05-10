@@ -45,31 +45,19 @@ export default Log
 
 // Queries
 export const GET_TODAY_LOGS = gql`
-	query TodaysLogs($Start: DateTime!, $End: DateTime!) {
-		logs(filters: {LogTime: {gte: $Start, lt: $End}}) {
-			data {
+	query TodaysLogs {
+		todayLogs {
+			id
+			text
+			logTime
+			type
+			completeHabit {
 				id
-				attributes {
-					Text
-					LogTime
-					Type
-					to_do_item {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-					habit {
-						data {
-							id
-							attributes {
-								Title
-							}
-						}
-					}
-				}
+				title
+			}
+			completeTodoitem {
+				id
+				title
 			}
 		}
 	}

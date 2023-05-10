@@ -43,9 +43,8 @@ const LogPage = () => {
 						title: log.completeHabit.title,
 					}
 				}
-				console.log("end")
 				return newLog
-				
+
 			})
 			setLogArray(logs)
 		}
@@ -83,7 +82,7 @@ const LogPage = () => {
 
 
 
-	
+
 	return (
 		<Container maxWidth="md">
 			<Box mt={5} mb={3}>

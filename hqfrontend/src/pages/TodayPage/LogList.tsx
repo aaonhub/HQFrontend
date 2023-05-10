@@ -14,36 +14,27 @@ const LogList = () => {
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
 
-	const start = new Date()
-	start.setHours(0, 0, 0, 0)
-	const end = new Date()
-	end.setHours(23, 59, 59, 999)
 
-	const { loading, error, data, refetch } = useQuery(GET_TODAY_LOGS, {
-		variables: {
-			Start: start.toISOString(),
-			End: end.toISOString(),
-		},
-		onCompleted: (data1) => {
-			const logData = data1.logs.data
-			const logs = logData.map((log: any) => {
+	const { loading, error, refetch } = useQuery(GET_TODAY_LOGS, {
+		onCompleted: (data) => {
+			const logs = data.todayLogs.map((log: any) => {
 				const newLog = new Log({
 					id: log.id,
-					logTime: log.attributes.LogTime,
-					type: log.attributes.Type,
+					logTime: log.logTime,
+					type: log.type,
 				})
 
-				if (log.attributes.Type === 'text') {
-					newLog.text = log.attributes.Text
-				} else if (log.attributes.Type === 'complete_todoitem') {
+				if (log.type === "TEXT") {
+					newLog.text = log.text
+				} else if (log.type === 'COMPLETE_TODOITEM') {
 					newLog.toDoItem = {
-						id: log.attributes.to_do_item.id,
-						title: log.attributes.to_do_item.data.attributes.Title,
+						id: log.completeTodoitem.id,
+						title: log.completeTodoitem.title,
 					}
-				} else if (log.attributes.Type === 'complete_habit') {
+				} else if (log.type === 'COMPLETE_HABIT') {
 					newLog.habit = {
-						id: log.attributes.habit.id,
-						title: log.attributes.habit.data.attributes.Title,
+						id: log.completeHabit.id,
+						title: log.completeHabit.title,
 					}
 				}
 				return newLog
@@ -103,7 +94,7 @@ const LogList = () => {
 				/>
 
 
-				{data.logs.data.length === 0 ? (
+				{logArray.length === 0 ? (
 					<Typography variant="h6" align="center" color="textSecondary">
 						Nothing logged today
 					</Typography>

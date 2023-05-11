@@ -12,7 +12,6 @@ interface LogItemProps {
 }
 
 const LogItem = React.memo(({ log, prevLog }: LogItemProps) => {
-	console.log(log)
 	const logTime = new Date(log.logTime);
 	const prevLogTime = prevLog && new Date(prevLog.logTime);
 	const isSameDay = prevLogTime && logTime.getDate() === prevLogTime.getDate();

@@ -37,7 +37,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage'
 import DemoPage from './pages/DemoPage/DemoPage'
-import DailyReviewPage from './pages/DailyReviewPage/DailyReviewPage'
+import DailyReviewPage from './pages/DailyReviewPage/1DailyReviewPage'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 
 
@@ -45,7 +45,6 @@ const REFRESH_TOKEN_MUTATION = gql`
 	mutation refreshToken {
 		refreshToken {
 			payload
-			refreshToken
 		}
 	}
 `
@@ -54,21 +53,21 @@ const drawerWidth = 240;
 
 
 function getAuth() {
-	let jwtToken = localStorage.getItem("jwtToken");
-	return !!jwtToken;
+	let jwtToken = localStorage.getItem("loggedIn");
+	return jwtToken;
 }
 
 
-function RequireAuth({ children, redirectTo }: any) {
+function RequireAuth({ children }: any) {
 	let isAuthenticated = getAuth()
-	return isAuthenticated ? children : <Navigate to={redirectTo} />
+	return isAuthenticated ? children : <Navigate to={"/login"} />
 }
 
 
 function App(): JSX.Element {
 
 	const [mobileOpen, setMobileOpen] = useState(false)
-	const [loggedIn, setLoggedIn] = useState(localStorage.getItem('loggedIn'))
+	const [loggedIn, setLoggedIn] = useState(localStorage.getItem("loggedIn"))
 
 
 
@@ -89,7 +88,7 @@ function App(): JSX.Element {
 		setInterval(() => {
 			refreshToken()
 			console.log("Refresh on interval")
-		}, 4 * 60 * 1000)
+		}, 25 * 60 * 1000)
 		console.log("Refresh")
 	}, [refreshToken])
 
@@ -176,7 +175,7 @@ function App(): JSX.Element {
 
 			<Box sx={{ flexGrow: 1 }} />
 			<List>
-				{ loggedIn === "true" &&
+				{loggedIn === "true" &&
 					<ListItem key={"LogOut"} disablePadding>
 						<ListItemButton onClick={handleLogout}>
 							<ListItemIcon>
@@ -268,34 +267,34 @@ function App(): JSX.Element {
 						<Box component="main" sx={{ flexGrow: 1, marginLeft: { sm: "0" } }}>
 							<Routes>
 
-								<Route path="/" element={<RequireAuth redirectTo="/login">
+								<Route path="/" element={<RequireAuth redirectTo="/login" then="/">
 									<TodayPage />
 								</RequireAuth>} />
-								<Route path="/log" element={<RequireAuth redirectTo="/login">
+								<Route path="/log" element={<RequireAuth>
 									<LogPage />
 								</RequireAuth>} />
-								<Route path="/inbox" element={<RequireAuth redirectTo="/login">
+								<Route path="/inbox" element={<RequireAuth>
 									<InboxPage />
 								</RequireAuth>} />
-								<Route path="/habits" element={<RequireAuth redirectTo="/login">
+								<Route path="/habits" element={<RequireAuth>
 									<HabitsPage />
 								</RequireAuth>} />
-								<Route path="/rituals" element={<RequireAuth redirectTo="/login">
+								<Route path="/rituals" element={<RequireAuth>
 									<RitualsPage />
 								</RequireAuth>} />
-								<Route path="/projects" element={<RequireAuth redirectTo="/login">
+								<Route path="/projects" element={<RequireAuth>
 									<ProjectsListPage />
 								</RequireAuth>} />
-								<Route path="/project/:projectId" element={<RequireAuth redirectTo="/login">
+								<Route path="/project/:projectId" element={<RequireAuth>
 									<ProjectPage />
 								</RequireAuth>} />
-								<Route path="/dailyreview" element={<RequireAuth redirectTo="/login">
+								<Route path="/dailyreview" element={<RequireAuth>
 									<DailyReviewPage />
 								</RequireAuth>} />
-								<Route path="/settings" element={<RequireAuth redirectTo="/login">
+								<Route path="/settings" element={<RequireAuth>
 									<SettingsPage />
 								</RequireAuth>} />
-								<Route path="/profile" element={<RequireAuth redirectTo="/login">
+								<Route path="/profile" element={<RequireAuth>
 									<ProfilePage />
 								</RequireAuth>} />
 

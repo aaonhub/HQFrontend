@@ -21,7 +21,7 @@ const LogPage = () => {
 
 
 	// Get logs query
-	const { data, loading, error, refetch } = useQuery(GET_LOGS, {
+	const { loading, error, refetch } = useQuery(GET_LOGS, {
 		onCompleted: (data) => {
 			const logs = data.logs.map((log: any) => {
 				const newLog = new Log({
@@ -49,8 +49,6 @@ const LogPage = () => {
 			setLogArray(logs)
 		}
 	})
-
-	console.log(data)
 
 
 

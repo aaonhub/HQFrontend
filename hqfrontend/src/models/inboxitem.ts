@@ -44,6 +44,7 @@ export default InboxItem;
 
 
 // Queries
+// Update to django
 export const GET_TODAY_LIST_ITEMS = gql`
 	query GetTodaysToDoList($Today: Date!) {
 		toDoItems(Today: $Today) {
@@ -58,6 +59,7 @@ export const GET_TODAY_LIST_ITEMS = gql`
 			description
 			startDate
 			startTime
+			timeCompleted
 		}
 	}  
 `;

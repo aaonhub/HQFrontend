@@ -7,6 +7,7 @@ interface DisplayDailyReviewProps {
 }
 
 const DisplayDailyReview: React.FC<DisplayDailyReviewProps> = ({ dailyReview }) => {
+
 	return (
 		<Box sx={{ p: 2 }}>
 

@@ -32,18 +32,17 @@ const TodayPage = () => {
 			Today: localDate,
 		},
 		onCompleted: (data) => {
-			const inboxItemsData = data.toDoItems.data
-			const inboxItems = inboxItemsData.map((inboxItem: any) => {
+			const inboxItems = data.toDoItems.map((toDoItems: any) => {
 				return new InboxItem({
-					id: inboxItem.id,
-					title: inboxItem.attributes.Title,
-					description: inboxItem.attributes.Description,
-					completed: inboxItem.attributes.Completed,
-					project: inboxItem.attributes.Project,
-					dueDateTime: inboxItem.attributes.DueDateTime,
-					startDate: inboxItem.attributes.StartDate,
-					startTime: inboxItem.attributes.startTime,
-					timeCompleted: new Date(inboxItem.attributes.TimeCompleted),
+					id: toDoItems.id,
+					title: toDoItems.title,
+					description: toDoItems.description,
+					completed: toDoItems.completed,
+					project: toDoItems.project,
+					dueDateTime: toDoItems.dueDateTime,
+					startDate: toDoItems.startDate,
+					startTime: toDoItems.startTime,
+					timeCompleted: new Date(toDoItems.timeCompleted),
 				})
 			})
 			setInboxItems(inboxItems)

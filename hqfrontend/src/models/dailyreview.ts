@@ -40,94 +40,97 @@ export default DailyReview;
 
 
 // Queries
+// Updated to django
 export const GET_DAILY_REVIEW = gql`
 	query GetDailyReview($id: ID!) {
 		dailyReview(id: $id) {
-			data {
-				id
-				attributes {
-					Title
-					GratitudeList
-					MajorEvents
-					Details
-				}
-			}
+			id
+			title
+			gratitudeList
+			majorEvents
+			details
 		}
 	}
 `;
 
+// Updated to django
 export const GET_DAILY_REVIEW_BY_DATE = gql`
 	query GetDailyReviewByDate($date: Date!) {
-		dailyReviews (filters: {Date: {eq: $date}}) {
-			data {
-				id
-				attributes {
-					Title
-					GratitudeList
-					MajorEvents
-					Details
-					Date
-				}
-			}
+		dailyReviews(date: $date) {
+			id
+			title
+			gratitudeList
+			majorEvents
+			details
+			date
 		}
 	}
 `;
 
+// Updated to django
 export const GET_DAILY_REVIEWS = gql`
 	query {
 		dailyReviews{
-			data {
-				id
-				attributes {
-					Title
-					Date
-				}
-			}
+			id
+			title
+			date
 		}
 	}
 `;
 
 
 // Mutations
+// Updated to django
 export const CREATE_DAILY_REVIEW = gql`
 	mutation CreateDailyReview( 
 		$title: String,
-		$gratitudeList: JSON,
-		$majorEvents: JSON,
+		$gratitudeList: JSONString,
+		$majorEvents: JSONString,
 		$details: String,
 		$date: Date!
 	) {
-		createDailyReview(data : { 
-			Title: $title, 
-			GratitudeList: $gratitudeList, 
-			MajorEvents: $majorEvents, 
-			Details: $details
-			Date: $date
-		}) {
-			data {
+		createDailyReview(
+			title: $title, 
+			gratitudeList: $gratitudeList, 
+			majorEvents: $majorEvents, 
+			details: $details
+			date: $date
+		) {
+			dailyReview {
 				id
-				attributes {
-					Title          
-				}
+				title
+				details
+				gratitudeList
+				majorEvents
+				date
 			}
 		}
 	}
 `;
 
+// Updated to django
 export const UPDATE_DAILY_REVIEW = gql`
 	mutation UpdateDailyReview( 
 		$id: ID! 
 		$title: String! 
-		$gratitudeList: JSON!, 
-		$majorEvents: JSON! 
+		$gratitudeList: JSONString!, 
+		$majorEvents: JSONString! 
 		$details: String!
 	) {
-		updateDailyReview(id: $id, data : { Title: $title, GratitudeList: $gratitudeList, MajorEvents: $majorEvents, Details: $details}) {
-			data {
+		updateDailyReview(
+			id: $id, 
+			title: $title, 
+			gratitudeList: $gratitudeList, 
+			majorEvents: $majorEvents, 
+			details: $details
+		) {
+			dailyReview {
 				id
-				attributes {
-					Title          
-				}
+				title
+				details
+				gratitudeList
+				majorEvents
+				date
 			}
 		}
 	}

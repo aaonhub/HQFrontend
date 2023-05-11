@@ -16,9 +16,17 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 	if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
+const graphqlURI = process.env.NODE_ENV === 'production'
+	? process.env.REACT_APP_GRAPHQL_PROD_URI
+	: process.env.REACT_APP_GRAPHQL_LOCAL_URI;
+
+	// log if it's production or local
+	console.log(`[GraphQL URI]: ${process.env.REACT_APP_GRAPHQL_LOCAL_URI}`)
+	console.log(process.env)
+
+
 const httpLink = new HttpLink({
-	uri: 'https://hqlink.herokuapp.com/graphql/',
-	// uri: 'http://localhost:8000/graphql/',
+	uri: graphqlURI,
 	credentials: 'include',
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client';
 
@@ -15,13 +15,24 @@ interface EditDailyReviewProps {
 	setDailyReview: React.Dispatch<React.SetStateAction<DailyReview>>
 	setEditMode: React.Dispatch<React.SetStateAction<boolean>>
 	today: string
+	loading: any
 }
 
-const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today }) => {
+const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading }) => {
 	const [title, setTitle] = useState(dailyReview.title)
 	const [gratitudes, setGratitudes] = useState(dailyReview.gratitudes.join('\n'))
 	const [majorEvents, setMajorEvents] = useState(dailyReview.majorEvents.join('\n'))
 	const [details, setDetails] = useState(dailyReview.details)
+
+
+	// Use useEffect to update state variables when dailyReview changes
+	useEffect(() => {
+		setTitle(dailyReview.title);
+		setGratitudes(dailyReview.gratitudes.join('\n'));
+		setMajorEvents(dailyReview.majorEvents.join('\n'));
+		setDetails(dailyReview.details);
+	}, [dailyReview]);
+
 
 	const handleSave = () => {
 		const gratitudesList = gratitudes.split('\n')
@@ -83,6 +94,8 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 			});
 		}
 	}
+
+	if (loading) return <p>Loading...</p>
 
 	return (
 		<Box>

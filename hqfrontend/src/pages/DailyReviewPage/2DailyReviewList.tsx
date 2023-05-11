@@ -92,7 +92,7 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 												<Typography component="p">
 													{dailyReview
 														? dailyReview.title || 'Untitled'
-														: <i>empty</i>
+														: <i>-----</i>
 													}
 												</Typography>
 											</>

@@ -32,6 +32,7 @@ const DailyReviewPage = () => {
 	const { loading, error } = useQuery(GET_DAILY_REVIEW_BY_DATE, {
 		variables: { date: today },
 		onCompleted: (data) => {
+			console.log("running onCompleted")
 			if (!data.dailyReviews[0]) {
 				setDailyReview(
 					new DailyReview({
@@ -93,6 +94,7 @@ const DailyReviewPage = () => {
 									setDailyReview={setDailyReview}
 									setEditMode={setEditMode}
 									today={today}
+									loading={loading}
 								/>
 							)}
 						</div>

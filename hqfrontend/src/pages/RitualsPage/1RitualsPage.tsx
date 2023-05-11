@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_RITUALS } from '../../models/ritual'
-import { Box, Dialog, Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import NewRitualDialog from './NewRitualDialog'
 
 const RitualPage = () => {

@@ -18,9 +18,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // Queries and Mutations
 import {
 	ADD_TODO,
-	COMPLETE_UNCOMPLETE_TODO,
+	CHECK_UNCHECK_TODO,
 	DELETE_TODO,
-	GET_INCOMPLETE_TODOS
+	GET_INBOX_TODOS
 } from '../../models/inboxitem'
 import { ADD_LOG } from '../../models/log'
 
@@ -39,21 +39,20 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 
 
 	// Get all incomplete todos
-	const { loading, error } = useQuery(GET_INCOMPLETE_TODOS, {
+	const { loading, error, refetch } = useQuery(GET_INBOX_TODOS, {
 		onError: (error) => console.log(error.networkError),
-		onCompleted: (data1) => {
-			const toDoItemsData = data1.toDoItems.data
-			const toDoItems = toDoItemsData.map((toDoItem: any) => {
+		onCompleted: (data) => {
+			const toDoItems = data.toDoItemsWithoutProject.map((toDoItem: any) => {
 				return new InboxItem({
 					id: toDoItem.id,
-					title: toDoItem.attributes.Title,
-					description: toDoItem.attributes.Description,
-					completed: toDoItem.attributes.Completed,
-					project: toDoItem.attributes.Project,
-					dueDateTime: toDoItem.attributes.DueDateTime,
-					startDate: toDoItem.attributes.StartDate,
-					startTime: toDoItem.attributes.startTime,
-					timeCompleted: toDoItem.attributes.TimeCompleted,
+					title: toDoItem.title,
+					description: toDoItem.description,
+					completed: toDoItem.completed,
+					project: toDoItem.project,
+					dueDateTime: toDoItem.dueDateTime,
+					startDate: toDoItem.startDate,
+					startTime: toDoItem.startTime,
+					timeCompleted: toDoItem.timeCompleted,
 				})
 			})
 			setToDoItems(toDoItems)
@@ -61,14 +60,21 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 	})
 
 
+	// Add todo
 	const [addTodo] = useMutation(ADD_TODO, {
 		onError: (error) => console.log(error.networkError),
+		onCompleted: (data) => {
+			refetch()
+		}
 	});
 
 
 	// Delete todo
 	const [deleteTodo] = useMutation(DELETE_TODO, {
 		onError: (error) => console.log(error.networkError),
+		onCompleted: (data) => {
+			refetch()
+		}
 	});
 	const handleDelete = (id: string) => {
 		deleteTodo({
@@ -78,7 +84,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 
 
 	// Complete or uncomplete todo
-	const [completeTodo] = useMutation(COMPLETE_UNCOMPLETE_TODO, {
+	const [completeTodo] = useMutation(CHECK_UNCHECK_TODO, {
 		onError: (error) => console.log(error.networkError),
 	});
 	const [addLog] = useMutation(ADD_LOG, {
@@ -94,37 +100,37 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 				id: toDoItem.id,
 				Completed: !toDoItem.completed
 			},
-		});
+		})
 		addLog({
 			variables: {
 				todoItemId: toDoItem.id,
 				logTime: new Date().toISOString(),
 			}
-		});
-	};
+		})
+	}
 
 
 	const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewTodo(e.target.value);
-	}, []);
+	}, [])
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		addTodo({
-			variables: { Title: newTodo },
+			variables: { title: newTodo },
 		});
-		setNewTodo('');
-	};
+		setNewTodo('')
+	}
 
 
 	const handleEdit = (toDoItem: InboxItem) => {
-		setToDoItem(toDoItem);
-		setShowEditDialog(true);
+		setToDoItem(toDoItem)
+		setShowEditDialog(true)
 	};
 
 
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error :(</p>;
+	if (loading) return <p>Loading...</p>
+	if (error) return <p>Error :(</p>
 
 	return (
 		<>
@@ -144,6 +150,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 						variant="outlined"
 						value={newTodo}
 						onChange={handleInputChange}
+						type="search"
 					/>
 					<Button variant="contained" type="submit">
 						Add

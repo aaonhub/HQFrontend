@@ -44,7 +44,7 @@ export default InboxItem;
 
 
 // Queries
-// Update to django
+// Updated to django
 export const GET_TODAY_LIST_ITEMS = gql`
 	query GetTodaysToDoList($Today: Date!) {
 		toDoItems(Today: $Today) {
@@ -64,45 +64,40 @@ export const GET_TODAY_LIST_ITEMS = gql`
 	}  
 `;
 
-export const GET_COMPLETED_TODOS = gql`
+// Updated to django
+export const GET_INBOX_TODOS = gql`
 	query {
-		toDoItems(filters: { Completed: { eq: true } }, limit: 5) {
+		toDoItemsWithoutProject {
 			id
-			Title
-			Completed
-			DueDateTime
-			Description
-		}
-	}
-`;
-
-export const GET_INCOMPLETE_TODOS = gql`
-	query {
-		toDoItems(filters: { Completed: { eq: false } }) {
-			Title
-			Completed
-			DueDateTime
-			Description
+			title
+			description
+			completed
+			project {
+				id
+			}
+			dueDateTime
+			startDate
+			startTime
+			timeCompleted
 		}
 	}
 `;
 
 
 // Mutations
+// Updated to django
 export const ADD_TODO = gql`
-  mutation createToDoItem($Title: String!) {
-    createToDoItem(data: { Title: $Title, Completed: false }) {
-      data {
-        id
-        attributes {
-          Title
-          Completed
-		  DueDateTime
-		  Description
-        }
-      }
-    }
-  }
+	mutation createToDoItem($title: String!) {
+		createToDoItem( title: $title ) {
+			toDoItem {
+				id
+				title
+				completed
+				dueDateTime
+				description
+			}
+		}
+	}
 `;
 
 export const UPDATE_TODO = gql`
@@ -121,27 +116,27 @@ export const UPDATE_TODO = gql`
 	}
 `;
 
+// Updated to django
 export const DELETE_TODO = gql`
 	mutation deleteToDoItem($id: ID!) {
 		deleteToDoItem(id: $id) {
-			data {
+			toDoItem{
 				id
 			}
 		}
 	}
 `;
 
-export const COMPLETE_UNCOMPLETE_TODO = gql`
-	mutation updateToDoItem($id: ID!, $Completed: Boolean!) {
-		updateToDoItem(id: $id, data: { Completed: $Completed }) {
-			data {
+// Updated to django
+export const CHECK_UNCHECK_TODO = gql`
+	mutation checkUncheckToDoItem($id: ID!, $Completed: Boolean!) {
+		checkUncheckToDoItem(id: $id, completed: $Completed ) {
+			toDoItem {
 				id
-				attributes {
-					Title
-					Completed
-					DueDateTime
-					Description
-				}
+				title
+				completed
+				dueDateTime
+				description
 			}
 		}
 	}

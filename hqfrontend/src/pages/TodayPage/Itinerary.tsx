@@ -13,7 +13,7 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 // Queries and Mutations
 import { useMutation } from '@apollo/client';
-import { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
+import { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
 import { CHECK_HABIT } from '../../models/habit';
 import { ADD_LOG } from '../../models/log';
 
@@ -62,14 +62,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		})
 	}
 
-	const [checkToDo] = useMutation(COMPLETE_UNCOMPLETE_TODO)
+	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
 	const [addToDoLog] = useMutation(ADD_LOG)
 	const handleCheckToDo = async (todoId: string) => {
 		console.log(todoId)
 		await checkToDo({
 			variables: {
 				// get rid of the h at the end of the id
-				toDoId: todoId.slice(0, -1),
+				id: todoId.slice(0, -1),
 				Completed: true,
 			},
 		})

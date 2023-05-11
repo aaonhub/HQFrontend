@@ -24,7 +24,7 @@ import BookIcon from '@mui/icons-material/Book'
 
 // Pages
 import HabitsPage from './pages/HabitsPage/1HabitsPage'
-import InboxPage from './pages/InboxPage/InboxPage'
+import InboxPage from './pages/InboxPage/1InboxPage'
 import TodayPage from './pages/TodayPage/1TodayPage'
 import Test from './pages/testpage'
 import LogPage from './pages/LogPage/LogPage'
@@ -45,6 +45,14 @@ const REFRESH_TOKEN_MUTATION = gql`
 	mutation refreshToken {
 		refreshToken {
 			payload
+		}
+	}
+`
+
+const DELETE_REFRESH_TOEKN_MUTATION = gql`
+	mutation {
+		deleteRefreshTokenCookie{
+			deleted
 		}
 	}
 `
@@ -70,6 +78,12 @@ function App(): JSX.Element {
 	const [loggedIn, setLoggedIn] = useState(localStorage.getItem("loggedIn"))
 
 
+	const [deleteRefreshTokenCookie] = useMutation(DELETE_REFRESH_TOEKN_MUTATION, {
+		onCompleted: () => {
+			setLoggedIn("false")
+			localStorage.removeItem('loggedIn')
+		}
+	})
 
 	// Refresh Mutation with onerror
 	const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION, {
@@ -95,8 +109,7 @@ function App(): JSX.Element {
 
 	// logout
 	const handleLogout = () => {
-		localStorage.removeItem("jwtToken")
-		window.location.reload();
+		deleteRefreshTokenCookie()
 	}
 
 

@@ -1,18 +1,10 @@
 import { gql } from '@apollo/client';
 
-import HabitItem from './inboxitem';
 
-
-export type HabitCompletion = {
-	habitId: string;
-	completed: boolean;
-};
-
-export type RitualHistory = {
+export type HabitItem = {
 	id: string;
+	title: string;
 	completed: boolean;
-	habitCompletion: HabitCompletion[];
-	startTime: Date;
 };
 
 export type RitualItem = {
@@ -21,20 +13,24 @@ export type RitualItem = {
 	completed: boolean;
 };
 
+export type OrderType = {
+	id: string;
+	completed: boolean;
+};
 
 class Ritual {
 	constructor(
 		public id: string,
 		public title: string,
 		public habits: HabitItem[],
-		public ritual_history?: RitualHistory[],
-		public RitualItems?: RitualItem[]
+		public ritual_items: RitualItem[],
+		public order: OrderType[]
 	) {
 		this.id = id;
 		this.title = title;
 		this.habits = habits;
-		this.ritual_history = ritual_history;
-		this.RitualItems = RitualItems;
+		this.ritual_items = ritual_items;
+		this.order = order;
 	}
 }
 
@@ -42,15 +38,12 @@ export default Ritual
 
 
 // Queries
+// Updated to django
 export const GET_RITUALS = gql`
 	query {
-		rituals{
-			data {
-				id
-				attributes {
-					Title
-				}
-			}
+		rituals {
+			id
+			title
 		}
 	}
 `;
@@ -59,12 +52,10 @@ export const GET_RITUALS = gql`
 // Mutations
 export const CREATE_RITUAL = gql`
 	mutation CreateRitual($title: String!) {
-		createRitual(data : {Title: $title}) {
-			data {
+		createRitual( title: $title) {
+			ritual {
 				id
-				attributes {
-					Title
-				}
+				title
 			}
 		}
 	}

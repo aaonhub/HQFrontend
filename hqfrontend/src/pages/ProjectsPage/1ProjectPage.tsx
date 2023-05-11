@@ -20,7 +20,7 @@ import { ADD_LOG } from '../../models/log';
 
 // Models
 import Project from '../../models/project';
-import InboxItem, { COMPLETE_UNCOMPLETE_TODO } from '../../models/inboxitem';
+import InboxItem, { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
 
 
 const ProjectPage = () => {
@@ -114,7 +114,7 @@ const ProjectPage = () => {
 
 
 	// Check off to do item
-	const [completeToDoItem] = useMutation(COMPLETE_UNCOMPLETE_TODO, {
+	const [completeToDoItem] = useMutation(CHECK_UNCHECK_TODO, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
 			console.log('completed')

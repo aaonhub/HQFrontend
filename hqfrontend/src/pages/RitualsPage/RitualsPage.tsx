@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_RITUALS } from '../../models/ritual'
 import { Box, Dialog, Grid } from '@mui/material'
+import NewRitualDialog from './NewRitualDialog'
 
 const RitualPage = () => {
 	const [open, setOpen] = useState(false)
@@ -22,7 +23,7 @@ const RitualPage = () => {
 	if (loading) return <div>Loading...</div>
 	if (error) return <div>Error! {error.message}</div>
 
-	const rituals = data.rituals.data
+	const rituals = data.rituals
 
 
 	return (
@@ -41,19 +42,15 @@ const RitualPage = () => {
 				<Grid item xs={12}>
 					<ul>
 						{rituals.map((ritual: any) => (
-							<li key={ritual.id}>{ritual.attributes.Title}</li>
+							<li key={ritual.id}>{ritual.title}</li>
 						))}
 					</ul>
 				</Grid>
 
 			</Grid>
 
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="form-dialog-title"
-			>
-			</Dialog>
+			<NewRitualDialog open={open} onClose={handleClose} />
+
 		</Box>
 	)
 }

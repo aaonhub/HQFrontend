@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './LoginPage.module.css';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
@@ -15,6 +18,7 @@ const LoginPage = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate(); // Access the navigate function from react-router-dom
+	const [showAlert, setShowAlert] = useState(false); // State to control the visibility of the alert
 
 	const [login, { error, loading }] = useMutation(LOGIN_MUTATION, {
 		onCompleted: (data) => {
@@ -22,17 +26,17 @@ const LoginPage = () => {
 			localStorage.setItem('loggedIn', 'true');
 			navigate('/'); // Redirect to root URL after successful login
 		},
-	})
+	});
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			await login({ variables: { username, password } })
+			await login({ variables: { username, password } });
 		} catch (error) {
-			console.error('Login error:', error)
+			console.error('Login error:', error);
+			setShowAlert(true); // Show the alert when login fails
 		}
-	}
-
+	};
 
 	return (
 		<div className={styles.login}>
@@ -60,6 +64,15 @@ const LoginPage = () => {
 				</button>
 			</form>
 
+			{showAlert && ( // Render the alert component conditionally
+				<Stack sx={{ width: '100%', marginBottom: '1rem' }} spacing={2}>
+					<Alert severity="error">
+						<AlertTitle>Login Failed</AlertTitle>
+						Please check your credentials and try again.
+					</Alert>
+				</Stack>
+			)}
+
 			{/* Add a Link to the registration page */}
 			<p>
 				Don't have an account?{' '}
@@ -67,9 +80,8 @@ const LoginPage = () => {
 					Register here
 				</Link>
 			</p>
-
 		</div>
-	)
-}
+	);
+};
 
-export default LoginPage
+export default LoginPage;

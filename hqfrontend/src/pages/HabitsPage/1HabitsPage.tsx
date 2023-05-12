@@ -16,12 +16,14 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 import Habit from '../../models/habit';
 
 const HabitsPage = () => {
-	const [habits, setHabits] = useState<Habit[]>([]);
-	const [today, setToday] = useState(getCurrentLocalDate());
-	const [open, setOpen] = useState(false);
+	const [habits, setHabits] = useState<Habit[]>([])
+	const [today, setToday] = useState(getCurrentLocalDate())
+	const [open, setOpen] = useState(false)
+
 	// Habits Query
 	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: today, },
+		fetchPolicy: "network-only", // Add this line
 		onCompleted: (data) => {
 			const habits = data.habitsDueToday.map((habit: any) => {
 				return new Habit(

@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import Ritual, { HabitItem, RitualItem } from '../../models/ritual'
+import React, { useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import { useQuery, gql } from '@apollo/client';
+import Ritual, { HabitItem, RitualItem } from '../../models/ritual';
+import SearchBar from '../../components/SearchBar';
+
+import { GET_RITUALS } from '../../models/ritual';
 
 interface RitualDialogProps {
 	open: boolean;
@@ -14,16 +18,13 @@ interface RitualDialogProps {
 }
 
 const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
-	const [title, setTitle] = useState('');
+	const [title, setTitle] = useState<string>('');
 	const [habits, setHabits] = useState<HabitItem[]>([]);
 	const [ritualItems, setRitualItems] = useState<RitualItem[]>([]);
+	const { loading, error, data } = useQuery(GET_RITUALS);
 
 	const handleAddHabit = (habit: HabitItem) => {
 		setHabits([...habits, habit]);
-	};
-
-	const handleAddRitualItem = (ritualItem: RitualItem) => {
-		setRitualItems([...ritualItems, ritualItem]);
 	};
 
 	const handleSubmit = () => {
@@ -47,6 +48,12 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
 				/>
+
+				{/* Search bar */}
+				{/* {!loading && !error && data && (
+					<SearchBar data={data.rituals} onSelect={handleAddHabit} />
+				)} */}
+
 				{/* Add habit selection and ritual item input fields here */}
 			</DialogContent>
 			<DialogActions>

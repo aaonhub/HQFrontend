@@ -49,7 +49,15 @@ const RitualPage = () => {
 
 			</Grid>
 
-			<NewRitualDialog open={open} onClose={handleClose} />
+
+
+			{/* Dialog */}
+			{open &&
+				<NewRitualDialog open={open} onClose={handleClose} />
+			}
+
+
+
 
 		</Box>
 	)

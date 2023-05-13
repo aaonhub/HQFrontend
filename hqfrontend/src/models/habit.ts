@@ -69,41 +69,13 @@ export const GET_HABITS_DUE_TODAY = gql`
 	}
 `
 
-export const GET_HABITS = gql`
-query habits($Today: Date!) {
-	habits {
-		data {
+export const GET_ALL_HABITS = gql`
+	query myHabits {
+		myHabits {
 			id
-			attributes {
-				Title
-				Active
-				Frequency
-				LastCompleted
-				Order
-				HabitFrequency {
-					StartDate
-					EndDate
-					TimeOfDay
-					RepetitionFrequency
-					DaysOfTheWeek
-					DaysOfTheMonth
-					DayOfTheYear
-				}
-				habit_histories(filters: {Date: {eq: $Today}}) {
-					data {
-						id
-						attributes {
-							Date
-							Completed
-							createdAt
-							updatedAt
-						}
-					}
-				}
-			}
+			title
 		}
 	}
-}
 `
 
 

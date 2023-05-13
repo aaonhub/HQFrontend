@@ -9,7 +9,7 @@ import DailyReviewList from './2DailyReviewList'
 import { getCurrentLocalDate } from '../../components/DateFunctions'
 
 // Queries and Mutations
-import { GET_DAILY_REVIEW_BY_DATE } from '../../models/dailyreview'
+import { GET_DAILY_REVIEWS, GET_DAILY_REVIEW_BY_DATE } from '../../models/dailyreview'
 
 // Models
 import DailyReview from '../../models/dailyreview'
@@ -29,10 +29,10 @@ const DailyReviewPage = () => {
 	}))
 
 
-	const { loading, error } = useQuery(GET_DAILY_REVIEW_BY_DATE, {
+	const { loading: dailyReviewLoading, error: dailyReviewError } = useQuery(GET_DAILY_REVIEW_BY_DATE, {
 		variables: { date: today },
+		fetchPolicy: 'network-only',
 		onCompleted: (data) => {
-			console.log("running onCompleted")
 			if (!data.dailyReviews[0]) {
 				setDailyReview(
 					new DailyReview({
@@ -61,9 +61,13 @@ const DailyReviewPage = () => {
 		},
 	})
 
+	const { loading: dailyReviewsLoading, data: dailyReviewsData, refetch } = useQuery(GET_DAILY_REVIEWS, {
+		fetchPolicy: 'network-only',
+	});
 
 
-	if (error) return <Typography>Error! {error.message}</Typography>
+
+	if (dailyReviewError) return <Typography>Error! {dailyReviewError.message}</Typography>
 
 	return (
 		<Container>
@@ -71,7 +75,14 @@ const DailyReviewPage = () => {
 
 
 				{/* Left Side */}
-				<DailyReviewList today={today} setToday={setToday} editMode={editMode} setEditMode={setEditMode} />
+				<DailyReviewList
+					today={today}
+					setToday={setToday}
+					editMode={editMode}
+					setEditMode={setEditMode}
+					data={dailyReviewsData}
+					loading={dailyReviewsLoading}
+				/>
 
 
 				{/* Vertical Divider */}
@@ -81,7 +92,7 @@ const DailyReviewPage = () => {
 
 
 				{/* Right Side */}
-				{loading ?
+				{dailyReviewLoading ?
 					<Typography>Loading...</Typography>
 					:
 					< Grid xs={8} item>
@@ -94,7 +105,8 @@ const DailyReviewPage = () => {
 									setDailyReview={setDailyReview}
 									setEditMode={setEditMode}
 									today={today}
-									loading={loading}
+									loading={dailyReviewLoading}
+									refetch={refetch}
 								/>
 							)}
 						</div>

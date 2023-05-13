@@ -48,11 +48,36 @@ export const GET_RITUALS = gql`
 	}
 `;
 
+export const GET_RITUAL = gql`
+	query Ritual($id: ID!) {
+		ritual(id: $id) {
+			id
+			title
+			habits {
+				id
+				title
+			}
+			ritualItems
+			ritualOrder
+		}
+	}
+`;
+
 
 // Mutations
 export const CREATE_RITUAL = gql`
-	mutation CreateRitual($title: String!) {
-		createRitual( title: $title) {
+	mutation CreateRitual(
+		$title: String!
+		$habits: [ID]!
+		$ritualItems: JSONString!
+		$ritualOrder: JSONString!
+	) {
+		createRitual(
+			title: $title
+			habits: $habits
+			ritualItems: $ritualItems
+			ritualOrder: $ritualOrder
+		) {
 			ritual {
 				id
 				title

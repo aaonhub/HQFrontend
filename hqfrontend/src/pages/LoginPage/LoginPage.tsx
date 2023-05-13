@@ -20,7 +20,7 @@ const LoginPage = () => {
 	const navigate = useNavigate(); // Access the navigate function from react-router-dom
 	const [showAlert, setShowAlert] = useState(false); // State to control the visibility of the alert
 
-	const [login, { error, loading }] = useMutation(LOGIN_MUTATION, {
+	const [login] = useMutation(LOGIN_MUTATION, {
 		onCompleted: (data) => {
 			console.log(data);
 			localStorage.setItem('loggedIn', 'true');

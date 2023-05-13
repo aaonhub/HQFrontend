@@ -1,9 +1,6 @@
 import { Box, Button, Grid, List, ListItem, ListItemText, Typography } from '@mui/material'
 import { formatDateWithWeekday, getCurrentLocalDate } from '../../components/DateFunctions'
 import { format, sub } from 'date-fns';
-import { useQuery } from '@apollo/client';
-
-import { GET_DAILY_REVIEWS } from '../../models/dailyreview'
 
 
 interface DailyReviewListProps {
@@ -11,14 +8,13 @@ interface DailyReviewListProps {
 	setToday: React.Dispatch<React.SetStateAction<string>>;
 	editMode: boolean;
 	setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+	data: any;
+	loading: any;
 }
 
-const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, editMode, setEditMode }) => {
+const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, editMode, setEditMode, data, loading }) => {
 
-	const { loading, data } = useQuery(GET_DAILY_REVIEWS, {
-		onCompleted: (data) => {
-		},
-	});
+
 
 	const goToToday = () => {
 		setToday(getCurrentLocalDate())

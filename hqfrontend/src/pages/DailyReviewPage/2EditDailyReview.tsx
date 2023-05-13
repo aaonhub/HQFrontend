@@ -16,9 +16,10 @@ interface EditDailyReviewProps {
 	setEditMode: React.Dispatch<React.SetStateAction<boolean>>
 	today: string
 	loading: any
+	refetch: any
 }
 
-const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading }) => {
+const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading, refetch }) => {
 	const [title, setTitle] = useState(dailyReview.title)
 	const [gratitudes, setGratitudes] = useState(dailyReview.gratitudes.join('\n'))
 	const [majorEvents, setMajorEvents] = useState(dailyReview.majorEvents.join('\n'))
@@ -93,6 +94,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 				},
 			});
 		}
+		refetch()
 	}
 
 	if (loading) return <p>Loading...</p>

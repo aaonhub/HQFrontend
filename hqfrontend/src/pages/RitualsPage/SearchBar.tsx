@@ -4,16 +4,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import { useQuery } from "@apollo/client";
 
-import { HabitItem } from "../../models/ritual";
 import { GET_ALL_HABITS } from "../../models/habit";
 import { List, ListItem } from "@mui/material";
+import { RitualItemType } from "./NewRitualDialog";
 
 
 
 
 interface SearchBarProps {
-	habits: { id: string, title: string }[];
-	setHabitToAdd: React.Dispatch<React.SetStateAction<HabitItem | undefined>>;
+	habits: RitualItemType[];
+	setHabitToAdd: React.Dispatch<React.SetStateAction<RitualItemType | undefined>>;
 }
 
 
@@ -22,13 +22,18 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 	const [searchQuery, setSearchQuery] = useState<string>("");
 
-	const { loading, error, data } = useQuery(GET_ALL_HABITS);
+	const { loading, error, data } = useQuery(GET_ALL_HABITS, {
+		onCompleted: () => {
+			console.log(data)
+		}
+	});
+
 
 	const handleSearch = (query: string) => {
 		setSearchQuery(query);
 	};
 
-	const handleSelect = (item: HabitItem) => {
+	const handleSelect = (item: any) => {
 		setHabitToAdd(item);
 	};
 
@@ -42,18 +47,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 
 
 	// Filter
-	const filteredData = data?.myHabits.filter((item: HabitItem) => {
-		const lowercaseId = item.id.toLowerCase();
+	const filteredData = data.myHabits.filter((habit: any) => {
+		const lowercaseTitle = habit.title.toLowerCase();
 		const lowercaseSearchQuery = searchQuery.toLowerCase();
 
-		// Remove the "h" prefix from the habit IDs
-		const habitIds = habits.map((habit) => habit.id.substring(1).toLowerCase());
 
-		console.log(habitIds)
+		const habitIds = habits.map((habit) => habit.id);
 
-		// Check if the ID includes the search query and there is no matching habit ID
+
 		return (
-			lowercaseId.includes(lowercaseSearchQuery) && !habitIds.includes(lowercaseId)
+			lowercaseTitle.includes(lowercaseSearchQuery) && !habitIds.includes(habit.id)
 		);
 	});
 
@@ -78,19 +81,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 
 
 			<List>
-				{filteredData?.map((item: HabitItem) => (
+				{filteredData?.map((item: any) => (
 					<ListItem
 						key={item.id}
 						onClick={() => handleSelect(item)}
-						style={{
-							padding: 5,
-							justifyContent: "normal",
-							fontSize: 20,
-							margin: 1,
-							width: "250px",
-							borderWidth: "10px",
-							cursor: "pointer",
-						}}
 					>
 						{item.title}
 					</ListItem>

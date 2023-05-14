@@ -98,8 +98,13 @@ const ProjectPage = () => {
 			if (newProjectItemTitleRef.current) {
 				newProjectItemTitleRef.current.value = ''
 			}
-			refetch()
 		},
+		refetchQueries: [
+			{
+				query: GET_PROJECT_ITEMS,
+				variables: { projectId, completed: false },
+			},
+		],
 	});
 	const handleAddProjectItem = () => {
 		addItemToProject({
@@ -116,9 +121,12 @@ const ProjectPage = () => {
 	// Check off to do item
 	const [completeToDoItem] = useMutation(CHECK_UNCHECK_TODO, {
 		onError: (error) => console.log(error.networkError),
-		onCompleted: () => {
-			console.log('completed')
-		},
+		refetchQueries: [
+			{
+				query: GET_PROJECT_ITEMS,
+				variables: { projectId, completed: false },
+			},
+		],
 	});
 	const [addToDoLog] = useMutation(ADD_LOG, {
 		onError: (error) => console.log(error.networkError),

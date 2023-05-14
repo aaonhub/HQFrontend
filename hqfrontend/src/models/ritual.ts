@@ -13,24 +13,17 @@ export type RitualItem = {
 	completed: boolean;
 };
 
-export type OrderType = {
-	id: string;
-	completed: boolean;
-};
-
 class Ritual {
 	constructor(
 		public id: string,
 		public title: string,
 		public habits: HabitItem[],
 		public ritual_items: RitualItem[],
-		public order: OrderType[]
 	) {
 		this.id = id;
 		this.title = title;
 		this.habits = habits;
 		this.ritual_items = ritual_items;
-		this.order = order;
 	}
 }
 
@@ -58,7 +51,6 @@ export const GET_RITUAL = gql`
 				title
 			}
 			ritualItems
-			ritualOrder
 		}
 	}
 `;
@@ -70,13 +62,11 @@ export const CREATE_RITUAL = gql`
 		$title: String!
 		$habits: [ID]!
 		$ritualItems: JSONString!
-		$ritualOrder: JSONString!
 	) {
 		createRitual(
 			title: $title
 			habits: $habits
 			ritualItems: $ritualItems
-			ritualOrder: $ritualOrder
 		) {
 			ritual {
 				id

@@ -39,7 +39,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 
 
 	// Get all incomplete todos
-	const { loading, error, refetch } = useQuery(GET_INBOX_TODOS, {
+	const { loading, error } = useQuery(GET_INBOX_TODOS, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: (data) => {
 			const toDoItems = data.toDoItemsWithoutProject.map((toDoItem: any) => {
@@ -62,19 +62,15 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 
 	// Add todo
 	const [addTodo] = useMutation(ADD_TODO, {
+		refetchQueries: [{ query: GET_INBOX_TODOS }],
 		onError: (error) => console.log(error.networkError),
-		onCompleted: (data) => {
-			refetch()
-		}
 	});
 
 
 	// Delete todo
 	const [deleteTodo] = useMutation(DELETE_TODO, {
 		onError: (error) => console.log(error.networkError),
-		onCompleted: (data) => {
-			refetch()
-		}
+		refetchQueries: [{ query: GET_INBOX_TODOS }],
 	});
 	const handleDelete = (id: string) => {
 		deleteTodo({
@@ -88,9 +84,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 		onError: (error) => console.log(error.networkError),
 	});
 	const [addLog] = useMutation(ADD_LOG, {
-		onCompleted: (data) => {
-			console.log(data)
-		},
+		refetchQueries: [{ query: GET_INBOX_TODOS }],
 		onError: (error) => console.log(error.networkError),
 	});
 	const handleComplete = (e: React.MouseEvent<HTMLButtonElement>, toDoItem: InboxItem) => {

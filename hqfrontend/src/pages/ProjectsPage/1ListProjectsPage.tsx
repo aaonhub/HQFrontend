@@ -35,8 +35,8 @@ const ProjectsPage = () => {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
 			setNewProjectCodename('')
-			refetch()
 		},
+		refetchQueries: [{ query: GET_PROJECTS }],
 	})
 	const handleCreateProject = async () => {
 		await createProject({

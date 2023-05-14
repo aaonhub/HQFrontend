@@ -15,7 +15,7 @@ const LogList = () => {
 	const [logText, setLogText] = useState('')
 
 
-	const { loading, error, refetch } = useQuery(GET_TODAY_LOGS, {
+	const { loading, error } = useQuery(GET_TODAY_LOGS, {
 		onCompleted: (data) => {
 			const logs = data.todayLogs.map((log: any) => {
 				const newLog = new Log({
@@ -45,7 +45,13 @@ const LogList = () => {
 	})
 
 	// Add log mutation
-	const [addLog] = useMutation(ADD_LOG)
+	const [addLog] = useMutation(ADD_LOG, {
+		onError: (error) => console.log(error.networkError),
+		onCompleted: () => {
+			setLogText('')
+		},
+		refetchQueries: [{ query: GET_TODAY_LOGS }],
+	})
 	const handleAddLog = () => {
 		if (logText.trim() !== '') {
 
@@ -54,13 +60,8 @@ const LogList = () => {
 					text: logText,
 					logTime: new Date(),
 				}
-			}).then(() => {
-				setLogText('')
 			})
-
 			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date(), type: 'TEXT' }))
-
-			refetch()
 		}
 	}
 

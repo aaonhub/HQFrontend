@@ -1,54 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import { useQuery, useMutation } from '@apollo/client';
-import { CREATE_RITUAL, HabitItem } from '../../models/ritual';
-import SearchBar from './SearchBar';
+import React, { useEffect, useState } from 'react'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import { useMutation } from '@apollo/client'
+import { CREATE_RITUAL } from '../../models/ritual'
+import SearchBar from './SearchBar'
 
-import { GET_RITUALS } from '../../models/ritual';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material'
 
 interface RitualDialogProps {
 	open: boolean;
 	onClose: () => void;
 }
 
+export interface RitualItemType {
+	id: string;
+	title: string;
+	completed: boolean;
+}
+
 const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 	const [title, setTitle] = useState<string>('')
-	const [habits, setHabits] = useState<{ id: string; title: string }[]>([])
-	const [habitToAdd, setHabitToAdd] = useState<HabitItem | undefined>()
-	const [order, setOrder] = useState<{ id: string, title: string }[]>([])
+	const [habits, setHabits] = useState<RitualItemType[]>([])
+	const [ritualItems, setRitualItems] = useState<RitualItemType[]>([])
 
-
-	const [ritualItems, setRitualItems] = useState<{ id: string; title: string }[]>([])
+	const [habitToAdd, setHabitToAdd] = useState<RitualItemType>()
 	const [newRitualItemTitle, setNewRitualItemTitle] = useState<string>()
 
 
-	const { loading, error, data } = useQuery(GET_RITUALS);
+	// Create Ritual
 	const [createRitual] = useMutation(CREATE_RITUAL, {
-		refetchQueries: [{ query: GET_RITUALS }],
 		onCompleted: () => onClose(),
 	});
 
 	const handleSubmit = async () => {
-		console.log(title)
-		console.log(JSON.stringify(ritualItems))
-		console.log(habits.map((habit) => habit.id.slice(1)))
-		console.log(JSON.stringify(order))
 		await createRitual({
 			variables: {
 				title: title,
 				ritualItems: JSON.stringify(ritualItems),
-				habits: habits.map((habit) => habit.id.slice(1)),
-				ritualOrder: JSON.stringify(order),
+				habits: habits.map((habit) => habit.id),
 			},
 		});
-		// console log all the variables
 	};
 
 
@@ -56,17 +52,11 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 	useEffect(() => {
 		if (habitToAdd) {
-			setHabits(() => [...habits, { id: 'h' + habitToAdd.id, title: habitToAdd.title, },]);
-			setOrder(() => [...order, { id: 'h' + habitToAdd.id, title: habitToAdd.title, },])
-			setHabitToAdd(undefined);
+			setHabits([...habits, habitToAdd])
+			setRitualItems(() => [...ritualItems, { id: 'h' + habitToAdd.id, title: habitToAdd.title, completed: false },])
+			setHabitToAdd(undefined)
 		}
-	}, [habitToAdd, habits, order]);
-
-	useEffect(() => {
-		if (ritualItems) {
-			setOrder(() => [...habits, ...ritualItems])
-		}
-	}, [ritualItems, order, setOrder, habits])
+	}, [habitToAdd, habits, ritualItems])
 
 
 
@@ -112,7 +102,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 
 					{/* List */}
-					{order.map((ritualItem) => (
+					{ritualItems.map((ritualItem) => (
 						<Box
 							key={ritualItem.id}
 							component="div"
@@ -143,7 +133,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 							if (e.key === 'Enter') {
 								if (!newRitualItemTitle) return;
 								const newId = findLowestAvailableNumber();
-								const newRitualItem = { id: newId, title: newRitualItemTitle };
+								const newRitualItem = { id: newId, title: newRitualItemTitle, completed: false };
 
 								setRitualItems((prevItems) => {
 									const updatedItems = [...prevItems, newRitualItem];
@@ -159,7 +149,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 				{/* Search */}
 				<Box sx={{ marginLeft: 2, width: 300 }}>
-					{!loading && !error && data && <SearchBar habits={habits} setHabitToAdd={setHabitToAdd} />}
+					<SearchBar habits={habits} setHabitToAdd={setHabitToAdd} />
 				</Box>
 
 

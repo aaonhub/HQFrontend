@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 import gql from 'graphql-tag';
 
 const REGISTER_USER = gql`
@@ -20,12 +21,16 @@ const RegistrationPage: React.FC = () => {
 		password1: '',
 		password2: '',
 	});
+	const navigate = useNavigate(); // Access the navigate function from react-router-dom
 
 	const [registerUser] = useMutation(REGISTER_USER, {
 		update(_, { data: { register: userData } }) {
 			console.log(userData);
 		},
 		variables: values,
+		onCompleted: () => {
+			navigate('/login');
+		}
 	});
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

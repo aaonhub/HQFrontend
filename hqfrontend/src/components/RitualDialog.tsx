@@ -6,6 +6,8 @@ import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import { useMutation, useQuery } from '@apollo/client'
 import CustomList from './CustomList'
+import confirmation from '../sounds/confirmation.mp3'
+import useSound from 'use-sound'
 
 // Queries and mutations
 import { GET_RITUAL } from '../models/ritual'
@@ -28,6 +30,8 @@ interface RitualDialogProps {
 const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) => {
     const [ritualTitle, setRitualTitle] = useState('')
     const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
+
+    const [playSound] = useSound(confirmation, { volume: 0.1 });
 
     const [startRitual] = useMutation(START_RITUAL)
     const [updateRitual] = useMutation(UPDATE_RITUAL, {
@@ -63,6 +67,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
 
 
     const handleCheckItem = (item: RitualItem) => {
+        playSound();
 
         const updatedItems = ritualItems.map((ritualItem: any) => {
             if (ritualItem.id === item.id) {

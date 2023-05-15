@@ -1,11 +1,19 @@
-import React from "react";
+import React from 'react';
+import { useSound } from 'use-sound';
+import confirmation from '../sounds/confirmation.mp3'
 
-const TestPage: React.FC = () => {
+const Test = () => {
+	const [playSound] = useSound(confirmation, { volume: 0.1 }); // Adjust the volume value as per your requirement
 
+	const handleButtonClick = () => {
+		playSound();
+	};
 
 	return (
-		<p>Test Page</p>
+		<div>
+			<button onClick={handleButtonClick}>Play Sound</button>
+		</div>
 	);
 };
 
-export default TestPage
+export default Test;

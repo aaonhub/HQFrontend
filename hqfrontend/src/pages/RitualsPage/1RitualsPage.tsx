@@ -3,21 +3,16 @@ import { useQuery } from '@apollo/client'
 import { GET_RITUALS } from '../../models/ritual'
 import { Box, Grid } from '@mui/material'
 import NewRitualDialog from './NewRitualDialog'
+import RitualDialog from '../../components/RitualDialog'
 
 const RitualPage = () => {
 	const [open, setOpen] = useState(false)
+	const [openRitualDialog, setOpenRitualDialog] = useState(false)
+	const [selectedRitual, setSelectedRitual] = useState('')
 
 	const { loading, error, data } = useQuery(GET_RITUALS)
 
 
-
-	const handleClickOpen = () => {
-		setOpen(true)
-	}
-
-	const handleClose = () => {
-		setOpen(false)
-	}
 
 
 	if (loading) return <div>Loading...</div>
@@ -35,14 +30,20 @@ const RitualPage = () => {
 				</Grid>
 
 				<Grid item xs={4}>
-					<button onClick={handleClickOpen}>Add Ritual</button>
+					<button onClick={() => setOpen(true)}>New Ritual</button>
 				</Grid>
 
 
 				<Grid item xs={12}>
 					<ul>
 						{rituals.map((ritual: any) => (
-							<li key={ritual.id}>{ritual.title}</li>
+							// set selected ritual
+							<li key={ritual.id} onClick={() => {
+								setSelectedRitual(ritual.id)
+								setOpenRitualDialog(true)
+							}}>
+								{ritual.title}
+							</li>
 						))}
 					</ul>
 				</Grid>
@@ -53,10 +54,13 @@ const RitualPage = () => {
 
 			{/* Dialog */}
 			{open &&
-				<NewRitualDialog open={open} onClose={handleClose} />
+				<NewRitualDialog open={open} onClose={() => setOpen(false)} />
 			}
 
-
+			{
+				openRitualDialog &&
+				<RitualDialog open={openRitualDialog} onClose={() => setOpenRitualDialog(false)} ritualId={selectedRitual} />
+			}
 
 
 		</Box>

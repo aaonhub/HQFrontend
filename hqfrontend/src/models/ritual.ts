@@ -46,11 +46,8 @@ export const GET_RITUAL = gql`
 		ritual(id: $id) {
 			id
 			title
-			habits {
-				id
-				title
-			}
 			ritualItems
+			inProgress
 		}
 	}
 `;
@@ -68,6 +65,39 @@ export const CREATE_RITUAL = gql`
 			habits: $habits
 			ritualItems: $ritualItems
 		) {
+			ritual {
+				id
+				title
+			}
+		}
+	}
+`;
+
+export const START_RITUAL = gql`
+	mutation ($ritualId: ID!) {
+		startRitual(ritualId: $ritualId) {
+			ritual {
+				id
+				title
+			}
+		}
+	}
+`;
+
+export const COMPLETE_RITUAL = gql`
+	mutation ($ritualId: ID!, $status: String!) {
+		finishRitual(ritualId: $ritualId, status: $status) {
+			ritual {
+				id
+				title
+			}
+		}
+	}
+`;
+
+export const UPDATE_RITUAL = gql`
+	mutation ($id: ID!, $title: String, $habits: [ID], $ritualItems: JSONString, $inProgress: Boolean) {
+		updateRitual(id: $id, title: $title, habits: $habits, ritualItems: $ritualItems, inProgress: $inProgress) {
 			ritual {
 				id
 				title

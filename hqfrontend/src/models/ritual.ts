@@ -105,3 +105,14 @@ export const UPDATE_RITUAL = gql`
 		}
 	}
 `;
+
+export const DELETE_RITUAL = gql`
+	mutation ($ritualId: ID!) {
+		deleteRitual(ritualId: $ritualId) {
+			ritual {
+				id
+				title
+			}
+		}
+	}
+`;

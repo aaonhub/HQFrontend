@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Fab, TextField, List } from '@mui/material';
 import ProjectToDoItem from './3ProjectToDoItem';
-import EditInboxItemDialog from '../../components/EditInboxItemDialog';
+import EditInboxItemDialog from '../../components/EditToDoItemDialog';
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Icons

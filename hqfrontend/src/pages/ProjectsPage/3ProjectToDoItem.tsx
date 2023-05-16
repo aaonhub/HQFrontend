@@ -1,5 +1,4 @@
 import {
-	Button,
 	Checkbox,
 	IconButton,
 	ListItem,
@@ -7,7 +6,6 @@ import {
 	ListItemIcon,
 	ListItemText,
 } from "@mui/material";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 import React from "react";
 import { useMutation } from "@apollo/client";
@@ -91,27 +89,7 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 				</ListItemButton>
 			</ListItem>
 
-			<Dialog
-				open={openDialog}
-				onClose={closeDeleteDialog}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						Are you sure you want to delete this item?
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={closeDeleteDialog} color="primary">
-						Cancel
-					</Button>
-					<Button onClick={handleDelete} color="primary" autoFocus>
-						Confirm
-					</Button>
-				</DialogActions>
-			</Dialog>
+			
 
 		</React.Fragment>
 	);

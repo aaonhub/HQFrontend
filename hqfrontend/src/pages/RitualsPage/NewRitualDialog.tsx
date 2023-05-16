@@ -83,7 +83,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 
 			{/* Title */}
-			<DialogTitle>
+			<DialogTitle sx={{ pb: 0 }}>
 				<TextField
 					autoFocus
 					margin="dense"
@@ -96,12 +96,10 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 			</DialogTitle>
 
 
+
 			<DialogContent sx={{ display: 'flex' }}>
 				<Box sx={{ flex: 1 }}>
 					<DialogContentText>Ritual Items:</DialogContentText>
-
-
-					{/* List */}
 					{ritualItems.map((ritualItem) => (
 						<Box
 							key={ritualItem.id}
@@ -117,11 +115,6 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 							<Typography>{ritualItem.title}</Typography>
 						</Box>
 					))}
-
-
-
-
-					{/* Ritual Item input */}
 					<TextField
 						margin="dense"
 						label="New Ritual Item"
@@ -144,17 +137,12 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 							}
 						}}
 					/>
-
 				</Box>
-
-				{/* Search */}
 				<Box sx={{ marginLeft: 2, width: 300 }}>
 					<SearchBar habits={habits} setHabitToAdd={setHabitToAdd} />
 				</Box>
-
-
-
 			</DialogContent>
+
 
 
 			{/* Buttons */}

@@ -7,6 +7,11 @@ import Button from '@mui/material/Button'
 import { useMutation, useQuery } from '@apollo/client'
 import CustomList from './CustomChecklist'
 import useSound from 'use-sound'
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 
 // Sounds
 import complete from '../sounds/complete.wav'
@@ -14,7 +19,9 @@ import confirmation from '../sounds/confirmation.mp3'
 
 // Queries and mutations
 import { GET_RITUAL } from '../models/ritual'
-import { START_RITUAL, COMPLETE_RITUAL, UPDATE_RITUAL } from '../models/ritual'
+import { START_RITUAL, COMPLETE_RITUAL, UPDATE_RITUAL, DELETE_RITUAL } from '../models/ritual'
+
+
 
 
 interface RitualItem {
@@ -22,7 +29,6 @@ interface RitualItem {
     title: string
     completed: boolean
 }
-
 
 interface RitualDialogProps {
     open: boolean
@@ -34,18 +40,30 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
     const [ritualTitle, setRitualTitle] = useState('')
     const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
 
+
+
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+
+
+
     // Sounds
     const [playConfirm] = useSound(confirmation, { volume: 0.1 });
     const [playComplete] = useSound(complete, { volume: 0.1 });
 
+
+
+
     const [startRitual] = useMutation(START_RITUAL)
-    const [updateRitual] = useMutation(UPDATE_RITUAL, {
-        onCompleted: (data) => {
-            console.log(data)
-        },
-    })
-
-
+    const [updateRitual] = useMutation(UPDATE_RITUAL)
+    const [completeRitual] = useMutation(COMPLETE_RITUAL)
     const { loading, error } = useQuery(GET_RITUAL, {
         fetchPolicy: 'network-only',
         variables: { id: ritualId },
@@ -67,7 +85,6 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
     })
 
 
-    const [completeRitual] = useMutation(COMPLETE_RITUAL)
 
 
 
@@ -154,6 +171,18 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
         })
     }
 
+    const [deleteRitual] = useMutation(DELETE_RITUAL);
+    const handleDelete = () => {
+        deleteRitual({
+            variables: {
+                ritualId: ritualId,
+            },
+            onCompleted: () => {
+                onClose();
+            },
+        });
+    };
+
 
 
     // loading and error
@@ -165,7 +194,36 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
         <Dialog open={open} onClose={onClose}>
 
             {/* Ritual Title */}
-            <DialogTitle>{ritualTitle}</DialogTitle>
+            <DialogTitle>
+                {ritualTitle}
+                <IconButton
+                    aria-label="menu"
+                    aria-controls="menu"
+                    aria-haspopup="true"
+                    onClick={handleMenuOpen}
+                    edge="end"
+                >
+                    <MoreVertIcon />
+                </IconButton>
+                <Menu
+                    id="menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                >
+                    <MenuItem>Edit</MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            handleMenuClose();
+                            handleDelete();
+                        }}
+                    >
+                        Delete
+                    </MenuItem>
+                </Menu>
+            </DialogTitle>
+
 
 
             {/*  Ritual List */}

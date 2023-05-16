@@ -12,6 +12,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt'
 import { Link } from 'react-router-dom'
 import ThemeProvider from './pages/SettingsPage/ThemeContext'
 import { gql, useMutation } from '@apollo/client'
+import { Analytics } from '@vercel/analytics/react';
 
 // Icons
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -232,6 +233,7 @@ function App(): JSX.Element {
 		<ThemeProvider>
 			<Router>
 				<Box sx={{ display: 'flex' }}>
+					<Analytics />
 					<CssBaseline />
 					<AppBar
 						position="fixed"

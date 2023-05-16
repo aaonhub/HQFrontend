@@ -19,7 +19,6 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 interface EditHabitDialogProps {
 	onClose: () => void
 	habit: Habit
-	refetch: () => void
 }
 
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => {
@@ -32,8 +31,10 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 			variables: {
 				id: id,
 			},
+			onCompleted: () => {
+				onClose();
+			}
 		})
-		onClose()
 	}
 
 	// Required to update the state when the habit prop changes
@@ -66,13 +67,14 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 				Title: newHabit.title,
 				LastCompleted: getCurrentLocalDate(),
 			},
+			onCompleted: () => {
+				onClose();
+			}
 		});
-		onClose();
 	};
 
 	const handleDeleteClick = () => {
-		handleDelete(habit.id);
-		onClose();
+		handleDelete(habit.id)
 	}
 
 	return (

@@ -5,9 +5,12 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import { useMutation, useQuery } from '@apollo/client'
-import CustomList from './CustomList'
-import confirmation from '../sounds/confirmation.mp3'
+import CustomList from './CustomChecklist'
 import useSound from 'use-sound'
+
+// Sounds
+import complete from '../sounds/complete.wav'
+import confirmation from '../sounds/confirmation.mp3'
 
 // Queries and mutations
 import { GET_RITUAL } from '../models/ritual'
@@ -31,7 +34,9 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
     const [ritualTitle, setRitualTitle] = useState('')
     const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
 
-    const [playSound] = useSound(confirmation, { volume: 0.1 });
+    // Sounds
+    const [playConfirm] = useSound(confirmation, { volume: 0.1 });
+    const [playComplete] = useSound(complete, { volume: 0.1 });
 
     const [startRitual] = useMutation(START_RITUAL)
     const [updateRitual] = useMutation(UPDATE_RITUAL, {
@@ -67,7 +72,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
 
 
     const handleCheckItem = (item: RitualItem) => {
-        playSound();
+        playConfirm();
 
         const updatedItems = ritualItems.map((ritualItem: any) => {
             if (ritualItem.id === item.id) {
@@ -123,10 +128,12 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
     };
 
     const handleComplete = () => {
+        playComplete()
+
         const updatedItems = ritualItems.map((ritualItem: RitualItem) => ({
             ...ritualItem,
             completed: false,
-        }));
+        }))
 
         updateRitual({
             variables: {
@@ -142,10 +149,10 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
                     onCompleted: () => {
                         onClose();
                     },
-                });
+                })
             },
-        });
-    };
+        })
+    }
 
 
 

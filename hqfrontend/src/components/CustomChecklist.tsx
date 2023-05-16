@@ -3,16 +3,16 @@ import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Chec
 import { useTheme } from "@mui/material/styles"
 import InboxIcon from "@mui/icons-material/Inbox"
 
-export interface ListItem {
+export interface ChecklistItem {
     id: string
     title: string
     completed: boolean
 }
 
 interface ListProps {
-    list: ListItem[]
-    handleCheckItem: (listItem: ListItem) => void
-    handleOrderChange?: (list: ListItem[]) => void
+    list: ChecklistItem[]
+    handleCheckItem: (listItem: ChecklistItem) => void
+    handleOrderChange?: (list: ChecklistItem[]) => void
 }
 
 const CustomList: React.FC<ListProps> = ({ list, handleCheckItem }) => {
@@ -34,9 +34,9 @@ const CustomList: React.FC<ListProps> = ({ list, handleCheckItem }) => {
                         }}
                     >
                         <ListItemButton>
-                            <ListItemIcon>
+                            {/* <ListItemIcon>
                                 <InboxIcon sx={{ color: listItem.completed ? "grey" : "#3f51b5" }} />
-                            </ListItemIcon>
+                            </ListItemIcon> */}
 
                             <ListItemText
                                 primary={listItem.title}

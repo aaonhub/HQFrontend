@@ -49,13 +49,11 @@ const HabitsPage = () => {
 
 
 	const handleClickOpen = () => {
-		setOpen(true);
+		setOpen(true)
 	};
 	const handleClose = () => {
-		setOpen(false);
-
-		//wait for the mutation to complete
-		setTimeout(() => { refetch() }, 1000);
+		setOpen(false)
+		refetch()
 	};
 
 
@@ -122,7 +120,7 @@ const HabitsPage = () => {
 			</Box>
 
 			{/* Habit list */}
-			<HabitList refetch={refetch} habits={habits} today={today} />
+			<HabitList habits={habits} today={today} handleClose={handleClose} />
 
 			{/* Habit Popup */}
 			<AddHabitPopup open={open} onClose={handleClose} />

@@ -51,8 +51,10 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 				Frequency: frequency,
 				StartDate: getCurrentLocalDate(),
 			},
+			onCompleted: () => {
+				onClose();
+			}
 		});
-		onClose();
 	};
 
 	return (

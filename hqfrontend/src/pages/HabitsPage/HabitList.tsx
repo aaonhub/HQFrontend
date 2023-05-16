@@ -25,12 +25,12 @@ import Habit from "../../models/habit"
 
 
 interface HabitListProps {
-	refetch: () => void;
 	habits: Habit[];
 	today: string;
+	handleClose: () => void;
 }
 
-const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
+const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => {
 	const [habit, setHabit] = useState<Habit>();
 
 	const theme = useTheme();
@@ -114,9 +114,13 @@ const HabitList: React.FC<HabitListProps> = ({ refetch, habits, today }) => {
 
 			{habit && (
 				<EditHabitDialog
-					onClose={() => setHabit(undefined)}
+					onClose={
+						() => {
+							setHabit(undefined)
+							handleClose()
+						}
+					}
 					habit={habit}
-					refetch={refetch}
 				/>
 			)}
 		</>

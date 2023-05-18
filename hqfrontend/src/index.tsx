@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App from './pages/App/App';
 import { ApolloClient, InMemoryCache, from, ApolloProvider, HttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 

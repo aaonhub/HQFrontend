@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-import { Link, useNavigate } from 'react-router-dom';
-import styles from './LoginPage.module.css';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import Stack from '@mui/material/Stack';
+import React, { useState } from 'react'
+import { useMutation, gql } from '@apollo/client'
+import { Link, useNavigate } from 'react-router-dom'
+import styles from './LoginPage.module.css'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Stack from '@mui/material/Stack'
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	List,
 	ListItem,
@@ -7,6 +7,8 @@ import {
 	Card,
 	CardContent,
 	Checkbox,
+	Input,
+	Button,
 } from '@mui/material';
 
 import { getCurrentLocalDate } from '../../components/DateFunctions';
@@ -16,20 +18,50 @@ import { useMutation } from '@apollo/client';
 import { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
 import { CHECK_HABIT } from '../../models/habit';
 import { ADD_LOG } from '../../models/log';
-
+import { ADD_TODO_TO_TODAY } from '../../models/inboxitem';
 
 // Models
 import SimpleItem from '../../models/simpleitem';
 
 
+
 interface ItineraryProps {
 	simpleItemArray: SimpleItem[];
 	setSimpleItemArray: (newArray: (prevArray: SimpleItem[]) => SimpleItem[]) => void;
+	habitsRefetch: () => void;
+	inboxRefetch: () => void;
 }
 
-const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArray }) => {
+const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArray, habitsRefetch, inboxRefetch }) => {
+	console.log(simpleItemArray)
+	const [inputValue, setInputValue] = useState('');
+
 	const hasData = simpleItemArray.length > 0
-	
+
+	const [addTodoToToday] = useMutation(ADD_TODO_TO_TODAY)
+	const handleAddItem = () => {
+		const newItem: SimpleItem = {
+			id: String(Date.now()) + 'i',
+			title: inputValue,
+			startTime: '',
+			type: 'inbox',
+			completedToday: false,
+		};
+		setSimpleItemArray((prevArray: SimpleItem[]) => [...prevArray, newItem]);
+		addTodoToToday({
+			variables: {
+				title: newItem.title,
+				startDate: getCurrentLocalDate(),
+				Completed: false,
+			},
+		}).then(() => {
+			setInputValue('');
+			inboxRefetch();
+			habitsRefetch();
+		});
+	};
+
+
 	const handleCheckItem = (item: SimpleItem) => {
 		if (item.type === 'habit') {
 			handleCheckHabit(item.id)
@@ -37,7 +69,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 			handleCheckToDo(item.id)
 		}
 	}
-	
+
+
 	const [checkHabit] = useMutation(CHECK_HABIT)
 	const [addHabitLog] = useMutation(ADD_LOG)
 	const handleCheckHabit = async (habitId: string) => {
@@ -50,7 +83,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		})
 
 		setSimpleItemArray((prevArray: SimpleItem[]) =>
-		// remove the item from the array
+			// remove the item from the array
 			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
 		)
 
@@ -62,10 +95,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 		})
 	}
 
+
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
 	const [addToDoLog] = useMutation(ADD_LOG)
 	const handleCheckToDo = async (todoId: string) => {
-		console.log(todoId)
 		await checkToDo({
 			variables: {
 				// get rid of the h at the end of the id
@@ -87,6 +120,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 
 	}
 
+
 	return (
 		<Card
 			sx={{
@@ -105,6 +139,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 				<Typography variant="h5" gutterBottom>
 					Itinerary
 				</Typography>
+
+				{/* Input Box */}
+				<Input
+					placeholder="Add item"
+					value={inputValue}
+					onChange={(e) => setInputValue(e.target.value)}
+					fullWidth
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							handleAddItem();
+						}
+					}}
+				/>
+
+				{/* spacer */}
+				<div style={{ height: 10 }} />
+				
+
+				{/* List */}
 				{hasData ? (
 					<List sx={{ padding: 0 }}>
 						{simpleItemArray.map((item) => (

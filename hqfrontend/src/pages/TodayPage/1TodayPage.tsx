@@ -27,7 +27,7 @@ const TodayPage = () => {
 
 
 	// Today Inbox Query
-	const { loading: inboxLoading, error: inboxError, data: inboxData, } = useQuery(GET_TODAY_LIST_ITEMS, {
+	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TODAY_LIST_ITEMS, {
 		variables: {
 			Today: localDate,
 		},
@@ -57,6 +57,7 @@ const TodayPage = () => {
 		loading: habitsLoading,
 		error: habitsError,
 		data: habitsData,
+		refetch: habitsRefetch,
 	} = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: localDate },
 		onCompleted: (data) => {
@@ -106,22 +107,22 @@ const TodayPage = () => {
 
 
 	return (
-		<Grid container> {/* Adjust the height value as needed */}
+		<Grid container>
 
 
-			<Grid item xs={12}> {/* Adjust the height value as needed */}
+			{/* Day Display */}
+			<Grid item xs={12}>
 				<Typography variant="h4">
 					{new Date().toLocaleDateString()}
 				</Typography>
 			</Grid>
 
-
+			{/* Left Log List */}
 			<Grid item xs={6}>
-				<Grid item xs={12}>
-					<Itinerary simpleItemArray={simpleItemArray} setSimpleItemArray={setSimpleItemArray} />
-				</Grid>
+				<Itinerary simpleItemArray={simpleItemArray} setSimpleItemArray={setSimpleItemArray} habitsRefetch={habitsRefetch} inboxRefetch={inboxRefetch} />
 			</Grid>
 
+			{/* Right side */}
 			<Grid item xs={6}>
 				<Grid item xs={12}>
 					<LogList />

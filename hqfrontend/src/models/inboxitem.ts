@@ -100,6 +100,21 @@ export const ADD_TODO = gql`
 	}
 `;
 
+// Updated to django
+export const ADD_TODO_TO_TODAY = gql`
+	mutation createToDoItem($title: String!, $startDate: Date!) {
+		createToDoItem( title: $title, startDate: $startDate ) {
+			toDoItem {
+				id
+				title
+				completed
+				dueDateTime
+				description
+			}
+		}
+	}
+`;
+
 export const UPDATE_TODO = gql`
 	mutation updateToDoItem($id: ID!, $data: ToDoItemInput!) {
 		updateToDoItem(id: $id, data: $data) {

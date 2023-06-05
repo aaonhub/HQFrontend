@@ -21,7 +21,6 @@ export default Project
 
 
 // Queries
-// Updated to django
 export const GET_PROJECTS = gql`
 	query GetProjects {
 		projects {
@@ -31,7 +30,6 @@ export const GET_PROJECTS = gql`
 	}
 `;
 
-// Updated to django
 export const GET_PROJECT_ITEMS = gql`
 	query GetProjectToDoItems($projectId: ID!, $completed: Boolean) {
 		project(id: $projectId) {
@@ -54,7 +52,6 @@ export const GET_PROJECT_ITEMS = gql`
 
 
 // Mutations
-// Updated to django
 export const CREATE_PROJECT = gql`
 	mutation CreateProject($codename: String!) {
 		createProject(codename: $codename) {
@@ -66,7 +63,6 @@ export const CREATE_PROJECT = gql`
 	}
 `;
 
-// Updated to django
 export const DELETE_PROJECT = gql`
 	mutation deleteProject($id: ID!) {
 		deleteProject(id: $id) {
@@ -75,19 +71,19 @@ export const DELETE_PROJECT = gql`
 	}
 `;
 
-// Updated to django
-export const CREATE_TO_DO_AND_ADD_TO_PROJECT = gql`
-	mutation UpdateProject($projectId: ID!, $title: String!) {
-		createToDoItem(projectId: $projectId title: $title) {
-			toDoItem {
-				id
-				title
-			}
-		}
-	}
+
+export const CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION = gql`
+    mutation UpdateProject($projectId: ID!, $title: String!, $position: Int!) {
+        createToDoAndAddToProject(projectId: $projectId, title: $title, position: $position) {
+            project {
+                id
+				codename
+            }
+        }
+    }
 `;
 
-// Updated to django
+
 export const UPDATE_PROJECT_ITEM_ORDER = gql`
 	mutation UpdateProject($id: ID!, $itemOrder: [String!]!) {
 		updateProjectItemOrder(id: $id, itemOrder: $itemOrder) {

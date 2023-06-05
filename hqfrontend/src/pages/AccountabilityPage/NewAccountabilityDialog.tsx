@@ -30,7 +30,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 	const { globalUsername } = useGlobalContext();
 
 	const [name, setName] = useState<string>('');
-	const [compType, setCompType] = useState<AccountabilityType>('BASIC');
+	const [compType, setCompType] = useState<AccountabilityType>('Basic');
 	const [startDate, setStartDate] = useState<string>('');
 	const [length, setLength] = useState<AccountabilityLength>('INDEFINITE');
 	const [description, setDescription] = useState<string>('');
@@ -135,11 +135,12 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 
 		createAccountability({
 			variables: {
+				name: name,
 				accountabilityType: compType,
 				startDate: startDate,
 				endDate: endDateObj ? endDateObj.toISOString().split('T')[0] : null,
 				description: description,
-				type: "BASIC",
+				type: "Basic",
 				pendingParticipants: squadMembers
 			}
 		})
@@ -214,7 +215,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 									onChange={e => setCompType(e.target.value as AccountabilityType)}
 									label="Accountability Type"
 								>
-									<MenuItem value="BASIC">Basic</MenuItem>
+									<MenuItem value="Basic">Basic</MenuItem>
 									{/* FINISHLATER */}
 									{/* <MenuItem value="HABIT_TRACKING">Habit Tracking</MenuItem> */}
 								</Select>
@@ -262,7 +263,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 								onChange={e => setDescription(e.target.value)}
 							/>
 						</Grid>
-						
+
 					</Grid>
 				</Box>
 			</DialogContent>

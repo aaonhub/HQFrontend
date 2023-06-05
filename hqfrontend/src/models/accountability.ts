@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 
-export type AccountabilityType = 'BASIC' | 'HABIT_TRACKING'
+export type AccountabilityType = 'Basic' | 'Habit Tracking'
 
 
 class Accountability {
@@ -90,6 +90,15 @@ export const GET_ACCOUNTABILITY = gql`
 			startDate
 			endDate
 			type
+			pendingParticipants{
+				codename
+			}
+			participants {
+				codename
+			}
+			organizer {
+				codename
+			}
 		}
 	}
 `;
@@ -122,6 +131,7 @@ export const DECLINE_FRIEND_REQUEST = gql`
 
 export const CREATE_ACCOUNTABILITY = gql`
 	mutation (
+		$name: String!
 		$description: String
 		$endDate: Date
 		$pendingParticipants: [ID]!
@@ -129,6 +139,7 @@ export const CREATE_ACCOUNTABILITY = gql`
 		$type: String!
 	) {
 		createAccountability(
+			name: $name,
 			description: $description, 
 			endDate: $endDate,
 			pendingParticipants: $pendingParticipants,

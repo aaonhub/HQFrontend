@@ -13,7 +13,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 
 // Queries and Mutations
 import { GET_PROJECT_ITEMS } from '../../models/project';
-import { CREATE_TO_DO_AND_ADD_TO_PROJECT } from '../../models/project';
+import { CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION } from '../../models/project';
 import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
 import { UPDATE_TODO } from '../../models/inboxitem';
 import { ADD_LOG } from '../../models/log';
@@ -92,7 +92,7 @@ const ProjectPage = () => {
 
 
 	// Add Project Item
-	const [addItemToProject] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT, {
+	const [addItemToProjectAtPosition] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
 			if (newProjectItemTitleRef.current) {
@@ -106,14 +106,16 @@ const ProjectPage = () => {
 			},
 		],
 	});
-	const handleAddProjectItem = () => {
-		addItemToProject({
+	const handleAddProjectItem = (position: number) => {
+		addItemToProjectAtPosition({
 			variables: {
 				title: newProjectItemTitleRef.current && newProjectItemTitleRef.current.value,
 				projectId: projectId,
+				position: position,
 			},
 		});
 	};
+
 
 
 
@@ -256,7 +258,7 @@ const ProjectPage = () => {
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItem();
+						handleAddProjectItem(0);
 					}
 				}}
 				sx={{ marginBottom: 2 }}
@@ -299,7 +301,7 @@ const ProjectPage = () => {
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItem();
+						handleAddProjectItem(projectItemArray.length);
 					}
 				}}
 				sx={{ marginBottom: 2 }}

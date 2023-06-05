@@ -13,7 +13,8 @@ const sidebarItems = [
 	[
 		{ id: '0', title: 'Today', link: '/', notifications: false },
 		{ id: '1', title: 'Log', link: '/log', notifications: false },
-		{ id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
+		// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
+		{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
 		{ id: '3', title: 'Projects', link: '/projects', notifications: false },
 	],
 	[

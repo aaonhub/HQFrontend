@@ -1,10 +1,14 @@
 import { useState } from "react"
-import { Button, Container, Grid, Typography, Card, CardContent, List, ListItem, ListItemText, Paper, ListItemButton } from "@mui/material"
+import { Button, Container, Grid, Typography, Card, CardContent, List, ListItem, ListItemText, Paper, ListItemButton, ListItemIcon } from "@mui/material"
 import NewAccountabilityDialog from "./NewAccountabilityDialog"
 
 import FriendsContent from "./FriendsContent";
 import AccountabilityDisplay from "./AccountabilityDisplay";
 import PendingAccountabilityContent from "./PendingAccountabilityContent";
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import lightBlue from '@mui/material/colors/lightBlue';
+import lightGreen from '@mui/material/colors/lightGreen';
+
 
 import { GET_ACCOUNTABILITIES } from "../../models/accountability";
 import { useQuery } from "@apollo/client";
@@ -49,7 +53,7 @@ const AccountabilityPage = () => {
 
                             {/* Label of new subsection */}
                             <ListItem>
-                                <Typography variant="h5" align="center" gutterBottom>Accountability Squads</Typography>
+                                <Typography variant="h5" align="center" gutterBottom>Accountability Squads:</Typography>
                             </ListItem>
 
 
@@ -59,9 +63,8 @@ const AccountabilityPage = () => {
                                     <ListItem key={accountability.id} >
                                         <Paper
                                             elevation={1}
-                                            // set selected content and selected accountability
                                             onClick={() => {
-                                                accountability.status === 'PE'?  setSelectedContent('pending') : setSelectedContent('active')
+                                                accountability.status === 'PE' ? setSelectedContent('pending') : setSelectedContent('active')
                                                 setSelectedAccountability(accountability.id)
                                             }}
                                             sx={{
@@ -70,6 +73,8 @@ const AccountabilityPage = () => {
                                             }}
                                         >
                                             <ListItemButton>
+                                                {accountability.status === 'PE' && <ListItemIcon><FiberManualRecordIcon sx={{ color: lightBlue[500] }} /></ListItemIcon>}
+                                                {accountability.status === 'AC' && <ListItemIcon><FiberManualRecordIcon sx={{ color: lightGreen[600] }} /></ListItemIcon>}
                                                 <ListItemText primary={accountability.name} secondary={accountability.status === 'PE' ? 'Pending' : ''} />
                                             </ListItemButton>
                                         </Paper>
@@ -97,7 +102,7 @@ const AccountabilityPage = () => {
                         {selectedContent === 'pending' && <PendingAccountabilityContent id={selectedAccountability} />}
                     </Card>
                 </Grid>
-                
+
             </Grid>
 
             {/* Dialog */}

@@ -12,6 +12,9 @@ import {
 	Box,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 
 // Components
 import { getCurrentLocalDate } from '../../components/DateFunctions';
@@ -39,14 +42,17 @@ const Itinerary: React.FC = () => {
 	const { setSnackbar } = useGlobalContext();
 
 	const [inputValue, setInputValue] = useState('');
-	const [simpleItemArray, setSimpleItemArray] = useState<SimpleItem[]>([]);
+	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([]);
+	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([]);
 	const [habits, setHabits] = useState<Habit[]>([]);
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
+	const [expanded, setExpanded] = useState(false);
+
 
 	const localDate = getCurrentLocalDate();
 
 
-	// Today Inbox Query
+	// Today's To Do Items Query
 	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TODAY_LIST_ITEMS, {
 		variables: {
 			Today: localDate,
@@ -70,7 +76,7 @@ const Itinerary: React.FC = () => {
 	});
 
 
-	// Habits Query
+	// Today's Habits Query
 	const {
 		loading: habitsLoading,
 		error: habitsError,
@@ -104,6 +110,26 @@ const Itinerary: React.FC = () => {
 	});
 
 
+	// Set up Simple Item Array
+	useEffect(() => {
+		if (habitsData && inboxData) {
+			const combinedArray = HabitInboxRosetta({ habits: habits, inboxItems: inboxItems })
+
+			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
+				return !simpleItem.completedToday
+			})
+			setUncompletedItems(simpleItemArrayFiltered)
+
+			const simpleItemArrayCompleted = combinedArray.filter((simpleItem) => {
+				return simpleItem.completedToday
+			})
+			setCompletedItems(simpleItemArrayCompleted)
+
+		}
+	}, [habitsData, inboxData, habits, inboxItems])
+
+
+	// Add To Do Item
 	const [addTodoToToday] = useMutation(ADD_TODO_TO_TODAY)
 	const handleAddItem = () => {
 		if (!inputValue.trim()) {
@@ -121,7 +147,7 @@ const Itinerary: React.FC = () => {
 			type: 'inbox',
 			completedToday: false,
 		};
-		setSimpleItemArray((prevArray: SimpleItem[]) => [...prevArray, newItem]);
+		setUncompletedItems((prevArray: SimpleItem[]) => [...prevArray, newItem]);
 		addTodoToToday({
 			variables: {
 				title: newItem.title,
@@ -131,7 +157,6 @@ const Itinerary: React.FC = () => {
 		}).then(() => {
 			setInputValue('');
 			inboxRefetch();
-			habitsRefetch();
 		});
 	};
 
@@ -149,6 +174,12 @@ const Itinerary: React.FC = () => {
 	const [addHabitLog] = useMutation(ADD_LOG)
 	const handleCheckHabit = async (habitId: string) => {
 		await checkHabit({
+			refetchQueries: [
+				{
+					query: GET_HABITS_DUE_TODAY,
+					variables: { today: getCurrentLocalDate() },
+				},
+			],
 			variables: {
 				// get rid of the h at the end of the id
 				habitId: habitId.slice(0, -1),
@@ -156,7 +187,7 @@ const Itinerary: React.FC = () => {
 			},
 		})
 
-		setSimpleItemArray((prevArray: SimpleItem[]) =>
+		setUncompletedItems((prevArray: SimpleItem[]) =>
 			// remove the item from the array
 			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
 		)
@@ -188,7 +219,7 @@ const Itinerary: React.FC = () => {
 			}
 		})
 
-		setSimpleItemArray((prevArray: any[]) =>
+		setUncompletedItems((prevArray: any[]) =>
 			prevArray.filter((item) => item.id !== todoId && item.type === 'todo' && !item.completedToday)
 		)
 
@@ -200,17 +231,6 @@ const Itinerary: React.FC = () => {
 		})
 	}
 
-
-	useEffect(() => {
-		if (habitsData && inboxData) {
-			const combinedArray = HabitInboxRosetta({ habits: habits, inboxItems: inboxItems })
-			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
-				return !simpleItem.completedToday
-			})
-
-			setSimpleItemArray(simpleItemArrayFiltered)
-		}
-	}, [habitsData, inboxData, habits, inboxItems])
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>
@@ -276,9 +296,9 @@ const Itinerary: React.FC = () => {
 						}
 					}}
 				>
-					{simpleItemArray.length > 0 ? (
+					{uncompletedItems.length > 0 ? (
 						<List sx={{ padding: 0 }}>
-							{simpleItemArray.map((item) => (
+							{uncompletedItems.map((item) => (
 								<ListItem key={item.id} disablePadding>
 									<Checkbox
 										checked={item.completedToday}
@@ -298,6 +318,35 @@ const Itinerary: React.FC = () => {
 					)}
 				</Box>
 			</CardContent>
+
+			<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
+				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+					<Typography variant="h6">Completed Items</Typography>
+				</AccordionSummary>
+				<AccordionDetails>
+					{completedItems.length > 0 ? (
+						<List sx={{ padding: 0 }}>
+							{completedItems.map((item) => (
+								<ListItem key={item.id} disablePadding>
+									<Checkbox
+										checked={item.completedToday}
+										disabled
+									/>
+									<ListItemText
+										primary={item.title}
+										secondary={item.startTime}
+									/>
+								</ListItem>
+							))}
+						</List>
+					) : (
+						<Typography variant="h6" align="center" color="textSecondary">
+							No completed items
+						</Typography>
+					)}
+				</AccordionDetails>
+			</Accordion>
+
 
 		</Card>
 	);

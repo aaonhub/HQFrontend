@@ -27,7 +27,7 @@ import { START_RITUAL, COMPLETE_RITUAL, UPDATE_RITUAL, DELETE_RITUAL } from '../
 interface RitualItem {
     id: string
     title: string
-    completed: boolean
+    checked: boolean
 }
 
 interface RitualDialogProps {
@@ -95,7 +95,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
             if (ritualItem.id === item.id) {
                 return {
                     ...ritualItem,
-                    completed: !ritualItem.completed,
+                    checked: !ritualItem.checked,
                 }
             }
             return ritualItem
@@ -112,7 +112,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
         setRitualItems(updatedItems)
 
         // Check if all items are completed
-        const allItemsCompleted = updatedItems.every((ritualItem: RitualItem) => ritualItem.completed)
+        const allItemsCompleted = updatedItems.every((ritualItem: RitualItem) => ritualItem.checked)
         if (allItemsCompleted) {
             handleComplete()
         }
@@ -229,7 +229,11 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
             {/*  Ritual List */}
             <DialogContent>
                 {loading ? <p>Loading...</p> :
-                    <CustomList list={ritualItems} handleCheckItem={handleCheckItem} />
+                    <CustomList
+                        list={ritualItems}
+                        handleCheckItem={handleCheckItem}
+                        checklistType="strikeout"
+                    />
                 }
             </DialogContent>
 

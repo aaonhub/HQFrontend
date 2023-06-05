@@ -103,6 +103,7 @@ const LogPage = () => {
 							value={logText}
 							onChange={(e) => setLogText(e.target.value)}
 							variant="outlined"
+                            autoComplete="off"
 							size="small"
 							onKeyDown={(e) => {
 								if (e.key === 'Enter') {

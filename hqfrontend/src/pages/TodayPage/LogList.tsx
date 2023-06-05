@@ -1,19 +1,24 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
-import { Card, CardContent, TextField, Typography } from '@mui/material'
+import {
+	Card,
+	CardContent,
+	TextField,
+	Typography,
+	IconButton,
+	List,
+	ListItem,
+	ListItemText
+} from '@mui/material'
+import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns'
 
-// Queries and Mutations
 import { GET_TODAY_LOGS, ADD_LOG } from '../../models/log'
-
-// Models
 import Log from '../../models/log'
-
 
 const LogList = () => {
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
-
 
 	const { loading, error } = useQuery(GET_TODAY_LOGS, {
 		onCompleted: (data) => {
@@ -44,7 +49,6 @@ const LogList = () => {
 		}
 	})
 
-	// Add log mutation
 	const [addLog] = useMutation(ADD_LOG, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
@@ -65,58 +69,53 @@ const LogList = () => {
 		}
 	}
 
-
 	if (loading) return <p>Loading...</p>
 	if (error) return <p>Error: {error.message}</p>
-
 
 	return (
 		<Card sx={{ borderRadius: 2, boxShadow: 2, height: '100%', overflow: 'hidden' }}>
 			<CardContent>
-
-
-				<Typography variant="h5" gutterBottom>
-					Log
-				</Typography>
-
+				<Typography variant="h5" gutterBottom>Log</Typography>
 
 				<TextField
-					fullWidth
 					label="Add log"
 					value={logText}
 					onChange={(e) => setLogText(e.target.value)}
 					variant="outlined"
 					size="small"
+					autoComplete="off"
+					style={{ width: '90%' }}
 					onKeyDown={(e) => {
 						if (e.key === 'Enter') {
 							handleAddLog()
 						}
 					}}
 				/>
-
+				<IconButton onClick={handleAddLog} color="primary" aria-label="send log">
+					<SendIcon />
+				</IconButton>
 
 				{logArray.length === 0 ? (
 					<Typography variant="h6" align="center" color="textSecondary">
 						Nothing logged today
 					</Typography>
 				) : (
-					<ul>
+					<List>
 						{logArray.map((log) => (
-							<li key={log.id}>
-								<Typography variant="body1" gutterBottom>
-									{log.type === 'TEXT' && log.text}
-									{log.type === 'COMPLETE_TODOITEM' && `Completed to do item: ${log.toDoItem && log.toDoItem.title}`}
-									{log.type === 'COMPLETE_HABIT' && `Completed habit: ${log.habit && log.habit.title}`}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									{format(new Date(log.logTime), 'hh:mm a').toString()}
-								</Typography>
-							</li>
+							<ListItem key={log.id}>
+								<ListItemText
+									primary={
+										log.type === 'TEXT' ? log.text :
+											log.type === 'COMPLETE_TODOITEM' ? `Completed to do item: ${log.toDoItem && log.toDoItem.title}` :
+												log.type === 'COMPLETE_HABIT' ? `Completed habit: ${log.habit && log.habit.title}` :
+													null
+									}
+									secondary={format(new Date(log.logTime), 'hh:mm a').toString()}
+								/>
+							</ListItem>
 						))}
-					</ul>
+					</List>
 				)}
-
-
 			</CardContent>
 		</Card>
 	)

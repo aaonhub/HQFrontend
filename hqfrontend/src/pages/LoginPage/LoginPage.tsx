@@ -6,6 +6,9 @@ import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import Stack from '@mui/material/Stack'
 
+// Globals
+import { useGlobalContext } from '../App/GlobalContextProvider'
+
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
     tokenAuth(username: $username, password: $password) {
@@ -15,6 +18,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 const LoginPage = () => {
+	const { setLoggedIn, setGlobalUsername } = useGlobalContext();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate(); // Access the navigate function from react-router-dom
@@ -23,6 +27,8 @@ const LoginPage = () => {
 	const [login] = useMutation(LOGIN_MUTATION, {
 		onCompleted: (data) => {
 			console.log(data);
+			setLoggedIn(true);
+			setGlobalUsername(data.tokenAuth.payload.username);
 			localStorage.setItem('loggedIn', 'true');
 			navigate('/'); // Redirect to root URL after successful login
 		},
@@ -31,7 +37,7 @@ const LoginPage = () => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			await login({ variables: { username, password } });
+			await login({ variables: { username: username, password } });
 		} catch (error) {
 			console.error('Login error:', error);
 			setShowAlert(true); // Show the alert when login fails

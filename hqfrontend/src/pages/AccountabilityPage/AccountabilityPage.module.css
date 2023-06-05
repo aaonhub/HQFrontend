@@ -1,0 +1,22 @@
+.square {
+  position: relative;
+  width: 100px; /* Adjust the width to your preference */
+  height: 100px; /* Adjust the height to your preference */
+  background-color: #f0f0f0; /* Adjust the background color as desired */
+  border: 1px solid #000000; /* Add the border style */
+}
+
+.bar {
+  position: relative;
+  left: 0;
+  background-color: #3ea8e6; /* Adjust the bar color as desired */
+}
+
+.date {
+  position: absolute;
+  top: 5px; /* Adjust the top positioning as needed */
+  right: 5px; /* Adjust the right positioning as needed */
+  font-size: 24px; /* Adjust the font size as needed */
+  color: #000000; /* Adjust the font color as needed */
+  z-index: 10;
+}

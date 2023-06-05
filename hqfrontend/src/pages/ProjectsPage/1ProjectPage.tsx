@@ -91,7 +91,7 @@ const ProjectPage = () => {
 
 
 
-	// Add Inbox Item
+	// Add Project Item
 	const [addItemToProject] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
@@ -284,18 +284,31 @@ const ProjectPage = () => {
 			</List>
 
 
+			{/* Text input that adds to do list items to the project */}
+			<TextField
+				inputRef={newProjectItemTitleRef}
+				fullWidth
+				label="Add Project Item"
+				defaultValue=""
+				onChange={(e) => {
+					if (newProjectItemTitleRef.current) {
+						newProjectItemTitleRef.current.value = e.target.value;
+					}
+				}}
+				variant="outlined"
+				size="small"
+				onKeyDown={(e) => {
+					if (e.key === 'Enter') {
+						handleAddProjectItem();
+					}
+				}}
+				sx={{ marginBottom: 2 }}
+			/>
+
+
 
 			{/* dialog */}
 			{selectedInboxItem && <EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />}
-
-
-			{/* Floating Action Button */}
-			<Box sx={{ position: 'fixed', bottom: '16px', right: '16px' }}>
-				<Fab color="primary" aria-label="add">
-					<Add />
-				</Fab>
-			</Box>
-
 
 		</Box >
 	);

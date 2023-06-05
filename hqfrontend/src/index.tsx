@@ -4,6 +4,7 @@ import './index.css';
 import App from './pages/App/App';
 import { ApolloClient, InMemoryCache, from, ApolloProvider, HttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
+import { GlobalContextProvider } from './pages/App/GlobalContextProvider';
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -39,7 +40,9 @@ const root = ReactDOM.createRoot(
 root.render(
 	<ApolloProvider client={client}>
 		<React.StrictMode>
-			<App />
+			<GlobalContextProvider>
+				<App />
+			</GlobalContextProvider>
 		</React.StrictMode>
-	</ApolloProvider>
+	</ApolloProvider >
 );

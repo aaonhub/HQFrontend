@@ -8,8 +8,12 @@ import {
 	CardContent,
 	Checkbox,
 	Input,
-	Button,
+	IconButton,
+	Box,
+	Snackbar,
+	Alert,
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 import { getCurrentLocalDate } from '../../components/DateFunctions';
 
@@ -33,13 +37,25 @@ interface ItineraryProps {
 }
 
 const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArray, habitsRefetch, inboxRefetch }) => {
-	console.log(simpleItemArray)
+	const [snackbar, setSnackbar] = useState({
+		message: '',
+		open: false,
+		severity: "success" as "success" | "error" | "info" | "warning"
+	})
 	const [inputValue, setInputValue] = useState('');
 
 	const hasData = simpleItemArray.length > 0
 
 	const [addTodoToToday] = useMutation(ADD_TODO_TO_TODAY)
 	const handleAddItem = () => {
+		if (!inputValue.trim()) {
+			setSnackbar({
+				message: "Please enter a title",
+				open: true,
+				severity: "error"
+			})
+			return;
+		}
 		const newItem: SimpleItem = {
 			id: String(Date.now()) + 'i',
 			title: inputValue,
@@ -105,6 +121,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 				id: todoId.slice(0, -1),
 				Completed: true,
 			},
+			onCompleted: () => {
+				setSnackbar({
+					message: "Task completed!",
+					open: true,
+					severity: "success"
+				})
+			}
 		})
 
 		setSimpleItemArray((prevArray: any[]) =>
@@ -117,8 +140,15 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 				todoItemId: todoId.slice(0, -1),
 			},
 		})
-
 	}
+
+	const handleSnackbarClose = () => {
+		setSnackbar({
+			...snackbar,
+			open: false
+		})
+	}
+
 
 
 	return (
@@ -126,61 +156,91 @@ const Itinerary: React.FC<ItineraryProps> = ({ simpleItemArray, setSimpleItemArr
 			sx={{
 				borderRadius: 2,
 				boxShadow: 2,
-				height: '90%',
 				marginRight: 2,
+				padding: 1,
 			}}
 		>
-			<CardContent
-				sx={{
-					height: '100%',
-					overflow: 'auto',
-				}}
-			>
+			<CardContent>
 				<Typography variant="h5" gutterBottom>
 					Itinerary
 				</Typography>
 
 				{/* Input Box */}
-				<Input
-					placeholder="Add item"
-					value={inputValue}
-					onChange={(e) => setInputValue(e.target.value)}
-					fullWidth
-					onKeyDown={(e) => {
-						if (e.key === 'Enter') {
-							handleAddItem();
-						}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						marginBottom: 2,
 					}}
-				/>
-
-				{/* spacer */}
-				<div style={{ height: 10 }} />
-				
+				>
+					<Input
+						placeholder="Add item"
+						value={inputValue}
+						onChange={(e) => setInputValue(e.target.value)}
+						fullWidth
+						inputProps={{ style: { paddingLeft: "5px" } }}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								handleAddItem();
+							}
+						}}
+					/>
+					<IconButton onClick={handleAddItem}>
+						<AddIcon />
+					</IconButton>
+				</Box>
 
 				{/* List */}
-				{hasData ? (
-					<List sx={{ padding: 0 }}>
-						{simpleItemArray.map((item) => (
-							<ListItem key={item.id} disablePadding>
-								<Checkbox
-									checked={item.completedToday}
-									onChange={() => handleCheckItem(item)}
-								/>
-								<ListItemText
-									primary={item.title}
-									secondary={item.startTime}
-								/>
-							</ListItem>
-						))}
-					</List>
-				) : (
-					<Typography variant="h6" align="center" color="textSecondary">
-						Nothing left to do
-					</Typography>
-				)}
+				<Box
+					sx={{
+						maxHeight: '90%',
+						overflow: 'auto',
+						'&::-webkit-scrollbar': {
+							width: '0.4em'
+						},
+						'&::-webkit-scrollbar-track': {
+							boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.00)',
+							webkitBoxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.00)'
+						},
+						'&::-webkit-scrollbar-thumb': {
+							backgroundColor: 'rgba(0,0,0,.1)',
+							outline: '1px solid slategrey'
+						}
+					}}
+				>
+					{hasData ? (
+						<List sx={{ padding: 0 }}>
+							{simpleItemArray.map((item) => (
+								<ListItem key={item.id} disablePadding>
+									<Checkbox
+										checked={item.completedToday}
+										onChange={() => handleCheckItem(item)}
+									/>
+									<ListItemText
+										primary={item.title}
+										secondary={item.startTime}
+									/>
+								</ListItem>
+							))}
+						</List>
+					) : (
+						<Typography variant="h6" align="center" color="textSecondary">
+							Nothing left to do
+						</Typography>
+					)}
+				</Box>
 			</CardContent>
+
+			{/* Snackbar */}
+			<Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
+				<Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+					{snackbar.message}
+				</Alert>
+			</Snackbar>
 		</Card>
 	);
+
+
 };
 
 export default Itinerary;

@@ -107,6 +107,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 				label="Title"
 				fullWidth
 				value={title}
+				autoComplete="off"
 				onChange={(e) => setTitle(e.target.value)}
 				margin="normal"
 			/>
@@ -117,6 +118,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 				multiline
 				rows={4}
 				value={gratitudes}
+				autoComplete="off"
 				onChange={(e) => setGratitudes(e.target.value)}
 				fullWidth
 				margin="normal"
@@ -128,6 +130,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 				multiline
 				rows={4}
 				value={majorEvents}
+				autoComplete="off"
 				onChange={(e) => setMajorEvents(e.target.value)}
 				fullWidth
 				margin="normal"
@@ -139,6 +142,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 				multiline
 				rows={4}
 				value={details}
+				autoComplete="off"
 				onChange={(e) => setDetails(e.target.value)}
 				fullWidth
 				margin="normal"

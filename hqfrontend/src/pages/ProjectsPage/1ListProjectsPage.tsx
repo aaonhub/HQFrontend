@@ -72,6 +72,7 @@ const ProjectsPage = () => {
 				onChange={(e) => setNewProjectCodename(e.target.value)}
 				variant="outlined"
 				size="small"
+				autoComplete="off"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
 						handleCreateProject()

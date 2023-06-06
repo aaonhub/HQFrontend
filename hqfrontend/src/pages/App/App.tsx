@@ -127,7 +127,7 @@ function ContentRoutes(): JSX.Element {
 			<Route path="/profile" element={<RequireAuth>
 				<ProfilePage />
 			</RequireAuth>} />
-			<Route path="/compete" element={<RequireAuth>
+			<Route path="/accountability" element={<RequireAuth>
 				<AccountabilityPage />
 			</RequireAuth>} />
 

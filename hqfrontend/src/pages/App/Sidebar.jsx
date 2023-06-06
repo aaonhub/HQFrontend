@@ -21,7 +21,7 @@ const sidebarItems = [
 		{ id: '4', title: 'Habits', link: '/habits', notifications: false },
 		{ id: '5', title: 'Rituals', link: '/rituals', notifications: false },
 		{ id: '6', title: 'Reviews', link: '/dailyreview', notifications: false },
-		{ id: '8', title: 'Compete', link: '/compete', notifications: false },
+		{ id: '8', title: 'Accountability', link: '/accountability', notifications: false },
 	],
 	[
 		{ id: '9', title: 'Settings', link: '/settings', notifications: false },

@@ -174,12 +174,6 @@ const Itinerary: React.FC = () => {
 	const [addHabitLog] = useMutation(ADD_LOG)
 	const handleCheckHabit = async (habitId: string) => {
 		await checkHabit({
-			refetchQueries: [
-				{
-					query: GET_HABITS_DUE_TODAY,
-					variables: { today: getCurrentLocalDate() },
-				},
-			],
 			variables: {
 				// get rid of the h at the end of the id
 				habitId: habitId.slice(0, -1),

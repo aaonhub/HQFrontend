@@ -13,8 +13,6 @@ const REFRESH_TOKEN_MUTATION = gql`
 
 export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalProfile: (username: string) => void) => {
 
-	let retryCount = 0;
-	const MAX_RETRIES = 2;
 
 	const { refetch } = useQuery(MY_PROFILE, {
 		onCompleted: (data) => {
@@ -24,25 +22,21 @@ export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalProfile:
 			setGlobalProfile("");
 		}
 	});
+	
 
 	const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION, {
 		onError: () => {
-			if (retryCount < MAX_RETRIES) {
-				retryCount++;
-				refreshToken();
-			} else {
-				setLoggedIn(false);
-				localStorage.removeItem('loggedIn');
-				setGlobalProfile("");
-			}
+			setLoggedIn(false);
+			localStorage.removeItem('loggedIn');
+			setGlobalProfile("");
 		},
 		onCompleted: (data) => {
-			retryCount = 0;  // reset the retry count after a successful request
 			setLoggedIn(true);
 			localStorage.setItem('loggedIn', "true");
 			refetch();
 		}
 	});
+
 
 	useEffect(() => {
 		// Run refresh token mutation every 25 minutes

@@ -86,7 +86,7 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 					/>
 				))}
 				<div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block sidebar-item">
-					SHORTCUTS
+					OTHER
 				</div>
 				{sidebarItems[1].map((i) => (
 					<MenuItem

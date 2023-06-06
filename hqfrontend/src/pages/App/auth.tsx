@@ -1,6 +1,7 @@
 // auth.js
 import { useEffect } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { MY_PROFILE } from '../../models/social';
 
 const REFRESH_TOKEN_MUTATION = gql`
 	mutation refreshToken {
@@ -10,10 +11,19 @@ const REFRESH_TOKEN_MUTATION = gql`
 	}
 `;
 
-export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalUsername: (username: string) => void) => {
+export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalProfile: (username: string) => void) => {
 
 	let retryCount = 0;
 	const MAX_RETRIES = 2;
+
+	const { refetch } = useQuery(MY_PROFILE, {
+		onCompleted: (data) => {
+			setGlobalProfile(data.myProfile);
+		},
+		onError: () => {
+			setGlobalProfile("");
+		}
+	});
 
 	const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION, {
 		onError: () => {
@@ -23,14 +33,14 @@ export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalUsername
 			} else {
 				setLoggedIn(false);
 				localStorage.removeItem('loggedIn');
-				setGlobalUsername("");
+				setGlobalProfile("");
 			}
 		},
 		onCompleted: (data) => {
 			retryCount = 0;  // reset the retry count after a successful request
 			setLoggedIn(true);
 			localStorage.setItem('loggedIn', "true");
-			setGlobalUsername(data.refreshToken.payload.username);
+			refetch();
 		}
 	});
 

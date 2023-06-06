@@ -53,9 +53,9 @@ function RequireAuth({ children }: any) {
 
 
 function App(): JSX.Element {
-	const { setLoggedIn, setGlobalUsername } = useGlobalContext();
+	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
 	const [showSidebar, onSetShowSidebar] = useState(false);
-	useAuth(setLoggedIn, setGlobalUsername);
+	useAuth(setLoggedIn, setGlobalProfile);
 
 	return (
 		<ThemeProvider>

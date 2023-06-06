@@ -1,14 +1,30 @@
-import { useState } from "react"
-import { Container, Typography, Box, Card, Grid, CardContent, List, ListItem, ListItemText } from "@mui/material"
+import { Container, Typography, Box, Card, Grid, CardContent, List, ListItem, ListItemText, Button } from "@mui/material"
 
 import { GET_ACCOUNTABILITY } from "../../models/accountability";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+
+import { useGlobalContext } from "../App/GlobalContextProvider";
+
+import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
+
 
 const PendingAccountabilityContent = ({ id }: { id: string }) => {
+    const { globalProfile } = useGlobalContext()
+    const currentCodename = globalProfile.codename
+
     const { data, loading, error } = useQuery(GET_ACCOUNTABILITY, {
         variables: {
             id,
         },
+    })
+
+    const [acceptAccountabilityInvite] = useMutation(ACCEPT_ACCOUNTABILITY_INVITE, {
+        variables: {
+            id: id,
+        },
+        onCompleted: () => {
+            window.location.reload()
+        }
     })
 
     if (loading) return <p>Loading...</p>
@@ -27,6 +43,9 @@ const PendingAccountabilityContent = ({ id }: { id: string }) => {
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="body1" gutterBottom>{accountability?.description}</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="h6" gutterBottom>Organizer: {accountability?.organizer.codename}</Typography>
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Typography variant="body1" gutterBottom>Start Date: {accountability?.startDate}</Typography>
@@ -51,6 +70,12 @@ const PendingAccountabilityContent = ({ id }: { id: string }) => {
                                     {accountability?.pendingParticipants.map((participant: any, index: number) => (
                                         <ListItem key={index}>
                                             <ListItemText primary={participant.codename} />
+                                            {/* Add an "Accept Invite" button if the user is the current user */}
+                                            {participant.codename === currentCodename && (
+                                                <Button onClick={() => acceptAccountabilityInvite()} color="primary" variant="contained">
+                                                    Accept Invite
+                                                </Button>
+                                            )}
                                         </ListItem>
                                     ))}
                                 </List>

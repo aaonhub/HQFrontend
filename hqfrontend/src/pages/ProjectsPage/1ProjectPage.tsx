@@ -1,13 +1,12 @@
 import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { Box, Typography, Fab, TextField, List } from '@mui/material';
+import { Box, Typography, TextField, List } from '@mui/material';
 import ProjectToDoItem from './3ProjectToDoItem';
 import EditInboxItemDialog from '../../components/EditToDoItemDialog';
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Icons
-import { Add } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 

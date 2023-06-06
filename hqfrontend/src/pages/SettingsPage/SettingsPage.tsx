@@ -21,9 +21,9 @@ const DELETE_REFRESH_TOEKN_MUTATION = gql`
 
 const SettingsPage = () => {
 	const { currentTheme, setTheme } = useContext(ThemeContext);
-	const { setLoggedIn, globalUsername, setGlobalUsername } = useGlobalContext()
+	const { setLoggedIn, globalProfile, setGlobalProfile } = useGlobalContext()
 
-	const [codeName, setCodeName] = useState<string>(globalUsername);
+	const [codeName, setCodeName] = useState<string>(globalProfile.codename);
 	const [message, setMessage] = useState<string>("");
 	const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
 	const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "info" | "warning">("success");
@@ -31,8 +31,8 @@ const SettingsPage = () => {
 
 
 	useEffect(() => {
-		setCodeName(globalUsername);
-	}, [globalUsername])
+		setCodeName(globalProfile.codename);
+	}, [globalProfile])
 
 
 
@@ -44,7 +44,7 @@ const SettingsPage = () => {
 		}
 	})
 	const handleLogout = () => {
-		setGlobalUsername("")
+		setGlobalProfile({})
 		deleteRefreshTokenCookie()
 	}
 

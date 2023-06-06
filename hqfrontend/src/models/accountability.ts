@@ -103,6 +103,21 @@ export const GET_ACCOUNTABILITY = gql`
 	}
 `;
 
+export const GET_ACCOUNTABILITY_DATA = gql`
+	query monthlyCompletionPercentages($accountability: ID!) {
+		monthlyCompletionPercentages(accountability: $accountability) {
+			id
+			date
+			totalTasks
+			completedTasks
+			profile {
+				id
+				codename
+			}
+		}
+	}
+`;
+
 
 // Mutations
 export const SEND_FRIEND_REQUEST = gql`
@@ -166,16 +181,12 @@ export const UPDATE_DAILY_COMPLETION_PERCENTAGE = gql`
 	}
 `;
 
-export const GET_ACCOUNTABILITY_DATA = gql`
-	query monthlyCompletionPercentages($accountability: ID!) {
-		monthlyCompletionPercentages(accountability: $accountability) {
-			id
-			date
-			totalTasks
-			completedTasks
-			profile {
+export const ACCEPT_ACCOUNTABILITY_INVITE = gql`
+	mutation AcceptAccounability($id: ID!) {
+		acceptAccountability( accountabilityId: $id ) {
+			accountability {
 				id
-				codename
+				name
 			}
 		}
 	}

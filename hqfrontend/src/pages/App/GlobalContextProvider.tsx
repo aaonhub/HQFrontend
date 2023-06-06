@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState } from "react";
 interface IGlobalContext {
 	loggedIn: boolean;
 	setLoggedIn: (value: boolean) => void;
-	globalUsername: string;
-	setGlobalUsername: (username: string) => void;
+	globalProfile: any;
+	setGlobalProfile: (value: any) => void;
 	snackbar: {
 		message: string;
 		open: boolean;
@@ -29,7 +29,7 @@ export const useGlobalContext = () => {
 
 export const GlobalContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const [loggedIn, setLoggedIn] = useState(false);
-	const [globalUsername, setGlobalUsername] = useState<string>("");
+	const [globalProfile, setGlobalProfile] = useState<string>("");
 	const [snackbar, setSnackbar] = useState({
 		message: '',
 		open: false,
@@ -40,8 +40,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 		<GlobalContext.Provider value={{
 			loggedIn,
 			setLoggedIn,
-			globalUsername,
-			setGlobalUsername,
+			globalProfile,
+			setGlobalProfile,
 			snackbar,
 			setSnackbar
 		}

@@ -27,7 +27,7 @@ import { useGlobalContext } from '../App/GlobalContextProvider';
 type AccountabilityLength = 'INDEFINITE' | 'ONE_WEEK' | 'ONE_MONTH' | 'ONE_YEAR';
 
 const NewAccountabilityDialog = ({ open, handleClose }: any) => {
-	const { globalUsername } = useGlobalContext();
+	const { globalProfile } = useGlobalContext();
 
 	const [name, setName] = useState<string>('');
 	const [compType, setCompType] = useState<AccountabilityType>('Basic');
@@ -44,13 +44,13 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 				if (friend.id === "0") {
 					return {
 						...friend,
-						title: globalUsername
+						title: globalProfile.codename
 					}
 				}
 				return friend;
 			})
 		})
-	}, [globalUsername])
+	}, [globalProfile])
 
 
 	// Friends Query
@@ -65,7 +65,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 			});
 			friendList.unshift({
 				id: "0",
-				title: globalUsername,
+				title: globalProfile.codename,
 				checked: true
 			})
 			setFriends(friendList);
@@ -76,7 +76,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 	// Add Friend to Squad
 	const handleAddToSquad = (squadMember: any) => {
 		const updatedSquadMembers = friends.map((friend: any) => {
-			if (globalUsername === friend.title) {
+			if (globalProfile.codename === friend.title) {
 				return {
 					...friend,
 					checked: true,

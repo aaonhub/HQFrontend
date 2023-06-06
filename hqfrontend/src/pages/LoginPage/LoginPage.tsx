@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation, gql, useQuery } from '@apollo/client'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './LoginPage.module.css'
 import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import Stack from '@mui/material/Stack'
+
+import { MY_PROFILE } from '../../models/social'
 
 // Globals
 import { useGlobalContext } from '../App/GlobalContextProvider'
@@ -18,17 +20,24 @@ const LOGIN_MUTATION = gql`
 `;
 
 const LoginPage = () => {
-	const { setLoggedIn, setGlobalUsername } = useGlobalContext();
+	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate(); // Access the navigate function from react-router-dom
 	const [showAlert, setShowAlert] = useState(false); // State to control the visibility of the alert
 
+	const { refetch } = useQuery(MY_PROFILE, {
+		onCompleted: (data) => {
+			console.log(data);
+			setGlobalProfile(data.myProfile);
+		}
+	});
+
 	const [login] = useMutation(LOGIN_MUTATION, {
 		onCompleted: (data) => {
 			console.log(data);
 			setLoggedIn(true);
-			setGlobalUsername(data.tokenAuth.payload.username);
+			refetch();
 			localStorage.setItem('loggedIn', 'true');
 			navigate('/'); // Redirect to root URL after successful login
 		},

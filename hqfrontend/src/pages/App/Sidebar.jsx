@@ -32,7 +32,7 @@ const sidebarItems = [
 
 
 export default function Sidebar({ onSidebarHide, showSidebar }) {
-	const { globalUsername } = useGlobalContext();
+	const { globalProfile } = useGlobalContext();
 	const [selected, setSelected] = useState('0');
 
 	return (
@@ -130,7 +130,7 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 					<Image path="mock_faces_8" className="w-10 h-10" />
 					<div className="block sm:hidden xl:block ml-2 font-bold ">
 						{
-							globalUsername ? globalUsername : "Log In"
+							globalProfile ? globalProfile.codename : "Log In"
 						}
 					</div>
 					<div className="flex-grow block sm:hidden xl:block" />

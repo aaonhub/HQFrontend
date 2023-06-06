@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Container, Grid, Typography } from "@mui/material";
 import Itinerary from "./Itinerary";
 import LogList from "./LogList";
 
@@ -26,26 +26,28 @@ const TodayPage = () => {
 	const customFormattedDate = `${weekday}, ${month} ${dayWithSuffix}, ${year}`;
 
 	return (
-		<Grid container>
-			{/* Day Display */}
-			<Grid item xs={12}>
-				<Typography variant="h4" sx={{ paddingBottom: 2 }}>
-					{customFormattedDate}
-				</Typography>
-			</Grid>
-
-			{/* Left Log List */}
-			<Grid item xs={6}>
-				<Itinerary />
-			</Grid>
-
-			{/* Right side */}
-			<Grid item xs={6}>
+		<Container>
+			<Grid container>
+				{/* Day Display */}
 				<Grid item xs={12}>
-					<LogList />
+					<Typography variant="h4" sx={{ paddingBottom: 2 }}>
+						{customFormattedDate}
+					</Typography>
+				</Grid>
+
+				{/* Left Log List */}
+				<Grid item xs={6}>
+					<Itinerary />
+				</Grid>
+
+				{/* Right side */}
+				<Grid item xs={6}>
+					<Grid item xs={12}>
+						<LogList />
+					</Grid>
 				</Grid>
 			</Grid>
-		</Grid>
+		</Container>
 	);
 };
 

@@ -25,7 +25,8 @@ import InboxItem, { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
 
 const ProjectPage = () => {
 	const { projectId } = useParams();
-	const newProjectItemTitleRef = useRef<HTMLInputElement>(null);
+	const newTopProjectItemTitleRef = useRef<HTMLInputElement>(null);
+	const newBottomProjectItemTitleRef = useRef<HTMLInputElement>(null);
 	const [project, setProject] = useState<Project>(new Project('', ''))
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 	const [projectItemArray, setProjectItemArray] = useState<InboxItem[]>([])
@@ -95,8 +96,11 @@ const ProjectPage = () => {
 	const [addItemToProjectAtPosition] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
-			if (newProjectItemTitleRef.current) {
-				newProjectItemTitleRef.current.value = ''
+			if (newTopProjectItemTitleRef.current) {
+				newTopProjectItemTitleRef.current.value = ''
+			}
+			if (newBottomProjectItemTitleRef.current) {
+				newBottomProjectItemTitleRef.current.value = ''
 			}
 		},
 		refetchQueries: [
@@ -106,10 +110,19 @@ const ProjectPage = () => {
 			},
 		],
 	});
-	const handleAddProjectItem = (position: number) => {
+	const handleAddProjectItemTop = (position: number) => {
 		addItemToProjectAtPosition({
 			variables: {
-				title: newProjectItemTitleRef.current && newProjectItemTitleRef.current.value,
+				title: newTopProjectItemTitleRef.current && newTopProjectItemTitleRef.current.value,
+				projectId: projectId,
+				position: position,
+			},
+		});
+	};
+	const handleAddProjectItemBottom = (position: number) => {
+		addItemToProjectAtPosition({
+			variables: {
+				title: newBottomProjectItemTitleRef.current && newBottomProjectItemTitleRef.current.value,
 				projectId: projectId,
 				position: position,
 			},
@@ -245,20 +258,20 @@ const ProjectPage = () => {
 
 			{/* Text input that adds to do list items to the project */}
 			<TextField
-				inputRef={newProjectItemTitleRef}
+				inputRef={newTopProjectItemTitleRef}
 				fullWidth
 				label="Add Project Item"
 				defaultValue=""
 				onChange={(e) => {
-					if (newProjectItemTitleRef.current) {
-						newProjectItemTitleRef.current.value = e.target.value;
+					if (newTopProjectItemTitleRef.current) {
+						newTopProjectItemTitleRef.current.value = e.target.value;
 					}
 				}}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItem(0);
+						handleAddProjectItemTop(0);
 					}
 				}}
 				sx={{ marginBottom: 2 }}
@@ -288,20 +301,20 @@ const ProjectPage = () => {
 
 			{/* Text input that adds to do list items to the project */}
 			<TextField
-				inputRef={newProjectItemTitleRef}
+				inputRef={newBottomProjectItemTitleRef}
 				fullWidth
 				label="Add Project Item"
 				defaultValue=""
 				onChange={(e) => {
-					if (newProjectItemTitleRef.current) {
-						newProjectItemTitleRef.current.value = e.target.value;
+					if (newBottomProjectItemTitleRef.current) {
+						newBottomProjectItemTitleRef.current.value = e.target.value;
 					}
 				}}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItem(projectItemArray.length);
+						handleAddProjectItemBottom(projectItemArray.length);
 					}
 				}}
 				sx={{ marginBottom: 2 }}

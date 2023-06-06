@@ -1,10 +1,11 @@
+import { useState, useEffect } from 'react';
 import clsx from "clsx"
-import React from "react"
 import './Sidebar.css'
 import { Link } from 'react-router-dom'
+import { useLocation } from "react-router-dom";
+
 import { useGlobalContext } from './GlobalContextProvider';
 
-const { useState } = React
 
 
 
@@ -33,7 +34,26 @@ const sidebarItems = [
 
 export default function Sidebar({ onSidebarHide, showSidebar }) {
 	const { globalProfile } = useGlobalContext();
+	const location = useLocation();
 	const [selected, setSelected] = useState('0');
+
+	// This will set the selected state based on current URL.
+
+
+	// Use effect to listen to location change
+	useEffect(() => {
+		const getCurrentSelected = () => {
+			for (let group of sidebarItems) {
+				for (let item of group) {
+					if (item.link === location.pathname) {
+						return item.id;
+					}
+				}
+			}
+		}
+		setSelected(getCurrentSelected());
+	}, [location]);
+
 
 	return (
 		<div

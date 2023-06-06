@@ -1,6 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
-import { ThemeContext } from './ThemeContext';
-import { FormControl, InputLabel, MenuItem, Select, TextField, Box, Snackbar, Alert, Typography, Button } from '@mui/material';
+import { 
+	// useContext, 
+	useEffect, useState } from 'react';
+// import { ThemeContext } from './ThemeContext';
+import { 
+	// FormControl, InputLabel, MenuItem, Select, 
+	TextField, Box, Snackbar, Alert, Typography, Button } from '@mui/material';
 import { useMutation, gql } from '@apollo/client';
 
 // Globals
@@ -20,7 +24,7 @@ const DELETE_REFRESH_TOEKN_MUTATION = gql`
 
 
 const SettingsPage = () => {
-	const { currentTheme, setTheme } = useContext(ThemeContext);
+	// const { currentTheme, setTheme } = useContext(ThemeContext);
 	const { setLoggedIn, globalProfile, setGlobalProfile } = useGlobalContext()
 
 	const [codeName, setCodeName] = useState<string>(globalProfile.codename);
@@ -67,9 +71,9 @@ const SettingsPage = () => {
 		}
 	});
 
-	const handleChange = (event: any) => {
-		setTheme(event.target.value);
-	};
+	// const handleChange = (event: any) => {
+	// 	setTheme(event.target.value);
+	// };
 
 	const handleChangeCodeName = (event: any) => {
 		updateProfile({

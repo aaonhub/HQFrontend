@@ -127,8 +127,9 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 			{/* Profile Display */}
 			<div className="flex-shrink-0 overflow-hidden p-2">
 				<div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-bottom">
-					<Image path="mock_faces_8" className="w-10 h-10" />
-					<div className="block sm:hidden xl:block ml-2 font-bold ">
+
+					{/* <Image path="mock_faces_8" className="w-10 h-10" /> */}
+					<div className="block sm:hidden xl:block ml-2 font-bold p-1">
 						{
 							globalProfile ? globalProfile.codename : "Log In"
 						}
@@ -289,12 +290,12 @@ function IconButton({
 
 
 
-function Image({ path = '1', className = 'w-4 h-4' }) {
-	return (
-		<img
-			src={`https://assets.codepen.io/3685267/${path}.jpg`}
-			alt=""
-			className={clsx(className, 'rounded-full')}
-		/>
-	);
-}
+// function Image({ path = '1', className = 'w-4 h-4' }) {
+// 	return (
+// 		<img
+// 			src={`https://assets.codepen.io/3685267/${path}.jpg`}
+// 			alt=""
+// 			className={clsx(className, 'rounded-full')}
+// 		/>
+// 	);
+// }

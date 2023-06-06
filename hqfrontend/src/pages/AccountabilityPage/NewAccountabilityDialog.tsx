@@ -12,8 +12,11 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
+
+// Components
 import CustomChecklist from "../../components/CustomChecklist";
 
 // Queries and Mutations
@@ -27,7 +30,7 @@ import { useGlobalContext } from '../App/GlobalContextProvider';
 type AccountabilityLength = 'INDEFINITE' | 'ONE_WEEK' | 'ONE_MONTH' | 'ONE_YEAR';
 
 const NewAccountabilityDialog = ({ open, handleClose }: any) => {
-	const { globalProfile } = useGlobalContext();
+	const { globalProfile, setSnackbar } = useGlobalContext();
 
 	const [name, setName] = useState<string>('');
 	const [compType, setCompType] = useState<AccountabilityType>('Basic');
@@ -63,11 +66,6 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 					checked: false
 				}
 			});
-			friendList.unshift({
-				id: "0",
-				title: globalProfile.codename,
-				checked: true
-			})
 			setFriends(friendList);
 		}
 	});
@@ -94,14 +92,27 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 
 	// Create Accountability Squad
 	const [createAccountability] = useMutation(CREATE_ACCOUNTABILITY, {
-		onCompleted: (data: any) => {
-			console.log(data);
+		onCompleted: () => {
+			setSnackbar({
+				open: true,
+				message: 'Accountability Squad Created!',
+				severity: 'success'
+			});
+			handleClose();
+		},
+		onError: (error) => {
+			console.log(error);
+			setSnackbar({
+				open: true,
+				message: error.message,
+				severity: 'error'
+			});
 		}
 	});
 	const handleCreateSquad = () => {
 		// Ensure that there is at least one other friend selected
 		const selectedFriends = friends.filter((friend: any) => friend.checked);
-		if (selectedFriends.length <= 1) {
+		if (selectedFriends.length < 1) {
 			alert('Please select at least one friend');
 			return;
 		}
@@ -144,7 +155,6 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 				pendingParticipants: squadMembers
 			}
 		})
-		handleClose();
 	}
 
 
@@ -152,7 +162,9 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
+
 			<DialogTitle>Create Accountability Squad</DialogTitle>
+
 			<DialogContent>
 				<Box
 					component="form"
@@ -180,6 +192,21 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 							<Box sx={{ maxHeight: 400, overflow: 'visible', marginTop: 2 }}>
 								{loading && <p>Loading...</p>}
 								{error && <p>Error :(</p>}
+
+								{/* Organizer (aka self) */}
+								<Typography variant='h6'>Organizer:</Typography>
+								<CustomChecklist
+									list={[{
+										id: "0",
+										title: globalProfile.codename,
+										checked: true
+									}]}
+									handleCheckItem={handleAddToSquad}
+									checklistType='highlight'
+								/>
+
+								{/* Friends */}
+								<Typography variant='h6'>Squad Members:</Typography>
 								{data && data.friendList &&
 									< CustomChecklist
 										list={friends}

@@ -45,7 +45,7 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 		onCompleted: (data) => {
 			const friendList = data.friendList.map((friend: any) => {
 				return {
-					id: friend.userId,
+					id: friend.id,
 					title: friend.codename,
 					checked: false
 				}

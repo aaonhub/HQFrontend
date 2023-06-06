@@ -66,7 +66,6 @@ export const GET_FRIENDS = gql`
 		friendList {
 			id
 			codename
-			userId
 		}
 	}
 `;

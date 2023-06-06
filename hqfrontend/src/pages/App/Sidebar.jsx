@@ -37,11 +37,10 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 	const location = useLocation();
 	const [selected, setSelected] = useState('0');
 
-	// This will set the selected state based on current URL.
-
 
 	// Use effect to listen to location change
 	useEffect(() => {
+		// This will set the selected state based on current URL.
 		const getCurrentSelected = () => {
 			for (let group of sidebarItems) {
 				for (let item of group) {

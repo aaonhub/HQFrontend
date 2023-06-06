@@ -82,9 +82,9 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 							onChange={handleFrequencyChange}
 						>
 							<MenuItem value="DAILY">Daily</MenuItem>
-							<MenuItem value="WEEKLY">Weekly</MenuItem>
+							{/* <MenuItem value="WEEKLY">Weekly</MenuItem>
 							<MenuItem value="MONTHLY">Monthly</MenuItem>
-							<MenuItem value="YEARLY">Yearly</MenuItem>
+							<MenuItem value="YEARLY">Yearly</MenuItem> */}
 						</Select>
 					</FormControl>
 				</Box>

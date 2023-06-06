@@ -20,3 +20,31 @@
   color: #000000; /* Adjust the font color as needed */
   z-index: 10;
 }
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.legendColor {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
+  margin-right: 5px;
+}
+
+.legendLabel {
+  font-weight: bold;
+}

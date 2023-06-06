@@ -1,81 +1,32 @@
 import styles from './AccountabilityPage.module.css';
+import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
+import { useQuery } from '@apollo/client';
+import { Box, Typography } from '@mui/material';
 
-// Sample data
-const users = [
-	{
-		name: "User 1",
-		history: {
-			"2023": "**50505050505050505050505050505050505050505050505050505050**",
-		},
-	},
-	{
-		name: "User 2",
-		history: {
-			"2023": "**50505050505050505050505050505050505050505050505050505050**",
-		},
-	},
-];
-
-
-
-
-// Parser
-function parseHistory(historyString: any) {
-	let historyArray = [];
-
-	for (let i = 0; i < historyString.length; i += 2) {
-		let slice = historyString.slice(i, i + 2);
-
-		if (slice === '**') {
-			historyArray.push(100);
-		} else {
-			historyArray.push(parseInt(slice, 10));
-		}
-	}
-
-	return historyArray;
-}
-
-// Encoder
-function encodeHistory(historyArray: any) {
-	let historyString = '';
-
-	for (let i = 0; i < historyArray.length; i++) {
-		let value = historyArray[i];
-
-		if (value === 100) {
-			historyString += '**';
-		} else if (value < 10) {
-			historyString += '0' + value.toString();
-		} else {
-			historyString += value.toString();
-		}
-	}
-
-	return historyString;
-}
-
-// Days in month
-function getDaysInMonth(dateString: any) {
-	const [year, month] = dateString.split('-');
-	const lastDayOfMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
-	return lastDayOfMonth;
-}
-
+// User color assignment - add more colors as required
+const userColors: Record<string, string> = {
+	'Guy': 'red',
+	'Guy1': 'blue',
+	// add more colors for more codenames here...
+};
 
 // Date square
 const DateSquare = ({ bars, date }: any) => {
-	const totalBars = bars.length;
+	const totalBars = Object.keys(userColors).length;
 	const barHeight = 100 / totalBars;
 
 	return (
 		<div className={styles.square}>
 			<div className={styles.date}>{date}</div>
-			{bars.map((bar: any, index: any) => (
+			{Object.keys(userColors).map((codename) => (
 				<div
-					key={index}
+					key={codename}
 					className={styles.bar}
-					style={{ width: `${bar}%`, height: `${barHeight}%` }}
+					style={{
+						backgroundColor: userColors[codename],
+						width: `${bars[codename] || 0}%`,
+						height: `${barHeight}%`
+					}}
 				/>
 			))}
 		</div>
@@ -87,73 +38,84 @@ const Spacer = () => (
 	<div
 		className={styles.square}
 		style={{ backgroundColor: "grey" }}
-	>
-
-	</div>
+	/>
 );
 
+const AccountabilityDisplay = ({ id }: { id: string }) => {
+	const { data, loading, error } = useQuery(GET_ACCOUNTABILITY_DATA, {
+		variables: { accountability: id },
+		onError: (error) => {
+			console.log(error.message);
+		},
+		onCompleted: (data) => {
+			console.log(data);
+		},
+	});
 
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error: {JSON.stringify(error)}</p>;
 
+	const recordsByDate: Record<string, Record<string, number>> = {};
+	const codenamesById: Record<string, string> = {};
 
-const AccountabilityDisplay = (id: any) => {
-	const bars = [30, 60];
+	data.monthlyCompletionPercentages.forEach((record: any) => {
+		const date = new Date(record.date);
+		const day = date.getDate();
+		const codename = record.profile.codename;
 
-	const history1 = parseHistory(users[0].history["2023"]);
-	const history2 = parseHistory(users[1].history["2023"]);
+		if (!recordsByDate[day]) recordsByDate[day] = {};
+		const completionPercentage = (record.completedTasks / record.totalTasks) * 100;
+		recordsByDate[day][codename] = completionPercentage;
 
-	// create a new array with the number of days in the month
-	const daysInMonth = getDaysInMonth("2023-06");
+		codenamesById[record.profile.id] = codename;
+	});
 
-	// Function to get day of week for first day in month
-	function getFirstDayOfMonth(dateString: any) {
-		const [year, month] = dateString.split('-');
-		const firstDayOfMonth = new Date(year, parseInt(month) - 1, 1).getDay();
-		return firstDayOfMonth;
-	}
+	const daysInMonth = 30;  // assuming June has 30 days, adjust as needed
+	const firstDayOfMonth = new Date("2023-06-01").getDay();
 
-
-	// Create nested arrays for rows of 7
-	const firstDayOfMonth = getFirstDayOfMonth("2023-06");
-
-	// Create nested arrays for rows of 7
 	const rows = [];
 	for (let i = 0; i < daysInMonth; i += 7) {
 		const row = Array.from(Array(7), (_, index) => {
-			let date = i + index + 1 - firstDayOfMonth;
-			return (date >= 0 && date <= daysInMonth) ? date : null;
+			const day = i + index + 1 - firstDayOfMonth;
+			return (day >= 1 && day <= daysInMonth) ? day : null;
 		});
-		if (i === 0) {
-			for (let j = 0; j < firstDayOfMonth; j++) {
-				row[j] = 0;
-			}
-		}
 		rows.push(row);
 	}
 
-
-
 	return (
-		<div>
-			<h1>Accountability Page</h1>
-
-			{/* <DateSquare bars={bars} date={1} /> */}
-
+		// center the box
+		<Box>
+			<Typography
+				variant="h4"
+				gutterBottom
+				style={{
+					textAlign: "center",
+					paddingTop: "20px",
+				}}
+			>Accountability Page</Typography>
+			
+			<div className={styles.legend}>
+				{Object.keys(codenamesById).map((id) => (
+					<div key={id} className={styles.legendItem}>
+						<div className={styles.legendColor} style={{ backgroundColor: userColors[codenamesById[id]] }} />
+						<div className={styles.legendLabel}>{codenamesById[id]}</div>
+					</div>
+				))}
+			</div>
 			{rows.map((row, rowIndex) => (
 				<div key={rowIndex} style={{ display: "flex" }}>
 					{row.map((date, dateIndex) => (
-						date && date > 0 ?
+						date ?
 							<DateSquare
 								key={dateIndex}
-								bars={[history1[date - 1], history2[date - 1]]}
+								bars={recordsByDate[date] || {}}
 								date={date}
 							/> : <Spacer key={dateIndex} />
 					))}
 				</div>
 			))}
+		</Box>
 
-
-
-		</div>
 	);
 };
 

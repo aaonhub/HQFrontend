@@ -152,3 +152,31 @@ export const CREATE_ACCOUNTABILITY = gql`
 		}
 	}
 `;
+
+export const UPDATE_DAILY_COMPLETION_PERCENTAGE = gql`
+	mutation UpdateDailyCompletionPercentage($Date: Date!, $TotalTasks: Int!, $CompletedTasks: Int!) {
+		createOrUpdateDailyCompletionPercentage(date: $Date, completedTasks: $CompletedTasks, totalTasks: $TotalTasks) {
+			dailyCompletionPercentage {
+				id
+				date
+				completedTasks
+				totalTasks
+			}
+		}
+	}
+`;
+
+export const GET_ACCOUNTABILITY_DATA = gql`
+	query monthlyCompletionPercentages($accountability: ID!) {
+		monthlyCompletionPercentages(accountability: $accountability) {
+			id
+			date
+			totalTasks
+			completedTasks
+			profile {
+				id
+				codename
+			}
+		}
+	}
+`;

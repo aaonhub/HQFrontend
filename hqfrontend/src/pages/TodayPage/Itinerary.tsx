@@ -35,6 +35,7 @@ import { ADD_LOG } from '../../models/log';
 import { ADD_TODO_TO_TODAY } from '../../models/inboxitem';
 import { GET_TODAY_LIST_ITEMS } from "../../models/inboxitem";
 import { GET_HABITS_DUE_TODAY } from "../../models/habit";
+import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../models/accountability';
 
 
 
@@ -47,6 +48,7 @@ const Itinerary: React.FC = () => {
 	const [habits, setHabits] = useState<Habit[]>([]);
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
 	const [expanded, setExpanded] = useState(false);
+
 
 
 	const localDate = getCurrentLocalDate();
@@ -161,7 +163,20 @@ const Itinerary: React.FC = () => {
 	};
 
 	// Check Item
+	const [updateDailyCompletionPercentage] = useMutation(UPDATE_DAILY_COMPLETION_PERCENTAGE)
+	const handleUpdateDailyCompletionPercentage = async () => {
+		const totalTasks = uncompletedItems.length + completedItems.length
+		const completedTasks = completedItems.length + 1
+		await updateDailyCompletionPercentage({
+			variables: {
+				Date: getCurrentLocalDate(),
+				TotalTasks: totalTasks,
+				CompletedTasks: completedTasks,
+			},
+		})
+	}
 	const handleCheckItem = (item: SimpleItem) => {
+		handleUpdateDailyCompletionPercentage()
 		if (item.type === 'habit') {
 			handleCheckHabit(item.id)
 		} else {

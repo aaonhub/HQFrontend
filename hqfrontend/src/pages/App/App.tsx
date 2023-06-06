@@ -60,11 +60,9 @@ function App(): JSX.Element {
 	return (
 		<ThemeProvider>
 			<Router>
-				<Box sx={{ display: 'flex' }}>
+				<Box sx={{ display: 'flex', overflow: 'hidden' }}> {/* Add this here */}
 					<Analytics />
 					<CssBaseline />
-
-
 					{/* Sidebar */}
 					<Box sx={{
 						width: !showSidebar ? 240 : 56, // Adjust the width based on the value of `showSidebar`
@@ -77,7 +75,6 @@ function App(): JSX.Element {
 							showSidebar={showSidebar}
 						/>
 					</Box>
-
 
 					{/* Content */}
 					<Box sx={{ flexGrow: 1 }}>

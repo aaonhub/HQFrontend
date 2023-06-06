@@ -1,7 +1,10 @@
 import styles from './AccountabilityPage.module.css';
 import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
-import { useQuery } from '@apollo/client';
-import { Box, Typography } from '@mui/material';
+import { useQuery, useMutation } from '@apollo/client';
+import { Box, Button, Typography } from '@mui/material';
+
+import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
+
 
 // User color assignment - add more colors as required
 const userColors: Record<string, string> = {
@@ -52,8 +55,24 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		},
 	});
 
+	const [acceptAccountabilityInvite] = useMutation(ACCEPT_ACCOUNTABILITY_INVITE, {
+		variables: {
+			id: id,
+		},
+		onCompleted: () => {
+			window.location.reload()
+		}
+	})
+
 	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error: {JSON.stringify(error)}</p>;
+	if (error) return (
+		<div>
+			<p>Error: {error.message}</p>
+			<Button onClick={() => acceptAccountabilityInvite()} color="primary" variant="contained">
+				Accept Invite
+			</Button>
+		</div>
+	);
 
 	const recordsByDate: Record<string, Record<string, number>> = {};
 	const codenamesById: Record<string, string> = {};
@@ -93,7 +112,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 					paddingTop: "20px",
 				}}
 			>Accountability Page</Typography>
-			
+
 			<div className={styles.legend}>
 				{Object.keys(codenamesById).map((id) => (
 					<div key={id} className={styles.legendItem}>

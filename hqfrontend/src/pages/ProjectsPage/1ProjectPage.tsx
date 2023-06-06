@@ -279,7 +279,7 @@ const ProjectPage = () => {
 
 
 			{/* To-Do Items */}
-			<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+			<List sx={{ width: '100%', bgcolor: 'background.paper', marginBottom: 2 }}>
 				<ReactSortable
 					list={projectItemArray}
 					setList={setProjectItemArray}

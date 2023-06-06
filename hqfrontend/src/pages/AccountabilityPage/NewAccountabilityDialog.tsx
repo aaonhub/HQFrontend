@@ -40,22 +40,6 @@ const NewAccountabilityDialog = ({ open, handleClose }: any) => {
 	const [friends, setFriends] = useState<any>([]);
 
 
-	// Updates the logged in user when the globalUsername is fetched or it'll be empty
-	useEffect(() => {
-		setFriends((prev: any) => {
-			return prev.map((friend: any) => {
-				if (friend.id === "0") {
-					return {
-						...friend,
-						title: globalProfile.codename
-					}
-				}
-				return friend;
-			})
-		})
-	}, [globalProfile])
-
-
 	// Friends Query
 	const { loading, error, data } = useQuery(GET_FRIENDS, {
 		onCompleted: (data) => {

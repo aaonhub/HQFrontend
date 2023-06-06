@@ -88,8 +88,8 @@ const SettingsPage = () => {
 			</Box>
 
 			{/* Set Theme */}
-			<Box mb={2}>
-				<FormControl variant="outlined" fullWidth>
+			{/* <Box mb={2}>
+				<FormControl variant="outlined">
 					<InputLabel>Theme</InputLabel>
 					<Select
 						value={currentTheme}
@@ -101,7 +101,7 @@ const SettingsPage = () => {
 						<MenuItem value="pink">Pink</MenuItem>
 					</Select>
 				</FormControl>
-			</Box>
+			</Box> */}
 
 
 			{/* Set Codename */}

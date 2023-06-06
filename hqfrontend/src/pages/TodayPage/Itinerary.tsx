@@ -157,6 +157,45 @@ const Itinerary: React.FC = () => {
 		});
 	};
 
+
+	// Paste Event Handler
+	const handlePaste = async (event: React.ClipboardEvent) => {
+		event.preventDefault(); // Prevent the paste from happening right away
+
+		const pasteData = event.clipboardData.getData('text'); // Get the data from the clipboard
+		const lines = pasteData.split('\n'); // Split the pasted data by new line
+
+		if (lines.length > 1) { // If there are multiple lines
+			if (!window.confirm(`You are about to create ${lines.length} to do items. Continue?`)) {
+				return;
+			}
+			for (const line of lines) {
+				if (!line.trim()) { // If line is only whitespace
+					continue;
+				}
+				const newItem: SimpleItem = {
+					id: String(Date.now()) + 'i',
+					title: line,
+					startTime: '',
+					type: 'inbox',
+					completedToday: false,
+				};
+				setUncompletedItems((prevArray: SimpleItem[]) => [...prevArray, newItem]);
+				await addTodoToToday({
+					variables: {
+						title: newItem.title,
+						startDate: getCurrentLocalDate(),
+						Completed: false,
+					},
+				});
+				inboxRefetch();
+			}
+		} else { // If there is only one line
+			setInputValue(pasteData); // Paste the data into the input field
+		}
+	};
+
+
 	// Check Item
 	const [updateDailyCompletionPercentage] = useMutation(UPDATE_DAILY_COMPLETION_PERCENTAGE)
 	const handleUpdateDailyCompletionPercentage = async () => {
@@ -269,6 +308,7 @@ const Itinerary: React.FC = () => {
 						placeholder="Add item"
 						value={inputValue}
 						onChange={(e) => setInputValue(e.target.value)}
+						onPaste={handlePaste}
 						fullWidth
 						inputProps={{ style: { paddingLeft: "5px" } }}
 						onKeyDown={(e) => {
@@ -281,7 +321,6 @@ const Itinerary: React.FC = () => {
 						<AddIcon />
 					</IconButton>
 				</Box>
-
 				{/* List */}
 				<Box
 					sx={{

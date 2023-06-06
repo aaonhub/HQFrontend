@@ -1,31 +1,38 @@
-import { useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/client';
-import { Box, Typography, TextField, List } from '@mui/material';
-import ProjectToDoItem from './3ProjectToDoItem';
-import EditInboxItemDialog from '../../components/EditToDoItemDialog';
+import { useState, useRef } from 'react'
+import { useParams } from 'react-router-dom'
+import { useQuery, useMutation } from '@apollo/client'
+import { Box, Typography, TextField, List } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
+// Components
+import EditInboxItemDialog from '../../components/EditToDoItemDialog'
+import ProjectToDoItem from './3ProjectToDoItem'
+
 // Icons
-import IconButton from '@mui/material/IconButton';
-import ArrowBack from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton'
+import ArrowBack from '@mui/icons-material/ArrowBack'
 
 // Queries and Mutations
-import { GET_PROJECT_ITEMS } from '../../models/project';
-import { CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION } from '../../models/project';
-import { UPDATE_PROJECT_ITEM_ORDER } from '../../models/project';
-import { UPDATE_TODO } from '../../models/inboxitem';
-import { ADD_LOG } from '../../models/log';
+import {
+	GET_PROJECT_ITEMS,
+	CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION,
+	UPDATE_PROJECT_ITEM_ORDER
+} from '../../models/project'
+import {
+	UPDATE_TODO,
+	CHECK_UNCHECK_TODO
+} from '../../models/inboxitem'
+import { ADD_LOG } from '../../models/log'
 
 // Models
-import Project from '../../models/project';
-import InboxItem, { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
+import Project from '../../models/project'
+import InboxItem from '../../models/inboxitem'
 
 
 const ProjectPage = () => {
-	const { projectId } = useParams();
-	const newTopProjectItemTitleRef = useRef<HTMLInputElement>(null);
-	const newBottomProjectItemTitleRef = useRef<HTMLInputElement>(null);
+	const { projectId } = useParams()
+	const newTopProjectItemTitleRef = useRef<HTMLInputElement>(null)
+	const newBottomProjectItemTitleRef = useRef<HTMLInputElement>(null)
 	const [project, setProject] = useState<Project>(new Project('', ''))
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 	const [projectItemArray, setProjectItemArray] = useState<InboxItem[]>([])
@@ -49,21 +56,21 @@ const ProjectPage = () => {
 					startTime: item.start_time,
 					timeCompleted: item.time_completed ? new Date(item.time_completed) : null,
 				})
-			) || [];
+			) || []
 
-			let item_order: string[] = [];
+			let item_order: string[] = []
 			try {
-				item_order = JSON.parse(data.project.itemOrder);
+				item_order = JSON.parse(data.project.itemOrder)
 			} catch (error) {
-				console.error('Failed to parse itemOrder:', data.project.itemOrder);
-				item_order = [];
+				console.error('Failed to parse itemOrder:', data.project.itemOrder)
+				item_order = []
 			}
 
 			// Items with order and without
 			const orderedItems = item_order.map((itemId: string) => {
 				return projectItems.find((item: any) => item.id === itemId)
 			}).filter((item: any) => item !== undefined) as InboxItem[]
-			const unorderedItems = projectItems.filter((item: any) => !item_order.includes(item.id));
+			const unorderedItems = projectItems.filter((item: any) => !item_order.includes(item.id))
 
 			// Combine ordered and unordered items
 			const finalItems = orderedItems.concat(unorderedItems)
@@ -73,21 +80,22 @@ const ProjectPage = () => {
 					id: data.project.id,
 					itemOrder: finalItems.map((item: InboxItem) => item.id),
 				},
-			});
+			})
 
 			const project: Project = {
 				id: data.project.id,
 				codename: data.project.codename,
 				to_do_items: finalItems,
 				item_order: item_order,
-			};
+			}
 
-			setProject(project);
+			setProject(project)
 			project.to_do_items
 				? setProjectItemArray(finalItems)
-				: setProjectItemArray([]);
+				: setProjectItemArray([])
 		},
-	});
+	})
+
 
 
 
@@ -108,7 +116,7 @@ const ProjectPage = () => {
 				variables: { projectId, completed: false },
 			},
 		],
-	});
+	})
 	const handleAddProjectItemTop = (position: number) => {
 		addItemToProjectAtPosition({
 			variables: {
@@ -116,8 +124,8 @@ const ProjectPage = () => {
 				projectId: projectId,
 				position: position,
 			},
-		});
-	};
+		})
+	}
 	const handleAddProjectItemBottom = (position: number) => {
 		addItemToProjectAtPosition({
 			variables: {
@@ -125,9 +133,8 @@ const ProjectPage = () => {
 				projectId: projectId,
 				position: position,
 			},
-		});
-	};
-
+		})
+	}
 
 
 
@@ -141,24 +148,24 @@ const ProjectPage = () => {
 				variables: { projectId, completed: false },
 			},
 		],
-	});
+	})
 	const [addToDoLog] = useMutation(ADD_LOG, {
 		onError: (error) => console.log(error.networkError),
-	});
+	})
 	const handleCheck = (toDoItem: InboxItem) => () => {
 		completeToDoItem({
 			variables: {
 				id: toDoItem.id,
 				Completed: !toDoItem.completed,
 			},
-		});
+		})
 		addToDoLog({
 			variables: {
 				logTime: new Date().toISOString(),
 				todoItemId: toDoItem.id,
 			},
-		});
-	};
+		})
+	}
 
 
 
@@ -184,19 +191,19 @@ const ProjectPage = () => {
 	const handleClose = (inboxItem?: InboxItem) => {
 		if (inboxItem) {
 			// update index item in project
-			const index = projectItemArray.findIndex(item => item.id === inboxItem.id);
+			const index = projectItemArray.findIndex(item => item.id === inboxItem.id)
 			if (index) {
-				const updatedProjectItemArray = [...projectItemArray];
-				updatedProjectItemArray.splice(index, 1, inboxItem);
-				setProjectItemArray(updatedProjectItemArray);
+				const updatedProjectItemArray = [...projectItemArray]
+				updatedProjectItemArray.splice(index, 1, inboxItem)
+				setProjectItemArray(updatedProjectItemArray)
 			}
-			handleUpdateToDo(inboxItem);
-			setSelectedInboxItem(undefined);
+			handleUpdateToDo(inboxItem)
+			setSelectedInboxItem(undefined)
 		}
 		else {
-			setSelectedInboxItem(undefined);
+			setSelectedInboxItem(undefined)
 		}
-	};
+	}
 
 
 
@@ -204,30 +211,30 @@ const ProjectPage = () => {
 	// Change order of to do items
 	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
 		onError: (error) => console.log(error.networkError),
-	});
+	})
 	const handleProjectItemOrderChangeComplete = (evt: SortableEvent) => {
-		const newIndex = evt.newIndex;
-		const oldIndex = evt.oldIndex;
+		const newIndex = evt.newIndex
+		const oldIndex = evt.oldIndex
 
 		if (typeof newIndex === 'undefined' || typeof oldIndex === 'undefined') {
-			return;
+			return
 		}
 
-		const newProjectItemArray = [...projectItemArray];
-		const movedItem = newProjectItemArray.splice(oldIndex, 1)[0];
-		newProjectItemArray.splice(newIndex, 0, movedItem);
+		const newProjectItemArray = [...projectItemArray]
+		const movedItem = newProjectItemArray.splice(oldIndex, 1)[0]
+		newProjectItemArray.splice(newIndex, 0, movedItem)
 
-		setProjectItemArray(newProjectItemArray);
+		setProjectItemArray(newProjectItemArray)
 
-		const itemOrder = newProjectItemArray.map((item) => item.id);
+		const itemOrder = newProjectItemArray.map((item) => item.id)
 
 		changeProjectItemOrder({
 			variables: {
 				id: projectId,
 				itemOrder: itemOrder,
 			},
-		});
-	};
+		})
+	}
 
 
 
@@ -235,11 +242,10 @@ const ProjectPage = () => {
 	if (loading) { return <div>Loading...</div> }
 	if (error) { return <div>Error! {error.message}</div> }
 
-
-
-
 	return (
 		<Box sx={{ flexGrow: 1 }}>
+
+
 
 
 			{/* Title */}
@@ -255,6 +261,8 @@ const ProjectPage = () => {
 			</Box>
 
 
+
+
 			{/* Text input that adds to do list items to the project */}
 			<TextField
 				inputRef={newTopProjectItemTitleRef}
@@ -263,18 +271,19 @@ const ProjectPage = () => {
 				defaultValue=""
 				onChange={(e) => {
 					if (newTopProjectItemTitleRef.current) {
-						newTopProjectItemTitleRef.current.value = e.target.value;
+						newTopProjectItemTitleRef.current.value = e.target.value
 					}
 				}}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItemTop(0);
+						handleAddProjectItemTop(0)
 					}
 				}}
 				sx={{ marginBottom: 2 }}
 			/>
+
 
 
 
@@ -298,6 +307,8 @@ const ProjectPage = () => {
 			</List>
 
 
+
+
 			{/* Text input that adds to do list items to the project */}
 			<TextField
 				inputRef={newBottomProjectItemTitleRef}
@@ -306,14 +317,14 @@ const ProjectPage = () => {
 				defaultValue=""
 				onChange={(e) => {
 					if (newBottomProjectItemTitleRef.current) {
-						newBottomProjectItemTitleRef.current.value = e.target.value;
+						newBottomProjectItemTitleRef.current.value = e.target.value
 					}
 				}}
 				variant="outlined"
 				size="small"
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
-						handleAddProjectItemBottom(projectItemArray.length);
+						handleAddProjectItemBottom(projectItemArray.length)
 					}
 				}}
 				sx={{ marginBottom: 2 }}
@@ -321,11 +332,15 @@ const ProjectPage = () => {
 
 
 
+
 			{/* dialog */}
 			{selectedInboxItem && <EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />}
 
-		</Box >
-	);
-};
 
-export default ProjectPage;
+
+
+		</Box >
+	)
+}
+
+export default ProjectPage

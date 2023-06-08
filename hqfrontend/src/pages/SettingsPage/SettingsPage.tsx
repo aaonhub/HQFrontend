@@ -1,10 +1,12 @@
-import { 
+import {
 	// useContext, 
-	useEffect, useState } from 'react';
+	useEffect, useState
+} from 'react';
 // import { ThemeContext } from './ThemeContext';
-import { 
+import {
 	// FormControl, InputLabel, MenuItem, Select, 
-	TextField, Box, Snackbar, Alert, Typography, Button } from '@mui/material';
+	TextField, Box, Typography, Button
+} from '@mui/material';
 import { useMutation, gql } from '@apollo/client';
 
 // Globals
@@ -25,12 +27,8 @@ const DELETE_REFRESH_TOEKN_MUTATION = gql`
 
 const SettingsPage = () => {
 	// const { currentTheme, setTheme } = useContext(ThemeContext);
-	const { setLoggedIn, globalProfile, setGlobalProfile } = useGlobalContext()
-
+	const { setLoggedIn, globalProfile, setGlobalProfile, setSnackbar } = useGlobalContext()
 	const [codeName, setCodeName] = useState<string>(globalProfile.codename);
-	const [message, setMessage] = useState<string>("");
-	const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
-	const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "info" | "warning">("success");
 
 
 
@@ -56,18 +54,24 @@ const SettingsPage = () => {
 	const [updateProfile] = useMutation(CHANGE_CODENAME, {
 		onCompleted: (data: any) => {
 			console.log(data);
-			setMessage("Codename updated successfully!");
-			setAlertSeverity("success");
-			setShowSnackbar(true);
+			setSnackbar({
+				message: "Codename updated successfully!",
+				severity: "success",
+				open: true
+			});
 		},
 		onError: (error: any) => {
-			setMessage(error.message);
+			let AlertSeverity: any = "error";
 			if (error.message.includes("This is already your codename.")) {
-				setAlertSeverity("info");
+				AlertSeverity = "warning";
 			} else {
-				setAlertSeverity("error");
+				AlertSeverity = "error";
 			}
-			setShowSnackbar(true);
+			setSnackbar({
+				message: error.message,
+				severity: AlertSeverity,
+				open: true
+			});
 		}
 	});
 
@@ -121,19 +125,22 @@ const SettingsPage = () => {
 				}}
 			/>
 
-
-			{/* Logout */}
 			<Box mt={2}>
-				<Button variant="contained" color="error" onClick={handleLogout}>Logout</Button>
+				<Button
+					variant="contained"
+					color="primary"
+					disabled={codeName === globalProfile.codename}
+					onClick={handleChangeCodeName}
+				>
+					Change Codename
+				</Button>
 			</Box>
 
 
-			{/* Snackbar */}
-			<Snackbar open={showSnackbar} autoHideDuration={6000} onClose={() => setShowSnackbar(false)}>
-				<Alert onClose={() => setShowSnackbar(false)} severity={alertSeverity}>
-					{message}
-				</Alert>
-			</Snackbar>
+			{/* Logout */}
+			<Box mt={2} position="absolute" bottom="0">
+				<Button variant="contained" color="error" onClick={handleLogout}>Logout</Button>
+			</Box>
 
 		</Box>
 	);

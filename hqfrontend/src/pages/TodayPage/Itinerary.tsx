@@ -392,7 +392,7 @@ const Itinerary: React.FC = () => {
 									/>
 									<ListItemText
 										primary={item.title}
-										secondary={item.startTime}
+										secondary={item.startTime?.slice(0, -3)}
 									/>
 								</ListItem>
 							))}

@@ -115,15 +115,25 @@ const Itinerary: React.FC = () => {
 			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
 				return !simpleItem.completedToday
 			})
+
+			// Sort uncompletedItems by startTime
+			simpleItemArrayFiltered.sort((a, b) => {
+				const aTime = a.startTime || '';
+				const bTime = b.startTime || '';
+				if (aTime < bTime) return -1;
+				if (aTime > bTime) return 1;
+				return 0;
+			});
+
 			setUncompletedItems(simpleItemArrayFiltered)
 
 			const simpleItemArrayCompleted = combinedArray.filter((simpleItem) => {
 				return simpleItem.completedToday
 			})
 			setCompletedItems(simpleItemArrayCompleted)
-
 		}
 	}, [habitsData, inboxData, habits, inboxItems])
+
 
 
 	// Add To Do Item
@@ -296,7 +306,6 @@ const Itinerary: React.FC = () => {
 					Itinerary
 				</Typography>
 
-				{/* Input Box */}
 				<Box
 					sx={{
 						display: 'flex',
@@ -304,6 +313,8 @@ const Itinerary: React.FC = () => {
 						marginBottom: 2,
 					}}
 				>
+
+					{/* To Do Input */}
 					<Input
 						placeholder="Add item"
 						value={inputValue}
@@ -321,7 +332,7 @@ const Itinerary: React.FC = () => {
 						<AddIcon />
 					</IconButton>
 				</Box>
-				{/* List */}
+
 				<Box
 					sx={{
 						maxHeight: '90%',
@@ -339,6 +350,8 @@ const Itinerary: React.FC = () => {
 						}
 					}}
 				>
+
+					{/* Itinerary List */}
 					{uncompletedItems.length > 0 ? (
 						<List sx={{ padding: 0 }}>
 							{uncompletedItems.map((item) => (
@@ -349,7 +362,8 @@ const Itinerary: React.FC = () => {
 									/>
 									<ListItemText
 										primary={item.title}
-										secondary={item.startTime}
+										// cut off the last 3 characters of time to remove minutes
+										secondary={item.startTime?.slice(0, -3)}
 									/>
 								</ListItem>
 							))}
@@ -359,6 +373,7 @@ const Itinerary: React.FC = () => {
 							Nothing left to do
 						</Typography>
 					)}
+
 				</Box>
 			</CardContent>
 

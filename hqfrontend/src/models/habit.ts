@@ -39,7 +39,7 @@ class Habit {
 		this.dayOfTheYear = dayOfTheYear || 0;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.timeOfDay = timeOfDay;
+		this.timeOfDay = timeOfDay || '';
 		this.completedToday = completedToday;
 	}
 }
@@ -102,21 +102,15 @@ export const DELETE_HABIT = gql`
 `
 
 export const UPDATE_HABIT = gql`
-mutation updateHabit($id: ID!, $Title: String, $Active: Boolean, $Frequency: ENUM_HABIT_FREQUENCY, $LastCompleted: Date) {
-	updateHabit(id: $id, data: { Title: $Title, Active: $Active, Frequency: $Frequency, LastCompleted: $LastCompleted }) {
-		data {
-			id
-			attributes {
-				Title
-				Active
-				Frequency
+	mutation updateHabit($Active: Boolean!, $TimeOfDay: String, $id: ID!, $Title: String, $Frequency: String) {
+		updateHabit(active: $Active, timeOfDay: $TimeOfDay, id: $id, title: $Title, frequency: $Frequency, ){
+			habit{
+				id
 			}
 		}
 	}
-}
 `
 
-// Updated to django
 export const CHECK_HABIT = gql`
 	mutation createHabitHistoryAndUpdateLastCompleted($habitId: ID!, $currentDate: Date!) {
 		createHabitHistoryAndUpdateLastCompleted( habitId: $habitId, currentDate: $currentDate) {

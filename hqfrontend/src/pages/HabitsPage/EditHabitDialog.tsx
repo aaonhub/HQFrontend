@@ -13,7 +13,7 @@ import { DELETE_HABIT } from '../../models/habit';
 
 // Models
 import Habit, { Frequency } from '../../models/habit';
-import { getCurrentLocalDate } from '../../components/DateFunctions';
+import { useGlobalContext } from '../App/GlobalContextProvider';
 
 
 interface EditHabitDialogProps {
@@ -22,10 +22,11 @@ interface EditHabitDialogProps {
 }
 
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => {
+	const { setSnackbar } = useGlobalContext();
 	const [newHabit, setNewHabit] = useState<Habit>(habit);
 
+	// Delete Habit
 	const [deleteHabit] = useMutation(DELETE_HABIT);
-
 	const handleDelete = (id: string) => {
 		deleteHabit({
 			variables: {
@@ -42,9 +43,6 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 		setNewHabit(habit);
 	}, [habit])
 
-	const [updateHabit] = useMutation(UPDATE_HABIT, {
-		onError: (error) => console.log(error.networkError),
-	});
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewHabit({ ...newHabit, title: e.target.value });
@@ -58,17 +56,25 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 		setNewHabit({ ...newHabit, frequency: e.target.value as Frequency });
 	};
 
+	const handleTimeOfDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setNewHabit({ ...newHabit, timeOfDay: e.target.value });
+	};
+
+	const [updateHabit] = useMutation(UPDATE_HABIT, {
+		onCompleted: () => {
+			setSnackbar({ open: true, message: "Habit Updated", severity: "success" });
+			onClose();
+		},
+		onError: (error) => console.log(error.networkError),
+	});
 	const handleSaveClick = () => {
 		updateHabit({
 			variables: {
 				id: habit.id,
+				Title: newHabit.title,
 				Active: newHabit.active,
 				Frequency: newHabit.frequency,
-				Title: newHabit.title,
-				LastCompleted: getCurrentLocalDate(),
-			},
-			onCompleted: () => {
-				onClose();
+				TimeOfDay: newHabit.timeOfDay,
 			}
 		});
 	};
@@ -82,6 +88,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 			<DialogTitle>Edit Habit</DialogTitle>
 			<DialogContent>
 				<FormGroup>
+
 					<TextField
 						autoFocus
 						margin="dense"
@@ -98,9 +105,9 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 							onChange={handleActiveChange}
 							inputProps={{ 'aria-label': 'controlled' }}
 						/>
-					} label="Active" />
+					} label="Active" sx={{ paddingBottom: 2 }} />
 
-					<FormControl fullWidth>
+					<FormControl fullWidth sx={{ paddingBottom: 2 }}>
 						<InputLabel>New Frequency</InputLabel>
 						<Select
 							labelId="demo-simple-select-label"
@@ -110,10 +117,22 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 							onChange={handleFrequencyChange}
 						>
 							<MenuItem value={"DAILY"}>Daily</MenuItem>
-							<MenuItem value={"WEEKLY"}>Weekly</MenuItem>
-							<MenuItem value={"MONTHLY"}>Monthly</MenuItem>
+							{/* <MenuItem value={"WEEKLY"}>Weekly</MenuItem>
+							<MenuItem value={"MONTHLY"}>Monthly</MenuItem> */}
 						</Select>
 					</FormControl>
+
+					{/* Start Time Selector */}
+					<TextField
+						id="time"
+						label="Time of Day"
+						type="time"
+						value={newHabit.timeOfDay}
+						onChange={handleTimeOfDayChange}
+						InputLabelProps={{
+							shrink: true,
+						}}
+					/>
 
 				</FormGroup>
 			</DialogContent>

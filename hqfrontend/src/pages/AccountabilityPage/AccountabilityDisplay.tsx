@@ -10,6 +10,7 @@ import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
 const userColors: Record<string, string> = {
 	'Guy': 'red',
 	'dirtylitter': 'pink',
+	'Rosie': 'yellow',
 	// add more colors for more codenames here...
 };
 

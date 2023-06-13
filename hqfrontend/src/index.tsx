@@ -31,7 +31,7 @@ const customFetch = (uri: RequestInfo, options?: RequestInit): Promise<Response>
 			.then(response => {
 				if (response.status !== 200) {
 					return response.json().then((body) => {
-						if (body.errors && body.errors.some((error: any) => error.message === "Refresh token is required")) {
+						if (body.errors && body.errors.some((error: any) => error.message === "You do not have permission to perform this action")) {
 							attempts += 1;
 							if (attempts <= retries) {
 								return new Promise(resolve =>

@@ -1,8 +1,9 @@
 import styles from './AccountabilityPage.module.css';
-import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, Button, Typography } from '@mui/material';
 
+// Queries and Mutations
+import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
 import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
 
 
@@ -79,9 +80,11 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 	const codenamesById: Record<string, string> = {};
 
 	data.monthlyCompletionPercentages.forEach((record: any) => {
-		const date = new Date(record.date);
-		const day = date.getDate();
+		const date = record.date;
+		const day1 = date.slice(-2);
+		const day = day1[0] === '0' ? day1[1] : day1;
 		const codename = record.profile.codename;
+		console.log(day)
 
 		if (!recordsByDate[day]) recordsByDate[day] = {};
 		const completionPercentage = (record.completedTasks / record.totalTasks) * 100;
@@ -90,17 +93,27 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		codenamesById[record.profile.id] = codename;
 	});
 
-	const daysInMonth = 30;  // assuming June has 30 days, adjust as needed
-	const firstDayOfMonth = new Date("2023-06-01").getDay();
+	const currentDate = new Date();
+	const currentMonth = currentDate.getMonth() + 1;
+	const currentYear = currentDate.getFullYear();
+	const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+	const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay();
 
 	const rows = [];
-	for (let i = 0; i < daysInMonth; i += 7) {
+	let offset = firstDayOfMonth;
+
+	for (let i = 0; i < daysInMonth + offset; i += 7) {
 		const row = Array.from(Array(7), (_, index) => {
+			if (offset > 0) {
+				offset--;
+				return null;
+			}
 			const day = i + index + 1 - firstDayOfMonth;
 			return (day >= 1 && day <= daysInMonth) ? day : null;
 		});
 		rows.push(row);
 	}
+
 
 	return (
 		// center the box

@@ -24,6 +24,14 @@ const DELETE_REFRESH_TOEKN_MUTATION = gql`
 	}
 `
 
+const DELETE_TOKEN_MUTATION = gql`
+	mutation {
+		deleteTokenCookie{
+			deleted
+		}
+	}
+`
+
 
 const SettingsPage = () => {
 	// const { currentTheme, setTheme } = useContext(ThemeContext);
@@ -45,9 +53,16 @@ const SettingsPage = () => {
 			localStorage.removeItem('loggedIn')
 		}
 	})
+	const [deleteTokenCookie] = useMutation(DELETE_TOKEN_MUTATION, {
+		onCompleted: () => {
+			setLoggedIn(false)
+			localStorage.removeItem('loggedIn')
+		}
+	})
 	const handleLogout = () => {
 		setGlobalProfile({})
 		deleteRefreshTokenCookie()
+		deleteTokenCookie()
 	}
 
 	// Mutations

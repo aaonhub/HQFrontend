@@ -19,6 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // Components
 import { getCurrentLocalDate } from '../../components/DateFunctions';
 import { useGlobalContext } from '../App/GlobalContextProvider';
+import EditInboxItemDialog from '../../components/EditToDoItemDialog';
 
 
 // Models
@@ -31,7 +32,6 @@ import HabitInboxRosetta from './HabitInboxRosetta';
 import { useMutation, useQuery } from '@apollo/client';
 import { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
 import { CHECK_HABIT } from '../../models/habit';
-import { ADD_LOG } from '../../models/log';
 import { ADD_TODO_TO_TODAY } from '../../models/inboxitem';
 import { GET_TODAY_LIST_ITEMS } from "../../models/inboxitem";
 import { GET_HABITS_DUE_TODAY } from "../../models/habit";
@@ -48,6 +48,7 @@ const Itinerary: React.FC = () => {
 	const [habits, setHabits] = useState<Habit[]>([]);
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
 	const [expanded, setExpanded] = useState(false);
+	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null);
 
 
 
@@ -56,6 +57,7 @@ const Itinerary: React.FC = () => {
 
 	// Today's To Do Items Query
 	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TODAY_LIST_ITEMS, {
+		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
 		},
@@ -139,6 +141,8 @@ const Itinerary: React.FC = () => {
 	// Add To Do Item
 	const [addTodoToToday] = useMutation(ADD_TODO_TO_TODAY)
 	const handleAddItem = () => {
+
+		// Error Handling
 		if (!inputValue.trim()) {
 			setSnackbar({
 				message: "Please enter a title",
@@ -147,24 +151,25 @@ const Itinerary: React.FC = () => {
 			})
 			return;
 		}
-		const newItem: SimpleItem = {
-			id: String(Date.now()) + 'i',
-			title: inputValue,
-			startTime: '',
-			type: 'inbox',
-			completedToday: false,
-		};
-		setUncompletedItems((prevArray: SimpleItem[]) => [...prevArray, newItem]);
+
 		addTodoToToday({
 			variables: {
-				title: newItem.title,
+				title: inputValue,
 				startDate: getCurrentLocalDate(),
 				Completed: false,
 			},
-		}).then(() => {
-			setInputValue('');
-			inboxRefetch();
-		});
+			refetchQueries: [
+				{ query: GET_TODAY_LIST_ITEMS, variables: { Today: localDate } },
+			],
+			onCompleted: () => {
+				setInputValue('');
+				setSnackbar({
+					message: "To Do Item Added",
+					open: true,
+					severity: "success"
+				})
+			}
+		})
 	};
 
 
@@ -183,23 +188,21 @@ const Itinerary: React.FC = () => {
 				if (!line.trim()) { // If line is only whitespace
 					continue;
 				}
-				const newItem: SimpleItem = {
-					id: String(Date.now()) + 'i',
-					title: line,
-					startTime: '',
-					type: 'inbox',
-					completedToday: false,
-				};
-				setUncompletedItems((prevArray: SimpleItem[]) => [...prevArray, newItem]);
+
 				await addTodoToToday({
 					variables: {
-						title: newItem.title,
+						title: line,
 						startDate: getCurrentLocalDate(),
 						Completed: false,
 					},
 				});
-				inboxRefetch();
 			}
+			setSnackbar({
+				message: "To Do Items Added",
+				open: true,
+				severity: "success"
+			})
+			inboxRefetch();
 		} else { // If there is only one line
 			setInputValue(pasteData); // Paste the data into the input field
 		}
@@ -230,7 +233,6 @@ const Itinerary: React.FC = () => {
 
 	// Check Habit
 	const [checkHabit] = useMutation(CHECK_HABIT)
-	const [addHabitLog] = useMutation(ADD_LOG)
 	const handleCheckHabit = async (habitId: string) => {
 		await checkHabit({
 			variables: {
@@ -244,18 +246,10 @@ const Itinerary: React.FC = () => {
 			// remove the item from the array
 			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
 		)
-
-		await addHabitLog({
-			variables: {
-				logTime: new Date().toISOString(),
-				habitId: habitId.slice(0, -1),
-			},
-		})
 	}
 
 	// Check To Do
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
-	const [addToDoLog] = useMutation(ADD_LOG)
 	const handleCheckToDo = async (todoId: string) => {
 		await checkToDo({
 			variables: {
@@ -269,20 +263,32 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
+				inboxRefetch();
 			}
 		})
-
-		setUncompletedItems((prevArray: any[]) =>
-			prevArray.filter((item) => item.id !== todoId && item.type === 'todo' && !item.completedToday)
-		)
-
-		await addToDoLog({
-			variables: {
-				logTime: new Date().toISOString(),
-				todoItemId: todoId.slice(0, -1),
-			},
-		})
 	}
+
+
+	const handleClose = (removed?: boolean) => {
+		if (removed) {
+			// find the item in the array
+			const item = uncompletedItems.find((item) => item.id === selectedInboxItemId + 'i')
+			if (item) {
+				// remove the item from the array
+				setUncompletedItems((prevArray: SimpleItem[]) =>
+					prevArray.filter((item) => item.id !== selectedInboxItemId + 'i')
+				)
+			}
+			const completedItem = completedItems.find((item) => item.id === selectedInboxItemId + 'i')
+			if (completedItem) {
+				// remove the item from the array
+				setCompletedItems((prevArray: SimpleItem[]) =>
+					prevArray.filter((item) => item.id !== selectedInboxItemId + 'i')
+				)
+			}
+		} 
+		setSelectedInboxItemId(null)
+	};
 
 
 
@@ -364,6 +370,11 @@ const Itinerary: React.FC = () => {
 										primary={item.title}
 										// cut off the last 3 characters of time to remove minutes
 										secondary={item.startTime?.slice(0, -3)}
+										onClick={() => {
+											if ("i" === item.id.slice(-1)) {
+												setSelectedInboxItemId(item.id.slice(0, -1))
+											}
+										}}
 									/>
 								</ListItem>
 							))}
@@ -393,6 +404,11 @@ const Itinerary: React.FC = () => {
 									<ListItemText
 										primary={item.title}
 										secondary={item.startTime?.slice(0, -3)}
+										onClick={() => {
+											if ("i" === item.id.slice(-1)) {
+												setSelectedInboxItemId(item.id.slice(0, -1))
+											}
+										}}
 									/>
 								</ListItem>
 							))}
@@ -405,6 +421,8 @@ const Itinerary: React.FC = () => {
 				</AccordionDetails>
 			</Accordion>
 
+
+			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
 
 		</Card>
 	);

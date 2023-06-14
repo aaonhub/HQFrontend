@@ -44,7 +44,6 @@ export default InboxItem;
 
 
 // Queries
-// Updated to django
 export const GET_TODAY_LIST_ITEMS = gql`
 	query GetTodaysToDoList($Today: Date!) {
 		toDoItems(Today: $Today) {
@@ -64,7 +63,6 @@ export const GET_TODAY_LIST_ITEMS = gql`
 	}  
 `;
 
-// Updated to django
 export const GET_INBOX_TODOS = gql`
 	query {
 		toDoItemsWithoutProject {
@@ -83,9 +81,26 @@ export const GET_INBOX_TODOS = gql`
 	}
 `;
 
+export const GET_INBOX_TODO = gql`
+	query getToDoItem($id: ID!) {
+		toDoItem(id: $id) {
+			id
+			title
+			description
+			completed
+			project {
+				codename
+			}
+			dueDateTime
+			startDate
+			startTime
+			timeCompleted
+		}
+	}
+`;
+
 
 // Mutations
-// Updated to django
 export const ADD_TODO = gql`
 	mutation createToDoItem($title: String!) {
 		createToDoItem( title: $title ) {
@@ -100,7 +115,6 @@ export const ADD_TODO = gql`
 	}
 `;
 
-// Updated to django
 export const ADD_TODO_TO_TODAY = gql`
 	mutation createToDoItem($title: String!, $startDate: Date!) {
 		createToDoItem( title: $title, startDate: $startDate ) {
@@ -116,22 +130,41 @@ export const ADD_TODO_TO_TODAY = gql`
 `;
 
 export const UPDATE_TODO = gql`
-	mutation updateToDoItem($id: ID!, $data: ToDoItemInput!) {
-		updateToDoItem(id: $id, data: $data) {
-			data {
+	mutation(
+		$ID: ID!,
+		$Completed: Boolean!,
+		$Title: String,
+		$Description: String,
+		$ProjectId: ID,
+		$StartDate: Date,
+		$StartTime: Time,
+		$DueDateTime: DateTime,
+		$Subtasks: JSONString
+	) {
+		updateToDoItem(
+			completed: $Completed, 
+			id: $ID,
+			title: $Title,
+			description: $Description,
+			dueDateTime: $DueDateTime,
+			projectId: $ProjectId,
+			startDate: $StartDate,
+			startTime: $StartTime,
+			subTasks: $Subtasks
+		) {
+			toDoItem {
 				id
-				attributes {
-					Title
-					Completed
-					DueDateTime
-					Description
+				title
+				completed
+				project{
+					id
+					codename
 				}
 			}
 		}
 	}
 `;
 
-// Updated to django
 export const DELETE_TODO = gql`
 	mutation deleteToDoItem($id: ID!) {
 		deleteToDoItem(id: $id) {
@@ -142,7 +175,6 @@ export const DELETE_TODO = gql`
 	}
 `;
 
-// Updated to django
 export const CHECK_UNCHECK_TODO = gql`
 	mutation checkUncheckToDoItem($id: ID!, $Completed: Boolean!) {
 		checkUncheckToDoItem(id: $id, completed: $Completed ) {

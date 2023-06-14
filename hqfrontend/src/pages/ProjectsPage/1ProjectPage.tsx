@@ -188,21 +188,9 @@ const ProjectPage = () => {
 			},
 		})
 	}
-	const handleClose = (inboxItem?: InboxItem) => {
-		if (inboxItem) {
-			// update index item in project
-			const index = projectItemArray.findIndex(item => item.id === inboxItem.id)
-			if (index) {
-				const updatedProjectItemArray = [...projectItemArray]
-				updatedProjectItemArray.splice(index, 1, inboxItem)
-				setProjectItemArray(updatedProjectItemArray)
-			}
-			handleUpdateToDo(inboxItem)
-			setSelectedInboxItem(undefined)
-		}
-		else {
-			setSelectedInboxItem(undefined)
-		}
+	const handleClose = () => {
+		setSelectedInboxItem(undefined)
+		refetch()
 	}
 
 
@@ -334,7 +322,7 @@ const ProjectPage = () => {
 
 
 			{/* dialog */}
-			{selectedInboxItem && <EditInboxItemDialog handleClose={handleClose} inboxItem={selectedInboxItem} />}
+			{selectedInboxItem && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItem.id} />}
 
 
 

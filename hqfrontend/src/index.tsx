@@ -14,7 +14,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 				`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
 			)
 		);
-	if (networkError) console.log(`[Network error]: ${networkError}`);
+	if (networkError) console.log(`[Network error]: ${JSON.stringify(networkError)}`);
 });
 
 const graphqlURI = process.env.NODE_ENV === 'production'
@@ -36,24 +36,15 @@ const customFetch = (uri: RequestInfo, options?: RequestInit): Promise<Response>
 							if (attempts <= retries) {
 								return new Promise(resolve =>
 									setTimeout(() => resolve(fetchWithRetry(uri, options)), retryDelay)
-								) as Promise<Response>;
+								) as Promise<Response>
 							}
 						}
-						throw new Error(body.errors);
-					});
+						throw new Error(body.errors)
+					})
 				}
-				return response;
+				return response
 			})
-			.catch(error => {
-				attempts += 1;
-				if (attempts <= retries) {
-					return new Promise(resolve =>
-						setTimeout(() => resolve(fetchWithRetry(uri, options)), retryDelay)
-					) as Promise<Response>;
-				}
-				throw error;
-			});
-	};
+	}
 
 	return fetchWithRetry(uri, options);
 };

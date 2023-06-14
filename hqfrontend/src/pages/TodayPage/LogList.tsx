@@ -12,14 +12,19 @@ import {
 } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns'
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import { GET_TODAY_LOGS, ADD_LOG } from '../../models/log'
+import { GET_TODAY_LOGS, ADD_LOG, DELETE_LOG } from '../../models/log'
 import Log from '../../models/log'
+import { useGlobalContext } from '../App/GlobalContextProvider';
 
 const LogList = () => {
+	const { setSnackbar } = useGlobalContext()
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
 
+
+	// Log Query
 	const { loading, error } = useQuery(GET_TODAY_LOGS, {
 		onCompleted: (data) => {
 			const logs = data.todayLogs.map((log: any) => {
@@ -49,6 +54,8 @@ const LogList = () => {
 		}
 	})
 
+
+	// Add Log Mutation
 	const [addLog] = useMutation(ADD_LOG, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
@@ -68,6 +75,36 @@ const LogList = () => {
 			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date(), type: 'TEXT' }))
 		}
 	}
+
+
+	// Delete Log Mutation
+	const [deleteLog] = useMutation(DELETE_LOG, {
+		onError: (error) => {
+			console.log(error.networkError)
+			setSnackbar({
+				open: true,
+				message: 'Error deleting log',
+				severity: 'error',
+			})
+		},
+		refetchQueries: [{ query: GET_TODAY_LOGS }],
+	})
+	const handleDeleteLog = (logId: string) => {
+		deleteLog({
+			variables: {
+				id: logId
+			},
+			onCompleted: () => {
+				setSnackbar({
+					open: true,
+					message: 'Log deleted',
+					severity: 'success',
+				})
+				setLogArray(logArray.filter(log => log.id !== logId))
+			}
+		})
+	}
+
 
 	if (loading) return <p>Loading...</p>
 	if (error) return <p>Error: {error.message}</p>
@@ -112,6 +149,9 @@ const LogList = () => {
 									}
 									secondary={format(new Date(log.logTime), 'hh:mm a').toString()}
 								/>
+								<IconButton onClick={() => handleDeleteLog(log.id)} color="secondary" aria-label="delete log">
+									<DeleteIcon />
+								</IconButton>
 							</ListItem>
 						))}
 					</List>

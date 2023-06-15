@@ -269,24 +269,7 @@ const Itinerary: React.FC = () => {
 	}
 
 
-	const handleClose = (removed?: boolean) => {
-		if (removed) {
-			// find the item in the array
-			const item = uncompletedItems.find((item) => item.id === selectedInboxItemId + 'i')
-			if (item) {
-				// remove the item from the array
-				setUncompletedItems((prevArray: SimpleItem[]) =>
-					prevArray.filter((item) => item.id !== selectedInboxItemId + 'i')
-				)
-			}
-			const completedItem = completedItems.find((item) => item.id === selectedInboxItemId + 'i')
-			if (completedItem) {
-				// remove the item from the array
-				setCompletedItems((prevArray: SimpleItem[]) =>
-					prevArray.filter((item) => item.id !== selectedInboxItemId + 'i')
-				)
-			}
-		} 
+	const handleClose = () => {
 		setSelectedInboxItemId(null)
 	};
 
@@ -361,7 +344,15 @@ const Itinerary: React.FC = () => {
 					{uncompletedItems.length > 0 ? (
 						<List sx={{ padding: 0 }}>
 							{uncompletedItems.map((item) => (
-								<ListItem key={item.id} disablePadding>
+								<ListItem
+									key={item.id}
+									disablePadding
+									onClick={() => {
+										if ("i" === item.id.slice(-1)) {
+											setSelectedInboxItemId(item.id.slice(0, -1))
+										}
+									}}
+								>
 									<Checkbox
 										checked={item.completedToday}
 										onChange={() => handleCheckItem(item)}
@@ -370,11 +361,6 @@ const Itinerary: React.FC = () => {
 										primary={item.title}
 										// cut off the last 3 characters of time to remove minutes
 										secondary={item.startTime?.slice(0, -3)}
-										onClick={() => {
-											if ("i" === item.id.slice(-1)) {
-												setSelectedInboxItemId(item.id.slice(0, -1))
-											}
-										}}
 									/>
 								</ListItem>
 							))}
@@ -396,7 +382,15 @@ const Itinerary: React.FC = () => {
 					{completedItems.length > 0 ? (
 						<List sx={{ padding: 0 }}>
 							{completedItems.map((item) => (
-								<ListItem key={item.id} disablePadding>
+								<ListItem
+									key={item.id}
+									disablePadding
+									onClick={() => {
+										if ("i" === item.id.slice(-1)) {
+											setSelectedInboxItemId(item.id.slice(0, -1))
+										}
+									}}
+								>
 									<Checkbox
 										checked={item.completedToday}
 										disabled
@@ -404,11 +398,6 @@ const Itinerary: React.FC = () => {
 									<ListItemText
 										primary={item.title}
 										secondary={item.startTime?.slice(0, -3)}
-										onClick={() => {
-											if ("i" === item.id.slice(-1)) {
-												setSelectedInboxItemId(item.id.slice(0, -1))
-											}
-										}}
 									/>
 								</ListItem>
 							))}

@@ -27,30 +27,36 @@ interface ProjectToDoItemProps {
 }
 
 const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch }: ProjectToDoItemProps) => {
-	const [openDialog, setOpenDialog] = React.useState(false);
 
-	const [deleteToDo] = useMutation(DELETE_TODO, {
-		variables: { id: toDoItem.id },
-	});
-	const openDeleteDialog = () => {
-		setOpenDialog(true);
-	};
-	const closeDeleteDialog = () => {
-		setOpenDialog(false);
-	};
-	const handleDelete = () => {
-		closeDeleteDialog();
-		deleteToDo();
-		refetch();
-	};
+	// Delete Project Item
+	const [deleteToDoItem] = useMutation(DELETE_TODO, {
+		onError: (error) => console.log(error.networkError),
+		onCompleted: () => {
+			refetch()
+		},
+	})
+	const handleDelete = (toDoItem: InboxItem) => () => {
+		deleteToDoItem({
+			variables: {
+				id: toDoItem.id,
+			},
+			onCompleted: () => {
+				refetch()
+			}
+		})
+	}
 
 
 	return (
 		<React.Fragment key={toDoItem.id}>
 			<ListItem
+				onClick={() => {
+					console.log(toDoItem)
+					setSelectedInboxItem(toDoItem)
+				}}
 				secondaryAction={
 					<>
-						<IconButton edge="end" aria-label="delete" onClick={openDeleteDialog}>
+						<IconButton edge="end" aria-label="delete" onClick={handleDelete(toDoItem)}>
 							<DeleteIcon />
 						</IconButton>
 					</>
@@ -78,7 +84,6 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 					{/* Title */}
 					<ListItemText
 						primary={toDoItem.title}
-						onClick={() => setSelectedInboxItem(toDoItem)}
 						primaryTypographyProps={{
 							style: {
 								textDecoration: toDoItem.completed ? "line-through" : "none",
@@ -89,7 +94,7 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 				</ListItemButton>
 			</ListItem>
 
-			
+
 
 		</React.Fragment>
 	);

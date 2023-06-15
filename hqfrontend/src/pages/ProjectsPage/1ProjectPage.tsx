@@ -19,8 +19,7 @@ import {
 	UPDATE_PROJECT_ITEM_ORDER
 } from '../../models/project'
 import {
-	UPDATE_TODO,
-	CHECK_UNCHECK_TODO
+	CHECK_UNCHECK_TODO,
 } from '../../models/inboxitem'
 import { ADD_LOG } from '../../models/log'
 
@@ -171,23 +170,6 @@ const ProjectPage = () => {
 
 
 	// Edit to do item
-	const [updateToDo] = useMutation(UPDATE_TODO)
-	const handleUpdateToDo = (inboxItem: InboxItem) => {
-		console.log(inboxItem)
-		updateToDo({
-			variables: {
-				id: inboxItem.id,
-				data: {
-					Title: inboxItem.title,
-					Description: inboxItem.description,
-					Completed: inboxItem.completed,
-					DueDateTime: inboxItem.dueDateTime,
-					StartDate: inboxItem.startDate,
-					StartTime: inboxItem.startTime,
-				},
-			},
-		})
-	}
 	const handleClose = () => {
 		setSelectedInboxItem(undefined)
 		refetch()

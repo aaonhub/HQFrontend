@@ -89,6 +89,7 @@ export const GET_INBOX_TODO = gql`
 			description
 			completed
 			project {
+				id
 				codename
 			}
 			dueDateTime

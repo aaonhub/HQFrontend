@@ -15,6 +15,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+// Components
+import EditInboxItemDialog from '../../components/EditToDoItemDialog';
+
 // Queries and Mutations
 import {
 	ADD_TODO,
@@ -28,17 +31,16 @@ import { ADD_LOG } from '../../models/log'
 import InboxItem from '../../models/inboxitem'
 
 
-interface ToDoListProps {
-	setShowEditDialog: (show: boolean) => void;
-	setToDoItem: (toDoItem: any) => void;
-}
-
-const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) => {
+const ToDoList: React.FC = () => {
 	const [toDoItems, setToDoItems] = useState<InboxItem[]>([]);
 	const [newTodo, setNewTodo] = useState('');
+	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null);
 
+	const handleClose = () => {
+		setSelectedInboxItemId(null);
+	};
 
-	// Get all incomplete todos
+	// Incomplete To Do Query
 	const { loading, error } = useQuery(GET_INBOX_TODOS, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: (data) => {
@@ -117,11 +119,6 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 	}
 
 
-	const handleEdit = (toDoItem: InboxItem) => {
-		setToDoItem(toDoItem)
-		setShowEditDialog(true)
-	};
-
 
 	if (loading) return <p>Loading...</p>
 	if (error) return <p>Error :(</p>
@@ -156,7 +153,7 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 					{toDoItems.map((item) => (
 						<React.Fragment key={item.id}>
 							<ListItem key={item.id} disablePadding>
-								<ListItemButton onClick={() => handleEdit(item)}>
+								<ListItemButton onClick={() => setSelectedInboxItemId(item.id)}>
 									<ListItemIcon>
 										<IconButton edge="start" aria-label="edit"
 											onClick={(e) => handleComplete(e, item)}>
@@ -177,6 +174,10 @@ const ToDoList: React.FC<ToDoListProps> = ({ setShowEditDialog, setToDoItem }) =
 				</List>
 
 			</Box >
+
+			{/* Edit To Do Item Dialog */}
+			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
+
 		</>
 	);
 }

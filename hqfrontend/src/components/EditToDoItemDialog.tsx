@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
 	Dialog,
 	DialogActions,
@@ -12,30 +12,30 @@ import {
 	Select,
 	MenuItem,
 	SelectChangeEvent
-} from "@mui/material";
-import { useMutation, useQuery } from "@apollo/client";
+} from "@mui/material"
+import { useMutation, useQuery } from "@apollo/client"
 
 // Components
-import { useGlobalContext } from "../pages/App/GlobalContextProvider";
+import { useGlobalContext } from "../pages/App/GlobalContextProvider"
 
 // Models
-import InboxItem from "../models/inboxitem";
-import Project from "../models/project";
+import InboxItem from "../models/inboxitem"
+import Project from "../models/project"
 
 // Queries and Mutations
-import { UPDATE_TODO } from "../models/inboxitem";
-import { GET_INBOX_TODO } from "../models/inboxitem";
-import { DELETE_TODO } from "../models/inboxitem";
-import { GET_PROJECTS } from "../models/project";
+import { UPDATE_TODO } from "../models/inboxitem"
+import { GET_INBOX_TODO } from "../models/inboxitem"
+import { DELETE_TODO } from "../models/inboxitem"
+import { GET_PROJECTS } from "../models/project"
 
 
 interface ProjectToDoItemProps {
-	handleClose: () => void;
-	inboxItemId: string;
+	handleClose: () => void
+	inboxItemId: string
 }
 
 const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToDoItemProps) => {
-	const { setSnackbar } = useGlobalContext();
+	const { setSnackbar } = useGlobalContext()
 
 	// State
 	const [newInboxItem, setNewInboxItem] = useState(new InboxItem({
@@ -48,8 +48,8 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		startDate: null,
 		startTime: null,
 		timeCompleted: null,
-	}));
-	const [projects, setProjects] = useState<Project[]>([]);
+	}))
+	const [projects, setProjects] = useState<Project[]>([])
 
 
 	// InboxItem Query
@@ -57,11 +57,11 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		variables: { id: inboxItemId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			console.log(data);
+			console.log(data)
 			const project = data.toDoItem.project ? new Project(
 				data.toDoItem.project.id,
 				data.toDoItem.project.codename
-			) : null;
+			) : null
 			setNewInboxItem(
 				new InboxItem({
 					id: data.toDoItem.id,
@@ -76,7 +76,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 				})
 			)
 		}
-	});
+	})
 
 	// Project Query
 	const { loading: projectLoading, error: projectError, data: projectData } = useQuery(GET_PROJECTS, {
@@ -85,21 +85,21 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 			setProjects(data.projects.map((project: Project) => new Project(
 				project.id,
 				project.codename
-			)));
+			)))
 		}
-	});
+	})
 
 
 
 	// InboxItem Update
-	const [updateInboxItem] = useMutation(UPDATE_TODO);
+	const [updateInboxItem] = useMutation(UPDATE_TODO)
 	const handleSave = () => {
-		console.log(newInboxItem.project?.id);
+		console.log(newInboxItem)
 		/* FINISHLATER */
 		// Add subtasks
 		// Add start time
-		
-		const dueDateTime = newInboxItem.dueDateTime ? new Date(newInboxItem.dueDateTime) : null;
+
+		const dueDateTime = newInboxItem.dueDateTime ? new Date(newInboxItem.dueDateTime) : null
 		try {
 			updateInboxItem({
 				variables: {
@@ -107,8 +107,9 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					Title: newInboxItem.title,
 					Description: newInboxItem.description,
 					StartDate: newInboxItem.startDate,
+					StartTime: newInboxItem.startTime + ":00",
 					DueDateTime: dueDateTime,
-					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,
+					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,	
 					Completed: newInboxItem.completed,
 				},
 				onCompleted: () => {
@@ -116,18 +117,18 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 						open: true,
 						message: "Inbox Item Updated",
 						severity: "success",
-					});
-					handleClose();
+					})
+					handleClose()
 				}
-			});
+			})
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 
 
 	// InboxItem Delete
-	const [deleteInboxItem] = useMutation(DELETE_TODO);
+	const [deleteInboxItem] = useMutation(DELETE_TODO)
 	const handleDelete = () => {
 		try {
 			deleteInboxItem({
@@ -135,26 +136,26 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					id: inboxItemId,
 				},
 				onCompleted: () => {
-					handleClose();
+					handleClose()
 					setSnackbar({
 						open: true,
 						message: "Inbox Item Deleted",
 						severity: "success",
-					});
+					})
 				}
-			});
+			})
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 
 
 	// Input Change Logic
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		console.log(name, value);
+		const { name, value } = e.target
+		console.log(name, value)
 		setNewInboxItem((prev) => {
-			const updatedValue = name === 'startDate' || name === 'dueDateTime'
+			const updatedValue = name === 'startDate' || name === 'dueDateTime' || name === 'startTime'
 				?
 				value === ''
 					? null
@@ -162,21 +163,21 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					value
 				:
 				value
-			return { ...prev, [name]: updatedValue };
-		});
-	};
+			return { ...prev, [name]: updatedValue }
+		})
+	}
 	const handleSelectChange = (event: SelectChangeEvent) => {
-		const { name, value } = event.target;
-		const selectedProject = projects.find(project => project.id === value);
-		setNewInboxItem((prev) => ({ ...prev, [name]: selectedProject }));
-	};
-	
+		const { name, value } = event.target
+		const selectedProject = projects.find(project => project.id === value)
+		setNewInboxItem((prev) => ({ ...prev, [name]: selectedProject }))
+	}
 
-	if (projectLoading) return <p>Loading projects...</p>;
-	if (projectError) return <p>Error loading projects :(</p>;
 
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error :(</p>;
+	if (projectLoading) return <p>Loading projects...</p>
+	if (projectError) return <p>Error loading projects :(</p>
+
+	if (loading) return <p>Loading...</p>
+	if (error) return <p>Error :(</p>
 
 	return (
 		<Dialog open={true} onClose={() => handleClose()}>
@@ -187,8 +188,8 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					noValidate
 					autoComplete="off"
 					onSubmit={(e) => {
-						e.preventDefault();
-						handleClose();
+						e.preventDefault()
+						handleClose()
 					}}
 				>
 
@@ -249,6 +250,22 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 						/>
 					</Box>
 
+					{/* Start Date */}
+					<Box m={2}>
+						<TextField
+							name="startTime"
+							label="Start Time"
+							type="time"
+							variant="outlined"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							sx={{ marginRight: "2ch" }}
+							value={newInboxItem.startTime ? newInboxItem.startTime : ''}
+							onChange={handleInputChange}
+						/>
+					</Box>
+
 					{/* Project */}
 					<Box m={2}>
 						<Select
@@ -276,10 +293,10 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 								<Checkbox
 									checked={newInboxItem.completed}
 									onChange={(event) => {
-										const { checked } = event.target;
+										const { checked } = event.target
 										setNewInboxItem((prev) => {
-											return { ...prev, completed: checked };
-										});
+											return { ...prev, completed: checked }
+										})
 									}}
 								/>
 							}
@@ -303,7 +320,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 				</Button>
 			</DialogActions>
 		</Dialog>
-	);
-});
+	)
+})
 
-export default EditInboxItemDialog;
+export default EditInboxItemDialog

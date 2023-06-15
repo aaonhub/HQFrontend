@@ -275,11 +275,32 @@ const Itinerary: React.FC = () => {
 	};
 
 
+	// request permission if not already granted
+	Notification.requestPermission().then(function (permission) {
+		if (permission !== "granted") {
+			console.error("Notification permission not granted.");
+		}
+	});
+	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
+	const scheduleNotification = (item: any) => {
+		const now = new Date();
+		const taskTime = new Date(item.startTime);
+
+		if (taskTime > now) {
+			const delay = taskTime.getTime() - now.getTime(); // Convert dates to milliseconds before subtracting
+			setTimeout(() => {
+				new Notification(`Task started: ${item.title}`);
+			}, delay);
+		}
+	};
+	// Schedule notifications for all tasks
+	habits.forEach(scheduleNotification);
+	inboxItems.forEach(scheduleNotification);
+
+
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>
 	if (inboxError || habitsError) return <p>Error :(</p>
-
-
 
 
 	return (

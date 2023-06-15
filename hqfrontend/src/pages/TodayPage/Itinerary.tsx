@@ -275,7 +275,8 @@ const Itinerary: React.FC = () => {
 	};
 
 
-	// request permission if not already granted
+	// Notification Stuff
+	// Notification Request
 	Notification.requestPermission().then(function (permission) {
 		if (permission !== "granted") {
 			console.error("Notification permission not granted.");
@@ -284,24 +285,36 @@ const Itinerary: React.FC = () => {
 	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
 	const scheduleNotification = (item: any) => {
 		const now = new Date();
-		const taskTime = new Date(item.startTime);
+		const date = new Date(); // today's date
+		const dateString = date.toISOString().split('T')[0]; // get the date string in the format of "yyyy-mm-dd"
+		const taskTime = new Date(dateString + 'T' + item.startTime);
+		console.log(now)
+		console.log(taskTime)
 
 		if (taskTime > now) {
 			const delay = taskTime.getTime() - now.getTime(); // Convert dates to milliseconds before subtracting
 			setTimeout(() => {
-				new Notification(`Task started: ${item.title}`);
+				new Notification(`Time to start item: ${item.title}`);
 			}, delay);
 		}
 	};
-	// Schedule notifications for all tasks
-	habits.forEach(scheduleNotification);
-	inboxItems.forEach(scheduleNotification);
 
+
+
+
+	// Use useEffect to schedule notifications for all tasks
+	useEffect(() => {
+		if (Notification.permission !== "granted") {
+			console.error("Notification permission not granted.");
+		} else {
+			habits.forEach(scheduleNotification);
+			inboxItems.forEach(scheduleNotification);
+		}
+	}, [habits, inboxItems]);  // Dependencies ensure this useEffect only re-runs when habits or inboxItems change
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>
 	if (inboxError || habitsError) return <p>Error :(</p>
-
 
 	return (
 		<Card

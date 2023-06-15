@@ -47,6 +47,13 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 	}
 
 
+	const handleIconButtonClick = (event: React.MouseEvent<HTMLButtonElement>, toDoItem: InboxItem) => {
+		event.stopPropagation(); // Stop the click event from propagating up to the parent ListItem
+		handleCheck(toDoItem)(event as any); // Since handleCheck expects a ChangeEvent, we need to cast here
+	};
+
+
+
 	return (
 		<React.Fragment key={toDoItem.id}>
 			<ListItem
@@ -72,13 +79,16 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 
 					{/* Checkbox */}
 					<ListItemIcon>
-						<Checkbox
+						<IconButton
 							edge="start"
-							checked={toDoItem.completed}
-							onChange={handleCheck(toDoItem)}
-							tabIndex={-1}
-							disableRipple
-						/>
+							onClick={(event) => handleIconButtonClick(event, toDoItem)}
+						>
+							<Checkbox
+								checked={toDoItem.completed}
+								tabIndex={-1}
+								disableRipple
+							/>
+						</IconButton>
 					</ListItemIcon>
 
 					{/* Title */}
@@ -100,5 +110,4 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 	);
 });
 
-// memo
 export default React.memo(ProjectToDoItem);

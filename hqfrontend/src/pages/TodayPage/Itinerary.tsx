@@ -271,6 +271,7 @@ const Itinerary: React.FC = () => {
 
 	const handleClose = () => {
 		setSelectedInboxItemId(null)
+		inboxRefetch();
 	};
 
 
@@ -355,7 +356,10 @@ const Itinerary: React.FC = () => {
 								>
 									<Checkbox
 										checked={item.completedToday}
-										onChange={() => handleCheckItem(item)}
+										onClick={(event) => {
+											event.stopPropagation();
+											handleCheckItem(item);
+										}}
 									/>
 									<ListItemText
 										primary={item.title}

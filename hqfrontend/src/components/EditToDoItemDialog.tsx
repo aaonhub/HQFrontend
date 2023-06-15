@@ -107,7 +107,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					Title: newInboxItem.title,
 					Description: newInboxItem.description,
 					StartDate: newInboxItem.startDate,
-					StartTime: newInboxItem.startTime + ":00",
+					StartTime: newInboxItem.startTime,
 					DueDateTime: dueDateTime,
 					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,	
 					Completed: newInboxItem.completed,
@@ -155,7 +155,10 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		const { name, value } = e.target
 		console.log(name, value)
 		setNewInboxItem((prev) => {
-			const updatedValue = name === 'startDate' || name === 'dueDateTime' || name === 'startTime'
+			if (name === 'startTime') {
+				return { ...prev, [name]: value === '' ? null : value + ":00" }
+			}
+			const updatedValue = name === 'startDate' || name === 'dueDateTime'
 				?
 				value === ''
 					? null

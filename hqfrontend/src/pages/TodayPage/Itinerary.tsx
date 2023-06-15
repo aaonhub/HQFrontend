@@ -49,6 +49,7 @@ const Itinerary: React.FC = () => {
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
 	const [expanded, setExpanded] = useState(false);
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null);
+	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({});
 
 
 
@@ -290,27 +291,23 @@ const Itinerary: React.FC = () => {
 		const taskTime = new Date(dateString + 'T' + item.startTime);
 		console.log(now)
 		console.log(taskTime)
-
-		if (taskTime > now) {
+	
+		if (taskTime > now && !scheduledNotifications[item.id]) {
 			const delay = taskTime.getTime() - now.getTime(); // Convert dates to milliseconds before subtracting
 			setTimeout(() => {
 				new Notification(`Time to start item: ${item.title}`);
 			}, delay);
+			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }));
 		}
 	};
-
-
-
-
 	// Use useEffect to schedule notifications for all tasks
 	useEffect(() => {
 		if (Notification.permission !== "granted") {
 			console.error("Notification permission not granted.");
 		} else {
-			habits.forEach(scheduleNotification);
-			inboxItems.forEach(scheduleNotification);
+			uncompletedItems.forEach(scheduleNotification);
 		}
-	}, [habits, inboxItems]);  // Dependencies ensure this useEffect only re-runs when habits or inboxItems change
+	}, [uncompletedItems]);  // Dependencies ensure this useEffect only re-runs when uncompletedItems change
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>

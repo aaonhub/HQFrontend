@@ -1,6 +1,7 @@
 import { Container, Grid, Typography } from "@mui/material";
-import Itinerary from "./Itinerary";
+import Itinerary from "./Itinerary/Itinerary";
 import LogList from "./LogList";
+import Calendar from "./Calendar";
 
 const getOrdinalSuffix = (day: number): string => {
 	if (day > 3 && day < 21) return 'th';
@@ -26,7 +27,7 @@ const TodayPage = () => {
 	const customFormattedDate = `${weekday}, ${month} ${dayWithSuffix}, ${year}`;
 
 	return (
-		<Container>
+		<Container sx={{ paddingBottom: 64 }}>
 			<Grid container>
 				{/* Day Display */}
 				<Grid item xs={12}>
@@ -35,16 +36,15 @@ const TodayPage = () => {
 					</Typography>
 				</Grid>
 
-				{/* Left Log List */}
+				{/* Left Side */}
 				<Grid item xs={6}>
+					{/* <Calendar /> */}
 					<Itinerary />
 				</Grid>
 
 				{/* Right side */}
 				<Grid item xs={6}>
-					<Grid item xs={12}>
-						<LogList />
-					</Grid>
+					<LogList />
 				</Grid>
 			</Grid>
 		</Container>

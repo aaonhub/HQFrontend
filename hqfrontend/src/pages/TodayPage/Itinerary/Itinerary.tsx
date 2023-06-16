@@ -17,25 +17,25 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 // Components
-import { getCurrentLocalDate } from '../../components/DateFunctions';
-import { useGlobalContext } from '../App/GlobalContextProvider';
-import EditInboxItemDialog from '../../components/EditToDoItemDialog';
+import { getCurrentLocalDate } from '../../../components/DateFunctions';
+import { useGlobalContext } from '../../App/GlobalContextProvider';
+import EditInboxItemDialog from '../../../components/EditToDoItemDialog';
 
 
 // Models
-import Habit from "../../models/habit";
-import InboxItem from "../../models/inboxitem";
-import SimpleItem from "../../models/simpleitem";
-import HabitInboxRosetta from './HabitInboxRosetta';
+import Habit from "../../../models/habit";
+import InboxItem from "../../../models/inboxitem";
+import SimpleItem from "../../../models/simpleitem";
+import HabitInboxRosetta from '../HabitInboxRosetta';
 
 // Queries and Mutations
 import { useMutation, useQuery } from '@apollo/client';
-import { CHECK_UNCHECK_TODO } from '../../models/inboxitem';
-import { CHECK_HABIT } from '../../models/habit';
-import { ADD_TODO_TO_TODAY } from '../../models/inboxitem';
-import { GET_TODAY_LIST_ITEMS } from "../../models/inboxitem";
-import { GET_HABITS_DUE_TODAY } from "../../models/habit";
-import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../models/accountability';
+import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem';
+import { CHECK_HABIT } from '../../../models/habit';
+import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem';
+import { GET_TODAY_LIST_ITEMS } from "../../../models/inboxitem";
+import { GET_HABITS_DUE_TODAY } from "../../../models/habit";
+import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability';
 
 
 
@@ -79,8 +79,6 @@ const Itinerary: React.FC = () => {
 			setInboxItems(inboxItems)
 		}
 	});
-
-
 	// Today's Habits Query
 	const { loading: habitsLoading, error: habitsError, data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: localDate },
@@ -108,8 +106,6 @@ const Itinerary: React.FC = () => {
 			console.log(error)
 		}
 	});
-
-
 	// Set up Simple Item Array
 	useEffect(() => {
 		if (habitsData && inboxData) {
@@ -173,7 +169,6 @@ const Itinerary: React.FC = () => {
 		})
 	};
 
-
 	// Paste Event Handler
 	const handlePaste = async (event: React.ClipboardEvent) => {
 		event.preventDefault(); // Prevent the paste from happening right away
@@ -226,36 +221,43 @@ const Itinerary: React.FC = () => {
 	const handleCheckItem = (item: SimpleItem) => {
 		handleUpdateDailyCompletionPercentage()
 		if (item.type === 'habit') {
-			handleCheckHabit(item.id)
+			handleCheckHabit(item)
 		} else {
-			handleCheckToDo(item.id)
+			handleCheckToDo(item)
 		}
 	}
 
 	// Check Habit
 	const [checkHabit] = useMutation(CHECK_HABIT)
-	const handleCheckHabit = async (habitId: string) => {
+	const handleCheckHabit = async (habit: any) => {
 		await checkHabit({
 			variables: {
 				// get rid of the h at the end of the id
-				habitId: habitId.slice(0, -1),
+				habitId: habit.id.slice(0, -1),
 				currentDate: getCurrentLocalDate(),
 			},
+			onCompleted: () => {
+
+				setUncompletedItems((prevArray: SimpleItem[]) =>
+					// remove the item from the array
+					prevArray.filter((item) => item.id !== habit.id && item.type === 'habit' && !item.completedToday)
+				)
+				setCompletedItems((prevArray: SimpleItem[]) =>
+					// add the item to the array
+					[...prevArray, { id: habit.id, type: 'habit', completedToday: true, title: habit.title }]
+				)
+			}
 		})
 
-		setUncompletedItems((prevArray: SimpleItem[]) =>
-			// remove the item from the array
-			prevArray.filter((item) => item.id !== habitId && item.type === 'habit' && !item.completedToday)
-		)
 	}
 
 	// Check To Do
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
-	const handleCheckToDo = async (todoId: string) => {
+	const handleCheckToDo = async (todo: any) => {
 		await checkToDo({
 			variables: {
 				// get rid of the h at the end of the id
-				id: todoId.slice(0, -1),
+				id: todo.id.slice(0, -1),
 				Completed: true,
 			},
 			onCompleted: () => {
@@ -264,7 +266,14 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
-				inboxRefetch();
+				setUncompletedItems((prevArray: SimpleItem[]) =>
+					// remove the item from the array
+					prevArray.filter((item) => item.id !== todo.id && item.type === 'inbox')
+				)
+				setCompletedItems((prevArray: SimpleItem[]) =>
+					// add the item to the array
+					[...prevArray, { id: todo.id, type: 'inbox', completedToday: true, title: todo.title }]
+				)
 			}
 		})
 	}
@@ -274,6 +283,8 @@ const Itinerary: React.FC = () => {
 		setSelectedInboxItemId(null)
 		inboxRefetch();
 	};
+
+
 
 
 	// Notification Stuff
@@ -289,9 +300,7 @@ const Itinerary: React.FC = () => {
 		const date = new Date(); // today's date
 		const dateString = date.toISOString().split('T')[0]; // get the date string in the format of "yyyy-mm-dd"
 		const taskTime = new Date(dateString + 'T' + item.startTime);
-		console.log(now)
-		console.log(taskTime)
-	
+
 		if (taskTime > now && !scheduledNotifications[item.id]) {
 			const delay = taskTime.getTime() - now.getTime(); // Convert dates to milliseconds before subtracting
 			setTimeout(() => {
@@ -308,6 +317,9 @@ const Itinerary: React.FC = () => {
 			uncompletedItems.forEach(scheduleNotification);
 		}
 	}, [uncompletedItems]);  // Dependencies ensure this useEffect only re-runs when uncompletedItems change
+
+
+
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>
@@ -354,24 +366,7 @@ const Itinerary: React.FC = () => {
 					</IconButton>
 				</Box>
 
-				<Box
-					sx={{
-						maxHeight: '90%',
-						overflow: 'auto',
-						'&::-webkit-scrollbar': {
-							width: '0.4em'
-						},
-						'&::-webkit-scrollbar-track': {
-							boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.00)',
-							webkitBoxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.00)'
-						},
-						'&::-webkit-scrollbar-thumb': {
-							backgroundColor: 'rgba(0,0,0,.1)',
-							outline: '1px solid slategrey'
-						}
-					}}
-				>
-
+				<Box>
 					{/* Itinerary List */}
 					{uncompletedItems.length > 0 ? (
 						<List sx={{ padding: 0 }}>

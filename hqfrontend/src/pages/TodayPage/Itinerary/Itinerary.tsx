@@ -81,6 +81,7 @@ const Itinerary: React.FC = () => {
 	});
 	// Today's Habits Query
 	const { loading: habitsLoading, error: habitsError, data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
+		fetchPolicy: 'network-only',
 		variables: { today: localDate },
 		onCompleted: (data) => {
 			const habits = data.habitsDueToday.map((habit: any) => {

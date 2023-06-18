@@ -241,7 +241,7 @@ const Itinerary: React.FC = () => {
 
 				setUncompletedItems((prevArray: SimpleItem[]) =>
 					// remove the item from the array
-					prevArray.filter((item) => item.id !== habit.id && item.type === 'habit' && !item.completedToday)
+					prevArray.filter((item) => item.id !== habit.id)
 				)
 				setCompletedItems((prevArray: SimpleItem[]) =>
 					// add the item to the array
@@ -269,7 +269,7 @@ const Itinerary: React.FC = () => {
 				})
 				setUncompletedItems((prevArray: SimpleItem[]) =>
 					// remove the item from the array
-					prevArray.filter((item) => item.id !== todo.id && item.type === 'inbox')
+					prevArray.filter((item) => item.id !== todo.id)
 				)
 				setCompletedItems((prevArray: SimpleItem[]) =>
 					// add the item to the array

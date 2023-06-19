@@ -14,21 +14,23 @@ const InboxPage = () => {
 
 
 	return (
-		<Container maxWidth="md">
+		<Container maxWidth="xl">
 
 
 			<Box mt={4} mb={4}>
-				<Typography variant="h4" align="center" gutterBottom>
-					Inbox
-				</Typography>
-				<Typography variant="subtitle1" align="center">
-					Manage your tasks
-				</Typography>
+				<Paper elevation={3} style={{ padding: "2rem" }}>
+					<Typography variant="h4" align="center" gutterBottom>
+						Inbox
+					</Typography>
+					<Typography variant="subtitle1" align="center">
+						Manage your tasks
+					</Typography>
+				</Paper>
 			</Box>
 
 
 			{/* To Do List */}
-			<Paper elevation={2}>
+			<Paper elevation={3} style={{ padding: "2rem" }}>
 				<ToDoList />
 			</Paper>
 

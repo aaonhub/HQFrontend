@@ -2,18 +2,17 @@ import React, { useState, useCallback } from 'react';
 import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
 import {
-	Box, Button, Divider,
-	IconButton, List, ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemSecondaryAction,
-	ListItemText, TextField
+	Box, Button, Card, CardContent,
+	IconButton, Fab, Typography,
+	TextField, CardActions, Grid
 } from '@mui/material';
+import Masonry from '@mui/lab/Masonry';
 
 // Icons
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 // Components
 import EditInboxItemDialog from '../../components/EditToDoItemDialog';
@@ -36,12 +35,9 @@ const ToDoList: React.FC = () => {
 	const [newTodo, setNewTodo] = useState('');
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null);
 
-	const handleClose = () => {
-		setSelectedInboxItemId(null);
-	};
 
 	// Incomplete To Do Query
-	const { loading, error } = useQuery(GET_INBOX_TODOS, {
+	const { loading, error, refetch } = useQuery(GET_INBOX_TODOS, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: (data) => {
 			const toDoItems = data.toDoItemsWithoutProject.map((toDoItem: any) => {
@@ -61,6 +57,10 @@ const ToDoList: React.FC = () => {
 		}
 	})
 
+	const handleClose = () => {
+		setSelectedInboxItemId(null);
+		refetch();
+	};
 
 	// Add To Do
 	const [addTodo] = useMutation(ADD_TODO, {
@@ -74,7 +74,8 @@ const ToDoList: React.FC = () => {
 		onError: (error) => console.log(error.networkError),
 		refetchQueries: [{ query: GET_INBOX_TODOS }],
 	});
-	const handleDelete = (id: string) => {
+	const handleDelete = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+		event.stopPropagation();
 		deleteTodo({
 			variables: { id },
 		});
@@ -89,8 +90,8 @@ const ToDoList: React.FC = () => {
 		refetchQueries: [{ query: GET_INBOX_TODOS }],
 		onError: (error) => console.log(error.networkError),
 	});
-	const handleComplete = (e: React.MouseEvent<HTMLButtonElement>, toDoItem: InboxItem) => {
-		e.stopPropagation();
+	const handleComplete = (event: React.MouseEvent<HTMLButtonElement>, toDoItem: InboxItem) => {
+		event.stopPropagation();
 		completeTodo({
 			variables: {
 				id: toDoItem.id,
@@ -128,12 +129,10 @@ const ToDoList: React.FC = () => {
 			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 				<Box
 					component="form"
-					sx={{
-						"& > :not(style)": { m: 1, width: "25ch" },
-					}}
 					noValidate
 					autoComplete="off"
 					onSubmit={handleSubmit}
+					sx={{ width: "100%", display: "flex", justifyContent: "center" }}
 				>
 					<TextField
 						id="outlined-basic"
@@ -142,42 +141,62 @@ const ToDoList: React.FC = () => {
 						value={newTodo}
 						onChange={handleInputChange}
 						type="search"
+						sx={{ margin: 1, width: "80%" }}
 					/>
-					<Button variant="contained" type="submit">
-						Add
-					</Button>
+					<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
+						<AddIcon />
+					</Fab>
 				</Box>
 
 
-				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+				{/* Inbox Items */}
+				<Masonry
+					columns={4}
+					spacing={4}
+					sx={{ padding: 2 }}
+				>
 					{toDoItems.map((item) => (
-						<React.Fragment key={item.id}>
-							<ListItem key={item.id} disablePadding>
-								<ListItemButton onClick={() => setSelectedInboxItemId(item.id)}>
-									<ListItemIcon>
-										<IconButton edge="start" aria-label="edit"
-											onClick={(e) => handleComplete(e, item)}>
-											{item.completed ? <CheckIcon /> : <CloseIcon />}
-										</IconButton>
-									</ListItemIcon>
-									<ListItemText primary={item.title} />
-								</ListItemButton>
-								<ListItemSecondaryAction>
-									<IconButton edge="end" aria-label="delete" onClick={() => handleDelete(item.id)} className="delete-button">
-										<DeleteIcon />
-									</IconButton>
-								</ListItemSecondaryAction>
-							</ListItem>
-							<Divider key={`divider-${item.id}`} />
-						</React.Fragment>
+						<Card
+							onClick={() => setSelectedInboxItemId(item.id)}
+							sx={{ position: 'relative', maxHeight: 200, maxWidth: 200, border: 1, borderColor: 'black' }}
+							key={item.id}
+						>
+							<CardContent sx={{
+								overflow: 'hidden',
+								maxHeight: 150,
+								paddingBottom: '40px',
+								marginBottom: '64px',
+								'&::-webkit-scrollbar': {
+									display: 'none'
+								},
+								'&': {
+									scrollbarWidth: 'none',
+									scrollbarColor: 'transparent transparent',
+								}
+							}}>
+								<Typography component="div" sx={{ wordWrap: 'break-word' }}>
+									{item.title}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									{item.description}
+								</Typography>
+							</CardContent>
+							<CardActions sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+								<IconButton onClick={(event) => handleComplete(event, item)}>
+									{item.completed ? <CheckIcon /> : <CloseIcon />}
+								</IconButton>
+								<IconButton onClick={(event) => handleDelete(event, item.id)}>
+									<DeleteIcon />
+								</IconButton>
+							</CardActions>
+						</Card>
 					))}
-				</List>
+				</Masonry>
 
-			</Box >
 
-			{/* Edit To Do Item Dialog */}
+			</Box>
+
 			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
-
 		</>
 	);
 }

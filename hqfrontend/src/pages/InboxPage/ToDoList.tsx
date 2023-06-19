@@ -62,7 +62,7 @@ const ToDoList: React.FC = () => {
 	})
 
 
-	// Add todo
+	// Add To Do
 	const [addTodo] = useMutation(ADD_TODO, {
 		refetchQueries: [{ query: GET_INBOX_TODOS }],
 		onError: (error) => console.log(error.networkError),
@@ -137,7 +137,7 @@ const ToDoList: React.FC = () => {
 				>
 					<TextField
 						id="outlined-basic"
-						label="Add Todo"
+						label="Add To Do"
 						variant="outlined"
 						value={newTodo}
 						onChange={handleInputChange}

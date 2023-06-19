@@ -239,6 +239,7 @@ const ProjectPage = () => {
 				fullWidth
 				label="Add Project Item"
 				defaultValue=""
+				autoComplete="off"
 				onChange={(e) => {
 					if (newTopProjectItemTitleRef.current) {
 						newTopProjectItemTitleRef.current.value = e.target.value
@@ -285,6 +286,7 @@ const ProjectPage = () => {
 				fullWidth
 				label="Add Project Item"
 				defaultValue=""
+				autoComplete="off"
 				onChange={(e) => {
 					if (newBottomProjectItemTitleRef.current) {
 						newBottomProjectItemTitleRef.current.value = e.target.value

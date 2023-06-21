@@ -57,14 +57,7 @@ const Itinerary: React.FC = () => {
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 
 	// Calendar State
-	const [events, setEvents] = useState<EventInput[]>([
-		{
-			id: '1',
-			title: 'my event',
-			start: '2023-06-21T10:00:00',
-			end: '2023-06-21T12:00:00',
-		},
-	])
+	const [events, setEvents] = useState<EventInput[]>([])
 	const calendarRef = useRef(null)
 
 
@@ -376,10 +369,9 @@ const Itinerary: React.FC = () => {
 			variables: {
 				// get rid of the h at the end of the id
 				habitId: habit.id.slice(0, -1),
-				currentDate: getCurrentLocalDate(),
+				currentDate: localDate,
 			},
 			onCompleted: () => {
-
 				setUncompletedItems((prevArray: SimpleItem[]) =>
 					// remove the item from the array
 					prevArray.filter((item) => item.id !== habit.id)
@@ -562,7 +554,7 @@ const Itinerary: React.FC = () => {
 						<Box>
 							{/* Itinerary List */}
 							{uncompletedItems.length > 0 ? (
-								<ItineraryList list={uncompletedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckToDo} />
+								<ItineraryList list={uncompletedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckItem} />
 							) : (
 								<Typography variant="h6" align="center" color="textSecondary">
 									Nothing left to do
@@ -578,7 +570,7 @@ const Itinerary: React.FC = () => {
 						</AccordionSummary>
 						<AccordionDetails>
 							{completedItems.length > 0 ? (
-								<ItineraryList list={completedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckToDo} />
+								<ItineraryList list={completedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckItem} />
 							) : (
 								<Typography variant="h6" align="center" color="textSecondary">
 									No completed items

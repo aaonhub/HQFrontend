@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
-import { Card, CardContent } from '@mui/material';
-import { EventInput } from '@fullcalendar/core';
+import React, { useEffect, useState, useRef } from 'react'
+import FullCalendar from '@fullcalendar/react'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin, { Draggable } from '@fullcalendar/interaction'
+import { Card, CardContent } from '@mui/material'
+import { EventInput } from '@fullcalendar/core'
 
 const Calendar = () => {
 	const now = new Date().toLocaleTimeString('en-US', {
@@ -11,49 +11,47 @@ const Calendar = () => {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
-	});
+	})
 
 	const [events, setEvents] = useState<EventInput[]>([
 		{
 			id: '1',
 			title: 'my event',
-			start: '2023-06-18T10:00:00',
-			end: '2023-06-18T12:00:00',
 		},
-	]);
-	const calendarRef = useRef(null);
+	])
+	const calendarRef = useRef(null)
 
 	useEffect(() => {
-		let draggableEl = document.getElementById('external-events');
+		let draggableEl = document.getElementById('external-events')
 
 		if (draggableEl) {
 			new Draggable(draggableEl, {
 				itemSelector: '.event-class',
 				eventData: function (eventEl) {
-					let event = JSON.parse(eventEl.getAttribute('data-event') ?? '{}');
+					let event = JSON.parse(eventEl.getAttribute('data-event') ?? '{}')
 					return {
 						title: event?.title,
 						duration: event?.duration,
-					};
+					}
 				},
-			});
+			})
 		}
-	}, []);
+	}, [])
 
 	const handleEventChange = (changeInfo: any) => {
-		console.log(changeInfo.event.start);
+		console.log(changeInfo.event.start)
 		// Find the index of the event that was changed
-		const index = events.findIndex(event => event.id === changeInfo.event.id);
+		const index = events.findIndex(event => event.id === changeInfo.event.id)
 
 		// Create a new array of events
-		const newEvents = [...events];
+		const newEvents = [...events]
 
 		// Update the start and end times of the changed event
-		newEvents[index].start = changeInfo.event.start;
-		newEvents[index].end = changeInfo.event.end;
+		newEvents[index].start = changeInfo.event.start
+		newEvents[index].end = changeInfo.event.end
 
 		// Update the state
-		setEvents(newEvents);
+		setEvents(newEvents)
 	}
 
 	const eventReceive = (info: any) => {
@@ -63,8 +61,8 @@ const Calendar = () => {
 			title: info.event.title,
 			start: info.event.start,
 			end: info.event.end
-		}]);
-	};
+		}])
+	}
 
 	return (
 		<Card sx={{
@@ -107,7 +105,7 @@ const Calendar = () => {
 				/>
 			</CardContent>
 		</Card>
-	);
-};
+	)
+}
 
-export default Calendar;
+export default Calendar

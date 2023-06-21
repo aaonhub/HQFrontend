@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import ThemeProvider from '../SettingsPage/ThemeContext'
 import { Analytics } from '@vercel/analytics/react';
 import Sidebar from './Sidebar'
+import './App.css'
 
 // Globals
 import { useGlobalContext } from '../App/GlobalContextProvider';

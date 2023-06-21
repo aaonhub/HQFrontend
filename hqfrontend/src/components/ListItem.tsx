@@ -1,5 +1,5 @@
-import React from 'react';
-import './ListItem.css';
+import React from 'react'
+import './ListItem.css'
 
 interface ListItemProps {
 	item: any
@@ -22,7 +22,7 @@ const ListItem: React.FC<ListItemProps> = ({ item, onDelete, onEdit }) => {
 				</button>
 			</div>
 		</div>
-	);
-};
+	)
+}
 
-export default ListItem;
+export default ListItem

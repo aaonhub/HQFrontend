@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
 	Dialog,
 	DialogActions,
@@ -11,7 +11,9 @@ import {
 	FormControlLabel,
 	Select,
 	MenuItem,
-	SelectChangeEvent
+	SelectChangeEvent,
+	FormControl,
+	InputLabel
 } from "@mui/material"
 import { useMutation, useQuery } from "@apollo/client"
 
@@ -48,8 +50,12 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		startDate: null,
 		startTime: null,
 		timeCompleted: null,
+		length: null,
 	}))
 	const [projects, setProjects] = useState<Project[]>([])
+	const [showCustomInput, setShowCustomInput] = useState(false);
+	const [customLength, setCustomLength] = useState<string | null>(null);
+
 
 
 	// InboxItem Query
@@ -75,6 +81,22 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					timeCompleted: data.toDoItem.timeCompleted,
 				})
 			)
+			if (data.toDoItem.length) {
+				setCustomLength(data.toDoItem.length)
+			}
+			if (!['00:15', '00:30', '00:45', '01:00', '02:00', '03:00'].includes(data.toDoItem.length)) {
+				setShowCustomInput(true);
+				setNewInboxItem(prev => ({
+					...prev,
+					length: 'custom'
+				}));
+			} else {
+				setShowCustomInput(false);
+				setNewInboxItem(prev => ({
+					...prev,
+					length: data.toDoItem.length
+				}));
+			}
 		}
 	})
 
@@ -95,11 +117,24 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 	const [updateInboxItem] = useMutation(UPDATE_TODO)
 	const handleSave = () => {
 		console.log(newInboxItem)
-		/* FINISHLATER */
-		// Add subtasks
-		// Add start time
 
 		const dueDateTime = newInboxItem.dueDateTime ? new Date(newInboxItem.dueDateTime) : null
+		const length = showCustomInput ? customLength : newInboxItem.length
+
+		// Ensure length is a string before testing
+		const lengthString = length || '';
+
+		// Check if length is in the "hh:mm" format
+		if (!/^([0-1][0-9]|[2][0-3]):([0-5][0-9])$/.test(lengthString)) {
+			// Length is not in "hh:mm" format. Notify the user.
+			setSnackbar({
+				open: true,
+				message: "Please enter length in 'hh:mm' format",
+				severity: "error",
+			});
+			return;
+		}
+
 		try {
 			updateInboxItem({
 				variables: {
@@ -109,8 +144,9 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					StartDate: newInboxItem.startDate,
 					StartTime: newInboxItem.startTime,
 					DueDateTime: dueDateTime,
-					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,	
+					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,
 					Completed: newInboxItem.completed,
+					Length: length,
 				},
 				onCompleted: () => {
 					setSnackbar({
@@ -125,6 +161,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 			console.log(error)
 		}
 	}
+
 
 
 	// InboxItem Delete
@@ -151,29 +188,40 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 
 
 	// Input Change Logic
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		console.log(name, value)
+	const handleInputChange = (e: React.ChangeEvent<{ name?: string; value: string }>) => {
+		const { name, value } = e.target;
+		if (!name) return;  // handle the case where name might be undefined
+
 		setNewInboxItem((prev) => {
+			if (name === 'length') {
+				// check if the custom option was selected
+				if (value === 'custom') {
+					setShowCustomInput(true);
+				} else {
+					setShowCustomInput(false);
+				}
+
+				return { ...prev, [name]: value };
+			}
+
 			if (name === 'startTime') {
 				return { ...prev, [name]: value === '' ? null : value + ":00" }
 			}
+
 			const updatedValue = name === 'startDate' || name === 'dueDateTime'
-				?
-				value === ''
-					? null
-					:
-					value
-				:
-				value
+				? value === '' ? null : value
+				: value;
+
 			return { ...prev, [name]: updatedValue }
-		})
-	}
+		});
+	};
 	const handleSelectChange = (event: SelectChangeEvent) => {
 		const { name, value } = event.target
 		const selectedProject = projects.find(project => project.id === value)
 		setNewInboxItem((prev) => ({ ...prev, [name]: selectedProject }))
 	}
+
+
 
 
 	if (projectLoading) return <p>Loading projects...</p>
@@ -306,6 +354,35 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 							label="Completed"
 						/>
 					</Box>
+
+					{/* Length */}
+					<Box m={2}>
+						<InputLabel id="length-label">Length</InputLabel>
+						<Select
+							name="length"
+							value={newInboxItem.length ? newInboxItem.length : ''}
+							onChange={handleInputChange as any}
+						>
+							<MenuItem value="00:15">15 minutes</MenuItem>
+							<MenuItem value="00:30">30 minutes</MenuItem>
+							<MenuItem value="00:45">45 minutes</MenuItem>
+							<MenuItem value="01:00">1 hour</MenuItem>
+							<MenuItem value="02:00">2 hours</MenuItem>
+							<MenuItem value="03:00">3 hours</MenuItem>
+							<MenuItem value="custom">Custom</MenuItem>
+						</Select>
+						{showCustomInput && (
+							<TextField
+								value={customLength}
+								onChange={(e) => {
+									setCustomLength(e.target.value);
+								}}
+							/>
+						)}
+					</Box>
+
+
+
 
 				</Box>
 			</DialogContent>

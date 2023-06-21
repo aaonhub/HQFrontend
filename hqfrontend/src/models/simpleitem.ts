@@ -7,12 +7,14 @@ export class SimpleItem {
 		public title: string,
 		public type: 'habit' | 'inbox',
 		public startTime?: string,
+		public length?: string,
 	) {
 		this.id = id;
 		this.completedToday = completedToday;
 		this.title = title;
 		this.type = type;
 		this.startTime = startTime;
+		this.length = length;
 	}
 }
 

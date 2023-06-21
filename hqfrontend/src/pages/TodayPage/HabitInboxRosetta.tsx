@@ -35,6 +35,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				title: inboxItem.title ?? '',
 				type: 'inbox',
 				startTime: inboxItem.startTime ? inboxItem.startTime : undefined,
+				length: inboxItem.length ? inboxItem.length : undefined,
 			});
 		});
 	}

@@ -1,61 +1,121 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react'
 import {
-	List,
-	ListItem,
-	ListItemText,
 	Typography,
 	Card,
 	CardContent,
-	Checkbox,
 	Input,
 	IconButton,
 	Box,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+	Grid,
+	debounce,
+} from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import './Itinerary.css'
 
+// Full Calendar
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import { EventInput } from '@fullcalendar/core'
+import FullCalendar from '@fullcalendar/react'
 
 // Components
-import { getCurrentLocalDate } from '../../../components/DateFunctions';
-import { useGlobalContext } from '../../App/GlobalContextProvider';
-import EditInboxItemDialog from '../../../components/EditToDoItemDialog';
+import { getCurrentLocalDate } from '../../../components/DateFunctions'
+import { useGlobalContext } from '../../App/GlobalContextProvider'
+import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 
 
 // Models
-import Habit from "../../../models/habit";
-import InboxItem from "../../../models/inboxitem";
-import SimpleItem from "../../../models/simpleitem";
-import HabitInboxRosetta from '../HabitInboxRosetta';
+import Habit from "../../../models/habit"
+import InboxItem, { UPDATE_TODO } from "../../../models/inboxitem"
+import SimpleItem from "../../../models/simpleitem"
+import HabitInboxRosetta from '../HabitInboxRosetta'
 
 // Queries and Mutations
-import { useMutation, useQuery } from '@apollo/client';
-import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem';
-import { CHECK_HABIT } from '../../../models/habit';
-import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem';
-import { GET_TODAY_LIST_ITEMS } from "../../../models/inboxitem";
-import { GET_HABITS_DUE_TODAY } from "../../../models/habit";
-import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability';
+import { useMutation, useQuery } from '@apollo/client'
+import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem'
+import { CHECK_HABIT } from '../../../models/habit'
+import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
+import { GET_TODAY_LIST_ITEMS } from "../../../models/inboxitem"
+import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
+import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
+import ItineraryList from './ItineraryList'
 
 
 
 const Itinerary: React.FC = () => {
-	const { setSnackbar } = useGlobalContext();
+	const { setSnackbar } = useGlobalContext()
 
-	const [inputValue, setInputValue] = useState('');
-	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([]);
-	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([]);
-	const [habits, setHabits] = useState<Habit[]>([]);
-	const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
-	const [expanded, setExpanded] = useState(false);
-	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null);
-	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({});
+	const [inputValue, setInputValue] = useState('')
+	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
+	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([])
+	const [habits, setHabits] = useState<Habit[]>([])
+	const [inboxItems, setInboxItems] = useState<InboxItem[]>([])
+	const [expanded, setExpanded] = useState(false)
+	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
+	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
+
+	// Calendar State
+	const [events, setEvents] = useState<EventInput[]>([
+		{
+			id: '1',
+			title: 'my event',
+			start: '2023-06-21T10:00:00',
+			end: '2023-06-21T12:00:00',
+		},
+	])
+	const calendarRef = useRef(null)
 
 
 
-	const localDate = getCurrentLocalDate();
+	const localDate = getCurrentLocalDate()
 
 
+	function computeEndTime(startTime: string, length: string): string {
+		const startTimeParts = startTime.split(':').map(Number);
+		const lengthParts = length.split(':').map(Number);
+
+		const startDate = new Date();
+		startDate.setHours(startTimeParts[0], startTimeParts[1], startTimeParts[2]);
+
+		const endDate = new Date(startDate.getTime());
+		endDate.setHours(endDate.getHours() + lengthParts[0]);
+		endDate.setMinutes(endDate.getMinutes() + lengthParts[1]);
+
+		const endHours = endDate.getHours().toString().padStart(2, '0');
+		const endMinutes = endDate.getMinutes().toString().padStart(2, '0');
+		const endSeconds = endDate.getSeconds().toString().padStart(2, '0');
+
+		return `${endHours}:${endMinutes}:${endSeconds}`;
+	}
+
+
+	// Helper function to convert to-do list item to an event
+	function toDoItemToEvent(item: InboxItem): EventInput | null {
+		const startTime = item.startTime;
+		const length = item.length;
+		const date = item.startDate ?? '2023-06-21';  // use a default date or throw an error if the date is undefined
+
+		if (!startTime || !length) {
+			return null;
+		}
+
+		return {
+			id: item.id + 'i',
+			title: item.title,
+			start: `${date}T${startTime}`,
+			end: `${date}T${computeEndTime(startTime, length)}`,
+			extendedProps: {
+				description: item.description,
+				completed: item.completed,
+				project: item.project,
+				dueDateTime: item.dueDateTime,
+				startDate: item.startDate,
+				length: length,
+			},
+		};
+	}
 	// Today's To Do Items Query
 	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TODAY_LIST_ITEMS, {
 		fetchPolicy: 'network-only',
@@ -74,11 +134,21 @@ const Itinerary: React.FC = () => {
 					startDate: toDoItems.startDate,
 					startTime: toDoItems.startTime,
 					timeCompleted: new Date(toDoItems.timeCompleted),
-				})
-			})
-			setInboxItems(inboxItems)
-		}
+					length: toDoItems.length,
+				});
+			});
+			setInboxItems(inboxItems);
+
+			// Convert inboxItems to events and update the state
+			const newEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
+			setEvents(newEvents);
+		},
+		onError: (error) => {
+			console.log(error);
+		},
 	});
+
+
 	// Today's Habits Query
 	const { loading: habitsLoading, error: habitsError, data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
 		fetchPolicy: 'network-only',
@@ -99,14 +169,14 @@ const Itinerary: React.FC = () => {
 					habit.endDate,
 					habit.timeOfDay,
 					habit.completedToday,
-				);
-			});
-			setHabits(habits);
+				)
+			})
+			setHabits(habits)
 		},
 		onError: (error) => {
 			console.log(error)
 		}
-	});
+	})
 	// Set up Simple Item Array
 	useEffect(() => {
 		if (habitsData && inboxData) {
@@ -118,12 +188,12 @@ const Itinerary: React.FC = () => {
 
 			// Sort uncompletedItems by startTime
 			simpleItemArrayFiltered.sort((a, b) => {
-				const aTime = a.startTime || '';
-				const bTime = b.startTime || '';
-				if (aTime < bTime) return -1;
-				if (aTime > bTime) return 1;
-				return 0;
-			});
+				const aTime = a.startTime || ''
+				const bTime = b.startTime || ''
+				if (aTime < bTime) return -1
+				if (aTime > bTime) return 1
+				return 0
+			})
 
 			setUncompletedItems(simpleItemArrayFiltered)
 
@@ -133,6 +203,78 @@ const Itinerary: React.FC = () => {
 			setCompletedItems(simpleItemArrayCompleted)
 		}
 	}, [habitsData, inboxData, habits, inboxItems])
+
+
+
+
+	// Calendar Logic
+	function formatTime(date: Date): string {
+		const hours = date.getHours().toString().padStart(2, '0');
+		const minutes = date.getMinutes().toString().padStart(2, '0');
+		return `${hours}:${minutes}`;
+	}
+	const handleEventChange = debounce((changeInfo) => {
+
+		// Find the index of the event that was changed
+		const potentialItem1 = completedItems.findIndex(event => event.id === changeInfo.event.id)
+		const potentialItem2 = uncompletedItems.findIndex(event => event.id === changeInfo.event.id)
+
+		if (potentialItem1 === -1 && potentialItem2 === -1) {
+			console.log('Event not found: ', changeInfo.event.id);
+			return;
+		}
+
+		const confirmedItem = potentialItem1 === -1 ? uncompletedItems[potentialItem2] : completedItems[potentialItem1]
+
+		// Calculate the length
+		const differenceInMilliseconds = changeInfo.event.end - changeInfo.event.start;
+		const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
+		const hours = Math.floor(differenceInMinutes / 60);
+		const minutes = differenceInMinutes % 60;
+
+		// Format the length to "hh:mm"
+		const formattedLength = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+		try {
+			updateInboxItem({
+				variables: {
+					// remove the last letter of the id
+					ID: confirmedItem.id.slice(0, -1),
+					Completed: confirmedItem.completedToday,
+					Length: formattedLength,
+					StartTime: formatTime(changeInfo.event.start),
+				},
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}, 100);
+
+	const [updateInboxItem] = useMutation(UPDATE_TODO)
+	const eventReceive = (info: any) => {
+		console.log("Event Received")
+		console.log(info)
+
+		// Check if the title contains '|', if not set a default id and title
+		if (!info.event.title.includes('|')) {
+			info.event.setProp('id');
+			info.event.setProp('title');
+		} else {
+			let [id, title] = info.event.title.split('|');
+
+			// Set the id and title of the event
+			info.event.setProp('id', id);
+			info.event.setProp('title', title);
+		}
+		// Append the new event to the existing events
+		setEvents([...events, {
+			id: info.event.id,
+			title: info.event.title,
+			start: info.event.start,
+			end: info.event.end
+		}])
+	}
+
 
 
 
@@ -147,7 +289,7 @@ const Itinerary: React.FC = () => {
 				open: true,
 				severity: "error"
 			})
-			return;
+			return
 		}
 
 		addTodoToToday({
@@ -160,7 +302,7 @@ const Itinerary: React.FC = () => {
 				{ query: GET_TODAY_LIST_ITEMS, variables: { Today: localDate } },
 			],
 			onCompleted: () => {
-				setInputValue('');
+				setInputValue('')
 				setSnackbar({
 					message: "To Do Item Added",
 					open: true,
@@ -168,22 +310,22 @@ const Itinerary: React.FC = () => {
 				})
 			}
 		})
-	};
+	}
 
 	// Paste Event Handler
 	const handlePaste = async (event: React.ClipboardEvent) => {
-		event.preventDefault(); // Prevent the paste from happening right away
+		event.preventDefault() // Prevent the paste from happening right away
 
-		const pasteData = event.clipboardData.getData('text'); // Get the data from the clipboard
-		const lines = pasteData.split('\n'); // Split the pasted data by new line
+		const pasteData = event.clipboardData.getData('text') // Get the data from the clipboard
+		const lines = pasteData.split('\n') // Split the pasted data by new line
 
 		if (lines.length > 1) { // If there are multiple lines
 			if (!window.confirm(`You are about to create ${lines.length} to do items. Continue?`)) {
-				return;
+				return
 			}
 			for (const line of lines) {
 				if (!line.trim()) { // If line is only whitespace
-					continue;
+					continue
 				}
 
 				await addTodoToToday({
@@ -192,18 +334,18 @@ const Itinerary: React.FC = () => {
 						startDate: getCurrentLocalDate(),
 						Completed: false,
 					},
-				});
+				})
 			}
 			setSnackbar({
 				message: "To Do Items Added",
 				open: true,
 				severity: "success"
 			})
-			inboxRefetch();
+			inboxRefetch()
 		} else { // If there is only one line
-			setInputValue(pasteData); // Paste the data into the input field
+			setInputValue(pasteData) // Paste the data into the input field
 		}
-	};
+	}
 
 
 	// Check Item
@@ -227,7 +369,6 @@ const Itinerary: React.FC = () => {
 			handleCheckToDo(item)
 		}
 	}
-
 	// Check Habit
 	const [checkHabit] = useMutation(CHECK_HABIT)
 	const handleCheckHabit = async (habit: any) => {
@@ -278,12 +419,10 @@ const Itinerary: React.FC = () => {
 			}
 		})
 	}
-
-
 	const handleClose = () => {
 		setSelectedInboxItemId(null)
-		inboxRefetch();
-	};
+		inboxRefetch()
+	}
 
 
 
@@ -292,41 +431,61 @@ const Itinerary: React.FC = () => {
 	// Notification Request
 	Notification.requestPermission().then(function (permission) {
 		if (permission !== "granted") {
-			console.error("Notification permission not granted.");
+			console.error("Notification permission not granted.")
 		}
-	});
+	})
 	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
 	const scheduleNotification = (item: any) => {
-		const now = new Date();
-		const date = new Date(); // today's date
-		const dateString = date.toISOString().split('T')[0]; // get the date string in the format of "yyyy-mm-dd"
-		const taskTime = new Date(dateString + 'T' + item.startTime);
+		const now = new Date()
+		const date = new Date() // today's date
+		const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
+		const taskTime = new Date(dateString + 'T' + item.startTime)
 
 		if (taskTime > now && !scheduledNotifications[item.id]) {
-			const delay = taskTime.getTime() - now.getTime(); // Convert dates to milliseconds before subtracting
+			const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
 			setTimeout(() => {
-				new Notification(`Time to start item: ${item.title}`);
-			}, delay);
-			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }));
+				new Notification(`Time to start item: ${item.title}`)
+			}, delay)
+			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
 		}
-	};
+	}
 	// Use useEffect to schedule notifications for all tasks
 	useEffect(() => {
 		if (Notification.permission !== "granted") {
-			console.error("Notification permission not granted.");
+			console.error("Notification permission not granted.")
 		} else {
-			uncompletedItems.forEach(scheduleNotification);
+			uncompletedItems.forEach(scheduleNotification)
 		}
-	}, [uncompletedItems]);  // Dependencies ensure this useEffect only re-runs when uncompletedItems change
+	}, [uncompletedItems])  // Dependencies ensure this useEffect only re-runs when uncompletedItems change
 
 
+	function getHourBeforeCurrentTime() {
+		const date = new Date();
+		let hour = date.getHours();
+		let minute = date.getMinutes();
+		let second = date.getSeconds();
 
+		// adjust hour to be one hour earlier and check it does not go beyond 00:00
+		hour = hour === 0 ? 0 : hour - 1;
+
+		// Ensuring double digit formatting
+		hour = hour < 10 ? 0 + hour : hour;
+		minute = minute < 10 ? 0 + minute : minute;
+		second = second < 10 ? 0 + second : second;
+
+		let hourString = hour < 10 ? "0" + hour.toString() : hour.toString();
+		let minuteString = minute < 10 ? "0" + minute.toString() : minute.toString();
+		let secondString = second < 10 ? "0" + second.toString() : second.toString();
+
+		return hourString + ":" + minuteString + ":" + secondString;
+	}
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>
 	if (inboxError || habitsError) return <p>Error :(</p>
 
 	return (
+
 		<Card
 			sx={{
 				borderRadius: 2,
@@ -335,119 +494,108 @@ const Itinerary: React.FC = () => {
 				padding: 1,
 			}}
 		>
-			<CardContent>
-				<Typography variant="h5" gutterBottom>
-					Itinerary
-				</Typography>
+			<Grid
+				container
+				spacing={2}
+				style={{ height: '80vh', overflow: 'auto' }}
+			>
 
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						marginBottom: 2,
-					}}
-				>
 
-					{/* To Do Input */}
-					<Input
-						placeholder="Add item"
-						value={inputValue}
-						onChange={(e) => setInputValue(e.target.value)}
-						onPaste={handlePaste}
-						fullWidth
-						inputProps={{ style: { paddingLeft: "5px" } }}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') {
-								handleAddItem();
-							}
-						}}
+				{/* Calendar */}
+				<Grid item xs={6} md={6} style={{ height: '100%', overflowY: 'auto' }}>
+
+					<FullCalendar
+						ref={calendarRef}
+						plugins={[timeGridPlugin, interactionPlugin]}
+						initialView="timeGridDay"
+						weekends={true}
+						headerToolbar={false}
+						nowIndicator={true}
+						scrollTime={getHourBeforeCurrentTime()}
+						height="100%"
+						contentHeight="100%"
+						droppable={true}
+						eventReceive={eventReceive}
+						events={events}
+						eventChange={handleEventChange}
+						editable={true}
+						slotMaxTime="26:00:00"
 					/>
-					<IconButton onClick={handleAddItem}>
-						<AddIcon />
-					</IconButton>
-				</Box>
 
-				<Box>
-					{/* Itinerary List */}
-					{uncompletedItems.length > 0 ? (
-						<List sx={{ padding: 0 }}>
-							{uncompletedItems.map((item) => (
-								<ListItem
-									key={item.id}
-									disablePadding
-									onClick={() => {
-										if ("i" === item.id.slice(-1)) {
-											setSelectedInboxItemId(item.id.slice(0, -1))
-										}
-									}}
-								>
-									<Checkbox
-										checked={item.completedToday}
-										onClick={(event) => {
-											event.stopPropagation();
-											handleCheckItem(item);
-										}}
-									/>
-									<ListItemText
-										primary={item.title}
-										// cut off the last 3 characters of time to remove minutes
-										secondary={item.startTime?.slice(0, -3)}
-									/>
-								</ListItem>
-							))}
-						</List>
-					) : (
-						<Typography variant="h6" align="center" color="textSecondary">
-							Nothing left to do
+				</Grid>
+
+
+				{/* Itinerary */}
+				<Grid item xs={6} md={6} style={{ height: '100%', overflowY: 'auto' }}>
+					<CardContent>
+						<Typography variant="h5" gutterBottom>
+							Itinerary
 						</Typography>
-					)}
 
-				</Box>
-			</CardContent>
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								marginBottom: 2,
+							}}
+						>
 
-			<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
-				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-					<Typography variant="h6">Completed Items</Typography>
-				</AccordionSummary>
-				<AccordionDetails>
-					{completedItems.length > 0 ? (
-						<List sx={{ padding: 0 }}>
-							{completedItems.map((item) => (
-								<ListItem
-									key={item.id}
-									disablePadding
-									onClick={() => {
-										if ("i" === item.id.slice(-1)) {
-											setSelectedInboxItemId(item.id.slice(0, -1))
-										}
-									}}
-								>
-									<Checkbox
-										checked={item.completedToday}
-										disabled
-									/>
-									<ListItemText
-										primary={item.title}
-										secondary={item.startTime?.slice(0, -3)}
-									/>
-								</ListItem>
-							))}
-						</List>
-					) : (
-						<Typography variant="h6" align="center" color="textSecondary">
-							No completed items
-						</Typography>
-					)}
-				</AccordionDetails>
-			</Accordion>
+							{/* To Do Input */}
+							<Input
+								placeholder="Add item"
+								value={inputValue}
+								onChange={(e) => setInputValue(e.target.value)}
+								onPaste={handlePaste}
+								fullWidth
+								inputProps={{ style: { paddingLeft: "5px" } }}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										handleAddItem()
+									}
+								}}
+							/>
+							<IconButton onClick={handleAddItem}>
+								<AddIcon />
+							</IconButton>
+						</Box>
+
+						<Box>
+							{/* Itinerary List */}
+							{uncompletedItems.length > 0 ? (
+								<ItineraryList list={uncompletedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckToDo} />
+							) : (
+								<Typography variant="h6" align="center" color="textSecondary">
+									Nothing left to do
+								</Typography>
+							)}
+
+						</Box>
+					</CardContent>
+
+					<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
+						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+							<Typography variant="h6">Completed Items</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							{completedItems.length > 0 ? (
+								<ItineraryList list={completedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckToDo} />
+							) : (
+								<Typography variant="h6" align="center" color="textSecondary">
+									No completed items
+								</Typography>
+							)}
+						</AccordionDetails>
+					</Accordion>
 
 
-			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
+					{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
 
+				</Grid>
+			</Grid>
 		</Card>
-	);
+	)
 
 
-};
+}
 
-export default Itinerary;
+export default Itinerary

@@ -12,6 +12,7 @@ interface InboxItem {
 	startTime: string | null;
 	startDate: string | null;
 	timeCompleted: Date | null;
+	length?: string | null;
 }
 
 class InboxItem {
@@ -25,6 +26,7 @@ class InboxItem {
 		startTime,
 		startDate,
 		timeCompleted,
+		length,
 
 	}: InboxItem) {
 		this.id = id;
@@ -36,6 +38,7 @@ class InboxItem {
 		this.startTime = startTime;
 		this.startDate = startDate;
 		this.timeCompleted = timeCompleted;
+		this.length = length;
 	}
 }
 
@@ -59,6 +62,7 @@ export const GET_TODAY_LIST_ITEMS = gql`
 			startDate
 			startTime
 			timeCompleted
+			length
 		}
 	}  
 `;
@@ -96,6 +100,7 @@ export const GET_INBOX_TODO = gql`
 			startDate
 			startTime
 			timeCompleted
+			length
 		}
 	}
 `;
@@ -141,6 +146,7 @@ export const UPDATE_TODO = gql`
 		$StartTime: Time,
 		$DueDateTime: DateTime,
 		$Subtasks: JSONString
+		$Length: String
 	) {
 		updateToDoItem(
 			completed: $Completed, 
@@ -152,6 +158,7 @@ export const UPDATE_TODO = gql`
 			startDate: $StartDate,
 			startTime: $StartTime,
 			subTasks: $Subtasks
+			length: $Length
 		) {
 			toDoItem {
 				id

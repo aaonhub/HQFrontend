@@ -1,0 +1,8 @@
+.fc-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.fc-scroller {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

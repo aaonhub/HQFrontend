@@ -82,6 +82,7 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 						<IconButton
 							edge="start"
 							onClick={(event) => handleIconButtonClick(event, toDoItem)}
+							style={{ padding: 0 }}
 						>
 							<Checkbox
 								checked={toDoItem.completed}
@@ -90,6 +91,7 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 							/>
 						</IconButton>
 					</ListItemIcon>
+
 
 					{/* Title */}
 					<ListItemText

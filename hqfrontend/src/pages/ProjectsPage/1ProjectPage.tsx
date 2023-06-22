@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
-import { Box, Typography, TextField, List } from '@mui/material'
+import { Box, Typography, TextField, List, Grid } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Components
@@ -218,10 +218,7 @@ const ProjectPage = () => {
 	if (error) { return <div>Error! {error.message}</div> }
 
 	return (
-		<Box sx={{ flexGrow: 1 }}>
-
-
-
+		<Grid container>
 
 			{/* Title */}
 			<Box sx={{ display: 'flex', marginBottom: 2 }}>
@@ -234,8 +231,6 @@ const ProjectPage = () => {
 					{project.codename}
 				</Typography>
 			</Box>
-
-
 
 
 			{/* Text input that adds to do list items to the project */}
@@ -315,8 +310,7 @@ const ProjectPage = () => {
 
 
 
-
-		</Box >
+		</Grid>
 	)
 }
 

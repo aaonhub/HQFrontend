@@ -2,10 +2,15 @@ import { Container, Grid, Typography } from "@mui/material";
 import Itinerary from "./Itinerary/Itinerary";
 import LogList from "./LogList";
 import { getCustomLocalDate } from "../../components/DateFunctions";
+import { useEffect } from "react";
 
 
 
 const TodayPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Today - HQ";
+	}, []);
 
 	return (
 		<Container>

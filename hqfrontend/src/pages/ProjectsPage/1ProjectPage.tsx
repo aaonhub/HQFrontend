@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, Typography, TextField, List } from '@mui/material'
@@ -38,7 +38,7 @@ const ProjectPage = () => {
 
 
 	// Project Query
-	const { loading, error, refetch } = useQuery(GET_PROJECT_ITEMS, {
+	const { data, loading, error, refetch } = useQuery(GET_PROJECT_ITEMS, {
 		variables: { projectId, completed: false },
 		onCompleted: (data) => {
 
@@ -95,7 +95,12 @@ const ProjectPage = () => {
 		},
 	})
 
-
+	// Tab Title
+	useEffect(() => {
+		if (data) {
+			document.title = data.project.codename ? data.project.codename : "Project"
+		}
+	}, [data]);
 
 
 	// Add Project Item

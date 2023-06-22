@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_RITUALS } from '../../models/ritual'
 import { Box, Grid, Typography, Button, List, ListItem, ListItemText } from '@mui/material'
@@ -6,6 +6,11 @@ import NewRitualDialog from './NewRitualDialog'
 import RitualDialog from '../../components/RitualDialog'
 
 const RitualPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Rituals - HQ";
+	}, []);
+	
 	const [open, setOpen] = useState(false)
 	const [openRitualDialog, setOpenRitualDialog] = useState(false)
 	const [selectedRitual, setSelectedRitual] = useState('')

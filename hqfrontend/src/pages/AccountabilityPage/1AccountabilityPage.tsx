@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button, Container, Grid, Typography, Card, CardContent, List, ListItem, ListItemText, Paper, ListItemButton, ListItemIcon } from "@mui/material"
 import NewAccountabilityDialog from "./NewAccountabilityDialog"
 
@@ -14,6 +14,11 @@ import { GET_ACCOUNTABILITIES } from "../../models/accountability";
 import { useQuery } from "@apollo/client";
 
 const AccountabilityPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Accountability - HQ";
+	}, []);
+    
     const [dialogOpen, setDialogOpen] = useState(false)
     const [selectedContent, setSelectedContent] = useState("friends")
     const [selectedAccountability, setSelectedAccountability] = useState("")

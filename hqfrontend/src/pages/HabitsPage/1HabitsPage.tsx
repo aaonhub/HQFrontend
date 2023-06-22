@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Container, Typography, Box } from '@mui/material';
 import { useQuery } from '@apollo/client';
@@ -16,6 +16,11 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 import Habit from '../../models/habit';
 
 const HabitsPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Habits - HQ";
+	}, []);
+	
 	const [habits, setHabits] = useState<Habit[]>([])
 	const [today, setToday] = useState(getCurrentLocalDate())
 	const [open, setOpen] = useState(false)

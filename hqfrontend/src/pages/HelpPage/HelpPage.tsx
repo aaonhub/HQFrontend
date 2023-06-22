@@ -1,6 +1,12 @@
+import { useEffect } from 'react';
 import { Box, Typography, Container } from '@mui/material';
 
 const HelpPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Help - HQ";
+	}, []);
+	
 	return (
 		<Container maxWidth="md">
 			<Box sx={{ mt: 4, mb: 4 }}>

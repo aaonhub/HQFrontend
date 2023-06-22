@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
 	Container,
 	Typography,
@@ -11,6 +12,10 @@ import ToDoList from './ToDoList';
 
 
 const InboxPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Inbox - HQ";
+	}, []);
 
 
 	return (

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Container, Typography, Box, TextField, Button, Grid, Paper, List } from '@mui/material'
 import LogItem from './LogItem'
@@ -14,6 +14,11 @@ import Log from '../../models/log'
 
 
 const LogPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Log - HQ";
+	}, []);
+
 	const [logArray, setLogArray] = useState<Log[]>([])
 	const [logText, setLogText] = useState('')
 
@@ -103,7 +108,7 @@ const LogPage = () => {
 							value={logText}
 							onChange={(e) => setLogText(e.target.value)}
 							variant="outlined"
-                            autoComplete="off"
+							autoComplete="off"
 							size="small"
 							onKeyDown={(e) => {
 								if (e.key === 'Enter') {

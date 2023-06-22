@@ -54,7 +54,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 	}))
 	const [projects, setProjects] = useState<Project[]>([])
 	const [showCustomInput, setShowCustomInput] = useState(false);
-	const [customLength, setCustomLength] = useState<string | null>(null);
+	const [customLength, setCustomLength] = useState<string>("");
 
 
 
@@ -81,10 +81,16 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					timeCompleted: data.toDoItem.timeCompleted,
 				})
 			)
+
 			if (data.toDoItem.length) {
 				setCustomLength(data.toDoItem.length)
 			}
-			if (!['00:15', '00:30', '00:45', '01:00', '02:00', '03:00'].includes(data.toDoItem.length)) {
+			if (data.toDoItem.length === null) {
+				setNewInboxItem(prev => ({
+					...prev,
+					length: "01:00"
+				}));
+			} else if (!['00:15', '00:30', '00:45', '01:00', '02:00', '03:00'].includes(data.toDoItem.length)) {
 				setShowCustomInput(true);
 				setNewInboxItem(prev => ({
 					...prev,
@@ -97,6 +103,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					length: data.toDoItem.length
 				}));
 			}
+
 		}
 	})
 

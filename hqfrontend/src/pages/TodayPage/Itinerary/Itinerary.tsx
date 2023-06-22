@@ -13,6 +13,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './Itinerary.css'
+import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 
 // Full Calendar
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -498,7 +499,8 @@ const Itinerary: React.FC = () => {
 
 					<FullCalendar
 						ref={calendarRef}
-						plugins={[timeGridPlugin, interactionPlugin]}
+						plugins={[timeGridPlugin, interactionPlugin, bootstrap5Plugin]}
+						themeSystem='standard'
 						initialView="timeGridDay"
 						weekends={true}
 						headerToolbar={false}

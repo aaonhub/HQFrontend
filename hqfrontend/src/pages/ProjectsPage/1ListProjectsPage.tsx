@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, List, Typography, TextField } from '@mui/material'
 import ProjectListItem from './3ListProjectItem'
@@ -12,6 +12,12 @@ import Project from '../../models/project'
 
 
 const ProjectsPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Projects - HQ";
+	}, []);
+
+
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
 

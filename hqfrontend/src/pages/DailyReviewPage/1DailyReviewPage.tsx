@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './DailyReviewPage.css'
 import { Container, Typography, Grid } from '@mui/material'
 import { useQuery } from '@apollo/client'
@@ -17,6 +17,11 @@ import DailyReview from '../../models/dailyreview'
 
 
 const DailyReviewPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Reviews - HQ";
+	}, []);
+	
 	const [today, setToday] = useState(getCurrentLocalDate())
 	const [editMode, setEditMode] = useState(false)
 	const [dailyReview, setDailyReview] = useState<DailyReview>(new DailyReview({

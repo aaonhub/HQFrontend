@@ -34,6 +34,11 @@ const DELETE_TOKEN_MUTATION = gql`
 
 
 const SettingsPage = () => {
+	// Tab Title
+	useEffect(() => {
+		document.title = "Settings - HQ";
+	}, []);
+
 	// const { currentTheme, setTheme } = useContext(ThemeContext);
 	const { setLoggedIn, globalProfile, setGlobalProfile, setSnackbar } = useGlobalContext()
 	const [codeName, setCodeName] = useState<string>(globalProfile.codename);

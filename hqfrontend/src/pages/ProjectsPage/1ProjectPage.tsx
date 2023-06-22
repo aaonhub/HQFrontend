@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
-import { Box, Typography, TextField, List, Grid } from '@mui/material'
+import { Box, Typography, TextField, List, Grid, Container } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Components
@@ -218,7 +218,7 @@ const ProjectPage = () => {
 	if (error) { return <div>Error! {error.message}</div> }
 
 	return (
-		<Grid container>
+		<Container maxWidth="xl">
 
 			{/* Title */}
 			<Box sx={{ display: 'flex', marginBottom: 2 }}>
@@ -310,7 +310,7 @@ const ProjectPage = () => {
 
 
 
-		</Grid>
+		</Container>
 	)
 }
 

@@ -6,3 +6,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+:root {
+    --fc-today-bg-color: #3B3B3B;
+  }

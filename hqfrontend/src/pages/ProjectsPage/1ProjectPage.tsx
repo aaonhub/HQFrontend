@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
-import { Box, Typography, TextField, List, Grid, Container } from '@mui/material'
+import { Box, Typography, TextField, List, Container } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Components

@@ -239,6 +239,7 @@ const Itinerary: React.FC = () => {
 					StartTime: formatTime(changeInfo.event.start),
 				},
 			})
+			inboxRefetch()
 		} catch (error) {
 			console.log(error)
 		}
@@ -294,6 +295,7 @@ const Itinerary: React.FC = () => {
 			},
 			refetchQueries: [
 				{ query: GET_TODAY_LIST_ITEMS, variables: { Today: localDate } },
+				{ query: GET_HABITS_DUE_TODAY, variables: { Today: localDate } },
 			],
 			onCompleted: () => {
 				setInputValue('')
@@ -373,6 +375,11 @@ const Itinerary: React.FC = () => {
 				currentDate: localDate,
 			},
 			onCompleted: () => {
+				setSnackbar({
+					message: "Habit completed!",
+					open: true,
+					severity: "success"
+				})
 				setUncompletedItems((prevArray: SimpleItem[]) =>
 					// remove the item from the array
 					prevArray.filter((item) => item.id !== habit.id)

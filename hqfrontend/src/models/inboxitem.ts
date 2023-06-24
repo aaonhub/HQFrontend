@@ -47,9 +47,9 @@ export default InboxItem;
 
 
 // Queries
-export const GET_TODAY_LIST_ITEMS = gql`
+export const GET_TO_DO_LIST_ITEMS_BY_START_DATE = gql`
 	query GetTodaysToDoList($Today: Date!) {
-		toDoItems(Today: $Today) {
+		toDoItemsByStartDate(Today: $Today) {
 			id
 			title
 			completed
@@ -102,6 +102,45 @@ export const GET_INBOX_TODO = gql`
 			timeCompleted
 			length
 		}
+	}
+`;
+
+export const TO_DO_ITEM_PAGINATION = gql`
+	query ToDoItems(
+		$completed: Boolean, 
+		$orderBy: String, 
+		$title_Icontains: String,
+		$after: String
+	) {
+		toDoItems(
+			completed: $completed, 
+			orderBy: $orderBy, 
+			title_Icontains: $title_Icontains, 
+			first: 20,
+			after: $after
+		) {
+			edges {
+				node {
+					id
+					title
+					completed
+					startDate
+					dueDateTime
+					description
+					createdAt
+				}
+			}
+			pageInfo {
+				hasNextPage
+				hasPreviousPage
+				startCursor
+				endCursor
+			}
+		}
+		toDoItemPaginationCount(
+			completed: $completed, 
+			titleIcontains: $title_Icontains
+		)
 	}
 `;
 

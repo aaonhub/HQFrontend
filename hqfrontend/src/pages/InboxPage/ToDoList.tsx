@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
 import {
-	Box, Button, Card, CardContent,
+	Box, Card, CardContent,
 	IconButton, Fab, Typography,
-	TextField, CardActions, Grid
+	TextField, CardActions
 } from '@mui/material';
 import Masonry from '@mui/lab/Masonry';
 

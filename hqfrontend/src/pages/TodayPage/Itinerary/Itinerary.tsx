@@ -38,7 +38,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem'
 import { CHECK_HABIT } from '../../../models/habit'
 import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
-import { GET_TODAY_LIST_ITEMS } from "../../../models/inboxitem"
+import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
 import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
 import ItineraryList from './ItineraryList'
@@ -111,7 +111,7 @@ const Itinerary: React.FC = () => {
 		};
 	}
 	// Today's To Do Items Query
-	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TODAY_LIST_ITEMS, {
+	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TO_DO_LIST_ITEMS_BY_START_DATE, {
 		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
@@ -294,7 +294,7 @@ const Itinerary: React.FC = () => {
 				Completed: false,
 			},
 			refetchQueries: [
-				{ query: GET_TODAY_LIST_ITEMS, variables: { Today: localDate } },
+				{ query: GET_TO_DO_LIST_ITEMS_BY_START_DATE, variables: { Today: localDate } },
 				{ query: GET_HABITS_DUE_TODAY, variables: { Today: localDate } },
 			],
 			onCompleted: () => {

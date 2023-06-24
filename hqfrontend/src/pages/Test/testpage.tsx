@@ -5,6 +5,7 @@ import { TO_DO_ITEM_PAGINATION } from '../../models/inboxitem';
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
 import EditToDoItemDialog from '../../components/EditToDoItemDialog';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 type Node = {
 	id: string;
@@ -61,6 +62,23 @@ const Test = () => {
 	}
 
 
+	const fetchMoreData = () => {
+        fetchMore({
+            variables: {
+                after: endCursor,
+            },
+        }).then(fetchMoreResult => {
+            const newRows = fetchMoreResult.data.toDoItems.edges.map((edge: Edge) => {
+                const node = { ...edge.node, createdAtFormatted: formatDate(edge.node.createdAt) };
+                rowsRef.current[node.id] = node; // Update rowsRef
+                return node;
+            });
+            setEndCursor(fetchMoreResult.data.toDoItems.pageInfo.endCursor);
+            setRows(oldRows => [...oldRows, ...newRows]);
+            setHasNextPage(fetchMoreResult.data.toDoItems.pageInfo.hasNextPage);
+        });
+    }
+
 
 	const { loading, error, data, fetchMore } = useQuery(TO_DO_ITEM_PAGINATION, {
 		variables: {
@@ -98,50 +116,41 @@ const Test = () => {
 	if (error) return <p>Error :(</p>;
 
 	return (
-		<Container maxWidth="xl">
-			<Box height="100vh">
+	    <Container maxWidth="xl">
+            <Box sx={{ flexGrow: 1 }}>
+                <Grid container direction="column" spacing={2}>
 
-				<Typography>
-					Fetched {totalFetched} of {totalDBRowCount} total rows.
-				</Typography>
+                    <Grid item xs={12}>
+                        <Typography variant="h4" component="h1" gutterBottom>
+                            Fetched {totalFetched} of {totalDBRowCount} total rows.
+                        </Typography>
+                    </Grid>
 
-				<Button
-					onClick={() => {
-						fetchMore({
-							variables: {
-								after: endCursor,
-							},
-						}).then(fetchMoreResult => {
-							console.log(fetchMoreResult.data.toDoItems.pageInfo.hasNextPage)
-							const newRows = fetchMoreResult.data.toDoItems.edges.map((edge: Edge) => edge.node);
-							setEndCursor(fetchMoreResult.data.toDoItems.pageInfo.endCursor);
-							setRows(oldRows => [...oldRows, ...newRows]);
-							setHasNextPage(fetchMoreResult.data.toDoItems.pageInfo.hasNextPage);
-						});
-					}}
-					disabled={!hasNextPage}
-				>Fetch More</Button>
+                    <InfiniteScroll
+                        dataLength={rows.length}
+                        next={fetchMoreData}
+                        hasMore={hasNextPage}
+                        loader={<h4>Loading...</h4>}
+                    >
+                        <DataGrid
+                            rows={rows.map(row => ({ ...row, id: row.id }))}
+                            columns={columns}
+                            checkboxSelection
+                            onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
+                        />
+                    </InfiniteScroll>
 
+                </Grid>
+            </Box>
 
-				<DataGrid
-					rows={rows.map(row => ({ ...row, id: row.id }))}
-					columns={columns}
-					checkboxSelection
-					onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
-				/>
+            {selectedRow &&
+                <EditToDoItemDialog
+                    handleClose={() => setSelectedRow(null)}
+                    inboxItemId={selectedRow.id}
+                />
+            }
 
-
-
-			</Box>
-
-			{selectedRow &&
-				<EditToDoItemDialog
-					handleClose={() => setSelectedRow(null)}
-					inboxItemId={selectedRow.id}
-				/>
-			}
-
-		</Container>
+        </Container>
 	);
 };
 

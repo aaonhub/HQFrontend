@@ -36,6 +36,7 @@ import DemoPage from '../DemoPage/DemoPage'
 import DailyReviewPage from '../DailyReviewPage/1DailyReviewPage'
 import ProfilePage from '../ProfilePage/ProfilePage'
 import AccountabilityPage from '../AccountabilityPage/1AccountabilityPage'
+import ToDosPage from '../ToDosPage/ToDosPage';
 import { useAuth } from './auth';
 
 
@@ -127,6 +128,9 @@ function ContentRoutes(): JSX.Element {
 			</RequireAuth>} />
 			<Route path="/accountability" element={<RequireAuth>
 				<AccountabilityPage />
+			</RequireAuth>} />
+			<Route path="/todos" element={<RequireAuth>
+				<ToDosPage />
 			</RequireAuth>} />
 
 

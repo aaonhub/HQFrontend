@@ -1,6 +1,6 @@
 import { Container, Grid, Typography } from "@mui/material";
 import Itinerary from "./Itinerary/Itinerary";
-import LogList from "./LogList";
+// import LogList from "./LogList";
 import { getCustomLocalDate } from "../../components/DateFunctions";
 import { useEffect } from "react";
 

@@ -434,29 +434,31 @@ const Itinerary: React.FC = () => {
 			console.error("Notification permission not granted.")
 		}
 	})
-	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
-	const scheduleNotification = (item: any) => {
-		const now = new Date()
-		const date = new Date() // today's date
-		const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
-		const taskTime = new Date(dateString + 'T' + item.startTime)
 
-		if (taskTime > now && !scheduledNotifications[item.id]) {
-			const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
-			setTimeout(() => {
-				new Notification(`Time to start item: ${item.title}`)
-			}, delay)
-			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
-		}
-	}
 	// Use useEffect to schedule notifications for all tasks
 	useEffect(() => {
+		// Assuming 'habits' and 'inboxItems' are arrays of your tasks
+		const scheduleNotification = (item: any) => {
+			const now = new Date()
+			const date = new Date() // today's date
+			const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
+			const taskTime = new Date(dateString + 'T' + item.startTime)
+
+			if (taskTime > now && !scheduledNotifications[item.id]) {
+				const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
+				setTimeout(() => {
+					new Notification(`Time to start item: ${item.title}`)
+				}, delay)
+				setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
+			}
+		}
+
 		if (Notification.permission !== "granted") {
 			console.error("Notification permission not granted.")
 		} else {
 			uncompletedItems.forEach(scheduleNotification)
 		}
-	}, [uncompletedItems])  // Dependencies ensure this useEffect only re-runs when uncompletedItems change
+	}, [uncompletedItems, scheduledNotifications])
 
 
 	function getHourBeforeCurrentTime() {

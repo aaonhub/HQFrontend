@@ -18,7 +18,7 @@ const TodayPage = () => {
 	
 
 	// Sticky Note Query
-	const { data } = useQuery(GET_STICKY_NOTE, {
+	useQuery(GET_STICKY_NOTE, {
 		onCompleted: (data) => {
 			setStickyNote(
 				data.stickyNote

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Box, CssBaseline, Snackbar } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ThemeProvider from '../SettingsPage/ThemeContext'
@@ -38,6 +38,7 @@ import ProfilePage from '../ProfilePage/ProfilePage'
 import AccountabilityPage from '../AccountabilityPage/1AccountabilityPage'
 import ToDosPage from '../ToDosPage/ToDosPage';
 import { useAuth } from './auth';
+import CommandLine from './CommandLine';
 
 
 
@@ -57,7 +58,39 @@ function RequireAuth({ children }: any) {
 function App(): JSX.Element {
 	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
 	const [showSidebar, onSetShowSidebar] = useState(false);
+
 	useAuth(setLoggedIn, setGlobalProfile);
+
+
+	// Command Line Stuff
+	const [showCommandLine, setShowCommandLine] = useState(false);
+	const [isControlPressed, setIsControlPressed] = useState(false);
+	const [timestamp, setTimestamp] = useState(0);
+	const commandInputRef = useRef<HTMLInputElement>(null);
+	const handleKeyPress = useCallback((event: KeyboardEvent) => {
+		if (event.key === 'Control') {
+
+			console.log(isControlPressed)
+			console.log(Date.now() - timestamp)
+			if (isControlPressed && (Date.now() - timestamp < 300)) { // 300 ms as threshold
+				setShowCommandLine(true);
+				commandInputRef.current?.focus();
+			}
+			setIsControlPressed(true);
+			setTimestamp(Date.now());
+
+		}
+	}, [isControlPressed, timestamp]);
+	useEffect(() => {
+		// attach the event listener
+		document.addEventListener('keydown', handleKeyPress);
+
+		// remove the event listener
+		return () => {
+			document.removeEventListener('keydown', handleKeyPress);
+		};
+	}, [handleKeyPress]);
+
 
 	return (
 		<ThemeProvider>
@@ -80,12 +113,22 @@ function App(): JSX.Element {
 
 					{/* Content */}
 					<Box sx={{ flexGrow: 1 }}>
-						<Box sx={{ p: 3 }}>
+						<Box sx={{ p: 3, paddingBottom: "128px" }}>
 							<ContentRoutes />
 						</Box>
 
+						{/* Snackbar */}
 						<SnackbarComponent />
+
 					</Box>
+
+
+					{/* Constant Input at Bottom */}
+					{showCommandLine &&
+						<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
+					}
+
+
 				</Box>
 			</Router>
 		</ThemeProvider>

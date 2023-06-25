@@ -58,7 +58,9 @@ export const GET_HABITS_DUE_TODAY = gql`
 			frequency
 			lastCompleted
 			order
-			daysOfTheWeek
+			daysOfTheWeek {
+				name
+			}
 			daysOfTheMonth
 			dayOfTheYear
 			startDate

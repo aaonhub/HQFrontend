@@ -117,8 +117,8 @@ const ToDosPage = () => {
     if (error) return <p>Error :(</p>;
 
     return (
-        <Container maxWidth="xl">
-            <Box sx={{ flexGrow: 1 }}>
+        <>
+            <Container maxWidth="lg">
                 <Grid container direction="column" spacing={2}>
 
                     <Grid item xs={12}>
@@ -142,7 +142,7 @@ const ToDosPage = () => {
                     </InfiniteScroll>
 
                 </Grid>
-            </Box>
+            </Container>
 
             {selectedRow &&
                 <EditToDoItemDialog
@@ -151,7 +151,7 @@ const ToDosPage = () => {
                 />
             }
 
-        </Container>
+        </>
     );
 };
 

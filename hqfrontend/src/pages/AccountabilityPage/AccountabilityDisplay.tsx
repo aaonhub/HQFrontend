@@ -1,6 +1,6 @@
 import styles from './AccountabilityPage.module.css';
 import { useQuery, useMutation } from '@apollo/client';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, Tooltip } from '@mui/material';
 
 // Queries and Mutations
 import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
@@ -16,27 +16,44 @@ const userColors: Record<string, string> = {
 };
 
 // Date square
-const DateSquare = ({ bars, date }: any) => {
+const DateSquare = ({ bars, date, records }: any) => {
 	const totalBars = Object.keys(userColors).length;
 	const barHeight = 100 / totalBars;
 
 	return (
 		<div className={styles.square}>
 			<div className={styles.date}>{date}</div>
-			{Object.keys(userColors).map((codename) => (
-				<div
-					key={codename}
-					className={styles.bar}
-					style={{
-						backgroundColor: userColors[codename],
-						width: `${bars[codename] || 0}%`,
-						height: `${barHeight}%`
-					}}
-				/>
-			))}
+			{Object.keys(userColors).map((codename) => {
+				const percentage = bars[codename] || 0;
+				const record = records.find((r: any) => r.profile.codename === codename);
+				const fraction = record ? `${record.completedTasks}/${record.totalTasks}` : '0/0';
+
+				return (
+					<Tooltip
+						key={codename}
+						title={
+							<>
+								<Typography color="inherit">{`${codename}: ${percentage.toFixed(1)}%`}</Typography>
+								<Typography color="inherit">{`(${fraction})`}</Typography>
+							</>
+						}
+					>
+						<div
+							className={styles.bar}
+							style={{
+								backgroundColor: userColors[codename],
+								width: `${percentage}%`,
+								height: `${barHeight}%`
+							}}
+						/>
+					</Tooltip>
+				);
+			})}
 		</div>
 	);
 };
+
+
 
 // Spacer Square
 const Spacer = () => (
@@ -47,6 +64,8 @@ const Spacer = () => (
 );
 
 const AccountabilityDisplay = ({ id }: { id: string }) => {
+
+	// Accountability data query
 	const { data, loading, error } = useQuery(GET_ACCOUNTABILITY_DATA, {
 		variables: { accountability: id },
 		onError: (error) => {
@@ -143,6 +162,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 								key={dateIndex}
 								bars={recordsByDate[date] || {}}
 								date={date}
+								records={data.monthlyCompletionPercentages}
 							/> : <Spacer key={dateIndex} />
 					))}
 				</div>

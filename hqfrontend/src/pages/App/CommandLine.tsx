@@ -1,5 +1,10 @@
 import { TextField } from "@mui/material";
 import React, { useState } from "react";
+import { useQuery, useMutation } from '@apollo/client';
+
+// Queries and Mutations
+import { ADD_TODO } from "../../models/inboxitem";
+
 
 interface CommandLineProps {
     setShowCommandLine: React.Dispatch<React.SetStateAction<boolean>>
@@ -8,8 +13,24 @@ interface CommandLineProps {
 
 const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) => {
     const [commandInput, setCommandInput] = useState('');
+    const [commandType, setCommandType] = useState('log');
 
 
+    const [addTodo] = useMutation(ADD_TODO, {
+        onCompleted: (data) => {
+            console.log(data)
+        }
+    })
+    const handleEnter = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            addTodo({
+                variables: {
+                    title: commandInput
+                }
+            })
+            setCommandInput('')
+        }
+    }
 
 
 

@@ -75,7 +75,7 @@ const DailyReviewPage = () => {
 	if (dailyReviewError) return <Typography>Error! {dailyReviewError.message}</Typography>
 
 	return (
-		<Container>
+		<Container maxWidth="xl" className="daily-review-page">
 			<Grid container spacing={2}>
 
 

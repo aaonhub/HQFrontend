@@ -140,7 +140,8 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 			<TextField
 				label="Details"
 				multiline
-				rows={4}
+				minRows={4}
+				maxRows={32}
 				value={details}
 				autoComplete="off"
 				onChange={(e) => setDetails(e.target.value)}

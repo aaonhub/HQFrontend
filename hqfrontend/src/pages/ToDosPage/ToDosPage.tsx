@@ -1,11 +1,13 @@
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-
-import { TO_DO_ITEM_PAGINATION } from '../../models/inboxitem';
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
 import EditToDoItemDialog from '../../components/EditToDoItemDialog';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
+// Queries and Mutations
+import { TO_DO_ITEM_PAGINATION } from '../../models/inboxitem';
+
 
 type Node = {
     id: string;

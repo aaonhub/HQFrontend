@@ -15,17 +15,27 @@ const userColors: Record<string, string> = {
 	// add more colors for more codenames here...
 };
 
+
+// Convert to 2-digit format
+function formatDay(day: number) {
+	return (day < 10 ? '0' : '') + day;
+}
+
+
 // Date square
-const DateSquare = ({ bars, date, records }: any) => {
+const DateSquare = ({ bars, date, records, currentMonth, currentYear }: any) => {
 	const totalBars = Object.keys(userColors).length;
 	const barHeight = 100 / totalBars;
+
+	// Format date to match the records date format
+	const formattedDate = `${currentYear}-${formatDay(currentMonth)}-${formatDay(date)}`;
 
 	return (
 		<div className={styles.square}>
 			<div className={styles.date}>{date}</div>
 			{Object.keys(userColors).map((codename) => {
 				const percentage = bars[codename] || 0;
-				const record = records.find((r: any) => r.profile.codename === codename);
+				const record = records.find((r: any) => r.date === formattedDate && r.profile.codename === codename);
 				const fraction = record ? `${record.completedTasks}/${record.totalTasks}` : '0/0';
 
 				return (
@@ -52,6 +62,7 @@ const DateSquare = ({ bars, date, records }: any) => {
 		</div>
 	);
 };
+
 
 
 
@@ -163,6 +174,8 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 								bars={recordsByDate[date] || {}}
 								date={date}
 								records={data.monthlyCompletionPercentages}
+								currentMonth={currentMonth}
+								currentYear={currentYear}
 							/> : <Spacer key={dateIndex} />
 					))}
 				</div>

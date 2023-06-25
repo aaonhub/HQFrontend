@@ -117,7 +117,6 @@ const Itinerary: React.FC = () => {
 			Today: localDate,
 		},
 		onCompleted: (data) => {
-			console.log(data)
 			const inboxItems = data.toDoItemsByStartDate.map((toDoItems: any) => {
 				return new InboxItem({
 					id: toDoItems.id,

@@ -15,9 +15,7 @@ interface HabitInboxRosettaProps {
 const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 	const SimpleItemArray: SimpleItem[] = [];
 
-	console.log("habits: ", habits);
-	console.log("inboxItems: ", inboxItems);
-
+	
 	if (habits) {
 		habits.forEach((habit) => {
 			SimpleItemArray.push({

@@ -567,9 +567,15 @@ const Itinerary: React.FC = () => {
 							{uncompletedItems.length > 0 ? (
 								<ItineraryList list={uncompletedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckItem} />
 							) : (
-								<Typography variant="h6" align="center" color="textSecondary">
-									Nothing left to do
-								</Typography>
+								completedItems.length > 0 ? (
+									<Typography variant="h6" align="center" color="textSecondary">
+										All done. Good job!
+									</Typography>
+								) : (
+									<Typography variant="h6" align="center" color="textSecondary">
+										No items
+									</Typography>
+								)
 							)}
 
 						</Box>

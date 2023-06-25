@@ -13,7 +13,8 @@ import {
 	MenuItem,
 	SelectChangeEvent,
 	FormControl,
-	InputLabel
+	InputLabel,
+	Grid
 } from "@mui/material"
 import { useMutation, useQuery } from "@apollo/client"
 
@@ -238,7 +239,12 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 	if (error) return <p>Error :(</p>
 
 	return (
-		<Dialog open={true} onClose={() => handleClose()}>
+		<Dialog
+			open={true}
+			onClose={() => handleClose()}
+			maxWidth="lg"
+			fullWidth
+		>
 			<DialogTitle>Edit To Do Item</DialogTitle>
 			<DialogContent>
 				<Box
@@ -250,155 +256,165 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 						handleClose()
 					}}
 				>
+					<Grid container spacing={2}>
+						<Grid item xs={6} sm={6}>
 
-					{/* Title */}
-					<Box m={2}>
-						<TextField
-							name="title"
-							label="Title"
-							variant="outlined"
-							value={newInboxItem.title}
-							onChange={handleInputChange}
-							sx={{ width: "60ch" }}
-						/>
-					</Box>
-
-					{/* Description */}
-					<Box m={2}>
-						<TextField
-							name="description"
-							label="Description"
-							variant="outlined"
-							value={newInboxItem.description}
-							onChange={handleInputChange}
-							multiline // added this line
-							rows={4} // minimum 4 lines visible
-							sx={{ width: "60ch" }}
-						/>
-					</Box>
-
-					<Box m={2}>
-
-						{/* Start Date */}
-						<TextField
-							name="startDate"
-							label="Start Date"
-							type="date"
-							variant="outlined"
-							InputLabelProps={{
-								shrink: true,
-							}}
-							sx={{ marginRight: "2ch" }}
-							value={newInboxItem.startDate ? newInboxItem.startDate : ''}
-							onChange={handleInputChange}
-						/>
-
-						{/* Due Date */}
-						<TextField
-							name="dueDateTime"
-							label="Due Date"
-							type="datetime-local"
-							variant="outlined"
-							InputLabelProps={{
-								shrink: true,
-							}}
-							sx={{ marginRight: "2ch" }}
-							value={newInboxItem.dueDateTime ? newInboxItem.dueDateTime : ''}
-							onChange={handleInputChange}
-						/>
-					</Box>
-
-					{/* Start Date */}
-					<Box m={2}>
-						<TextField
-							name="startTime"
-							label="Start Time"
-							type="time"
-							variant="outlined"
-							InputLabelProps={{
-								shrink: true,
-							}}
-							sx={{ marginRight: "2ch" }}
-							value={newInboxItem.startTime ? newInboxItem.startTime : ''}
-							onChange={handleInputChange}
-						/>
-					</Box>
-
-					{/* Project */}
-					<Box m={2}>
-						<Select
-							name="project"
-							value={newInboxItem.project ? newInboxItem.project.id : ''}
-							onChange={handleSelectChange}
-							displayEmpty
-							sx={{ width: "60ch" }}
-						>
-							<MenuItem value="" disabled>
-								Select a project
-							</MenuItem>
-							{projectData.projects.map((project: any) => (
-								<MenuItem value={project.id} key={project.id}>
-									{project.codename}
-								</MenuItem>
-							))}
-						</Select>
-					</Box>
-
-					{/* Completed */}
-					<Box m={2}>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={newInboxItem.completed}
-									onChange={(event) => {
-										const { checked } = event.target
-										setNewInboxItem((prev) => {
-											return { ...prev, completed: checked }
-										})
-									}}
+							{/* Title */}
+							<Box m={2}>
+								<TextField
+									name="title"
+									label="Title"
+									variant="outlined"
+									value={newInboxItem.title}
+									onChange={handleInputChange}
+									sx={{ width: "60ch" }}
 								/>
-							}
-							label="Completed"
-						/>
-					</Box>
+							</Box>
 
-					{/* Length */}
-					<Box m={2}>
-						<InputLabel id="length-label">Length</InputLabel>
-						<Select
-							name="length"
-							value={newInboxItem.length ? newInboxItem.length : ''}
-							onChange={handleInputChange as any}
-						>
-							<MenuItem value="00:15">15 minutes</MenuItem>
-							<MenuItem value="00:30">30 minutes</MenuItem>
-							<MenuItem value="00:45">45 minutes</MenuItem>
-							<MenuItem value="01:00">1 hour</MenuItem>
-							<MenuItem value="02:00">2 hours</MenuItem>
-							<MenuItem value="03:00">3 hours</MenuItem>
-							<MenuItem value="custom">Custom</MenuItem>
-						</Select>
-						{showCustomInput && (
-							<TextField
-								value={customLength}
-								onChange={(e) => {
-									setCustomLength(e.target.value);
-								}}
-							/>
-						)}
-					</Box>
+							{/* Description */}
+							<Box m={2}>
+								<TextField
+									name="description"
+									label="Description"
+									variant="outlined"
+									value={newInboxItem.description}
+									onChange={handleInputChange}
+									multiline // added this line
+									rows={4} // minimum 4 lines visible
+									fullWidth
+								/>
+							</Box>
 
+						</Grid>
+
+
+						<Grid item xs={6} sm={6}>
+							<Box m={2}>
+
+
+								{/* Completed */}
+								<Box m={2}>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={newInboxItem.completed}
+												onChange={(event) => {
+													const { checked } = event.target
+													setNewInboxItem((prev) => {
+														return { ...prev, completed: checked }
+													})
+												}}
+											/>
+										}
+										label="Completed"
+									/>
+								</Box>
+
+								{/* Start Date */}
+								<TextField
+									name="startDate"
+									label="Start Date"
+									type="date"
+									variant="outlined"
+									InputLabelProps={{
+										shrink: true,
+									}}
+									sx={{ marginRight: "2ch" }}
+									value={newInboxItem.startDate ? newInboxItem.startDate : ''}
+									onChange={handleInputChange}
+								/>
+							</Box>
+
+							{/* Due Date */}
+							<Box m={2}>
+								<TextField
+									name="dueDateTime"
+									label="Due Date"
+									type="datetime-local"
+									variant="outlined"
+									InputLabelProps={{
+										shrink: true,
+									}}
+									sx={{ marginRight: "2ch" }}
+									value={newInboxItem.dueDateTime ? newInboxItem.dueDateTime : ''}
+									onChange={handleInputChange}
+								/>
+							</Box>
+
+							{/* Start Date */}
+							<Box m={2}>
+								<TextField
+									name="startTime"
+									label="Start Time"
+									type="time"
+									variant="outlined"
+									InputLabelProps={{
+										shrink: true,
+									}}
+									sx={{ marginRight: "2ch" }}
+									value={newInboxItem.startTime ? newInboxItem.startTime : ''}
+									onChange={handleInputChange}
+								/>
+							</Box>
+
+
+							{/* Project */}
+							<Box m={2}>
+								<Select
+									name="project"
+									value={newInboxItem.project ? newInboxItem.project.id : ''}
+									onChange={handleSelectChange}
+									displayEmpty
+								>
+									<MenuItem value="" disabled>
+										Select a project
+									</MenuItem>
+									{projectData.projects.map((project: any) => (
+										<MenuItem value={project.id} key={project.id}>
+											{project.codename}
+										</MenuItem>
+									))}
+								</Select>
+							</Box>
+
+
+							{/* Length */}
+							<Box m={2}>
+								<InputLabel id="length-label">Length</InputLabel>
+								<Select
+									name="length"
+									value={newInboxItem.length ? newInboxItem.length : ''}
+									onChange={handleInputChange as any}
+								>
+									<MenuItem value="00:15">15 minutes</MenuItem>
+									<MenuItem value="00:30">30 minutes</MenuItem>
+									<MenuItem value="00:45">45 minutes</MenuItem>
+									<MenuItem value="01:00">1 hour</MenuItem>
+									<MenuItem value="02:00">2 hours</MenuItem>
+									<MenuItem value="03:00">3 hours</MenuItem>
+									<MenuItem value="custom">Custom</MenuItem>
+								</Select>
+								{showCustomInput && (
+									<TextField
+										value={customLength}
+										onChange={(e) => {
+											setCustomLength(e.target.value);
+										}}
+									/>
+								)}
+							</Box>
+
+						</Grid>
+					</Grid>
 
 
 
 				</Box>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => handleDelete()} color="primary">
+				<Button onClick={() => handleDelete()} color="error">
 					Delete
 				</Button>
-			</DialogActions>
-			<DialogActions>
 				<Button onClick={() => handleClose()} color="primary">
 					Cancel
 				</Button>

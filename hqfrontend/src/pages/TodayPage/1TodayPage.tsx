@@ -3,6 +3,7 @@ import Itinerary from "./Itinerary/Itinerary";
 // import LogList from "./LogList";
 import { getCustomLocalDate } from "../../components/DateFunctions";
 import { useEffect, useState } from "react";
+import { useGlobalContext } from "../App/GlobalContextProvider";
 
 // Queries and Mutations
 import { GET_STICKY_NOTE } from "../../models/settings";
@@ -12,6 +13,7 @@ import { useMutation, useQuery } from "@apollo/client";
 
 
 const TodayPage = () => {
+	const { setSnackbar } = useGlobalContext();
 	const [stickyNote, setStickyNote] = useState<string>("");
 	
 
@@ -32,6 +34,11 @@ const TodayPage = () => {
 			},
 			onCompleted: () => {
 				console.log("Sticky Note Saved");
+				setSnackbar({
+					message: "Sticky Note Saved",
+					open: true,
+					severity: "success",
+				});
 			},
 			onError: (error) => {
 				console.log(error);

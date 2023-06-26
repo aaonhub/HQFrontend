@@ -1,4 +1,4 @@
-import { Box, Container, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Container, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
@@ -148,10 +148,10 @@ const ToDosPage = () => {
                             <FormControl fullWidth>
                                 <InputLabel id="sort-by">Sort By</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="sort-by-select-label"
+                                    id="sort-by-select"
                                     value={sortBy}
-                                    label="Age"
+                                    label="Sort By"
                                     onChange={(event) => handleSortByChange(event)}
                                 >
                                     <MenuItem value={"-created_at"}>Created Date</MenuItem>

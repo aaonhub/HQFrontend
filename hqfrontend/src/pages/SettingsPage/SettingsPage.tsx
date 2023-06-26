@@ -42,6 +42,8 @@ const SettingsPage = () => {
 	// const { currentTheme, setTheme } = useContext(ThemeContext);
 	const { setLoggedIn, globalProfile, setGlobalProfile, setSnackbar } = useGlobalContext()
 	const [codeName, setCodeName] = useState<string>(globalProfile.codename);
+	const [refreshTokenDeleted, setRefreshTokenDeleted] = useState<boolean>(false);
+	const [tokenDeleted, setTokenDeleted] = useState<boolean>(false);
 
 
 
@@ -56,12 +58,14 @@ const SettingsPage = () => {
 		onCompleted: () => {
 			setLoggedIn(false)
 			localStorage.removeItem('loggedIn')
+			setRefreshTokenDeleted(true)
 		}
 	})
 	const [deleteTokenCookie] = useMutation(DELETE_TOKEN_MUTATION, {
 		onCompleted: () => {
 			setLoggedIn(false)
 			localStorage.removeItem('loggedIn')
+			setTokenDeleted(true)
 		}
 	})
 	const handleLogout = () => {
@@ -69,6 +73,11 @@ const SettingsPage = () => {
 		deleteRefreshTokenCookie()
 		deleteTokenCookie()
 	}
+	useEffect(() => {
+		if (refreshTokenDeleted && tokenDeleted) {
+			window.location.reload()
+		}
+	}, [refreshTokenDeleted, tokenDeleted])
 
 	// Mutations
 	const [updateProfile] = useMutation(CHANGE_CODENAME, {

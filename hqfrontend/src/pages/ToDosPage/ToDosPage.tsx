@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Container, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
@@ -29,17 +29,42 @@ const ToDosPage = () => {
     const [endCursor, setEndCursor] = useState<string>('');
     const [hasNextPage, setHasNextPage] = useState<boolean>(false);
     const [selectedRow, setSelectedRow] = useState<Node | null>(null);
+    const [sortBy, setSortBy] = useState<string>('-created_at');
 
 
     const rowsRef = useRef<Record<string, Node>>({});
 
 
+    // To Dos Query
+    const { loading, error, data, fetchMore, refetch } = useQuery(TO_DO_ITEM_PAGINATION, {
+        variables: {
+            orderBy: sortBy,
+            title_Icontains: '',
+            completed: false,
+        },
+        onCompleted: (data) => {
+            setEndCursor(data.toDoItems.pageInfo.endCursor);
+            setHasNextPage(data.toDoItems.pageInfo.hasNextPage);
+        }
+    });
+
+
+
+    const handleSortByChange = (event: any) => {
+        setSortBy(event.target.value as string);
+        setRows([]);
+        refetch({
+            orderBy: event.target.value as string,
+        });
+    };
+
+
     const columns: GridColDef[] = [
-        { field: 'title', headerName: 'Title', width: 200 },
+        { field: 'title', headerName: 'Title', width: 600 },
         { field: 'completed', headerName: 'Completed', width: 150 },
         { field: 'startDate', headerName: 'Start Date', width: 150 },
-        { field: 'dueDateTime', headerName: 'Due Date Time', width: 150 },
-        { field: 'description', headerName: 'Description', width: 300 },
+        // { field: 'dueDateTime', headerName: 'Due Date Time', width: 150 },
+        // { field: 'description', headerName: 'Description', width: 300 },
         {
             field: 'createdAtFormatted',
             headerName: 'Created At',
@@ -81,17 +106,7 @@ const ToDosPage = () => {
     }
 
 
-    const { loading, error, data, fetchMore } = useQuery(TO_DO_ITEM_PAGINATION, {
-        variables: {
-            orderBy: 'title',
-            title_Icontains: '',
-            completed: false,
-        },
-        onCompleted: (data) => {
-            setEndCursor(data.toDoItems.pageInfo.endCursor);
-            setHasNextPage(data.toDoItems.pageInfo.hasNextPage);
-        }
-    });
+
 
 
 
@@ -127,19 +142,50 @@ const ToDosPage = () => {
                         </Typography>
                     </Grid>
 
-                    <InfiniteScroll
-                        dataLength={rows.length}
-                        next={fetchMoreData}
-                        hasMore={hasNextPage}
-                        loader={<h4>Loading...</h4>}
-                    >
-                        <DataGrid
-                            rows={rows.map(row => ({ ...row, id: row.id }))}
-                            columns={columns}
-                            checkboxSelection
-                            onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
-                        />
-                    </InfiniteScroll>
+                    <Grid item xs={12} direction={"row"} container spacing={2}>
+
+                        <Grid item xs={4}>
+                            <FormControl fullWidth>
+                                <InputLabel id="sort-by">Sort By</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={sortBy}
+                                    label="Age"
+                                    onChange={(event) => handleSortByChange(event)}
+                                >
+                                    <MenuItem value={"-created_at"}>Created Date</MenuItem>
+                                    <MenuItem value={"title"}>Title</MenuItem>
+                                    <MenuItem value={"-start_date"}>Start Date</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
+                        {/* <Grid item xs={4}>
+                            <TextField
+                                id="standard-basic"
+                                label="Search"
+                                fullWidth
+                            />
+                        </Grid> */}
+
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <InfiniteScroll
+                            dataLength={rows.length}
+                            next={fetchMoreData}
+                            hasMore={hasNextPage}
+                            loader={<h4>Loading...</h4>}
+                        >
+                            <DataGrid
+                                rows={rows.map(row => ({ ...row, id: row.id }))}
+                                columns={columns}
+                                checkboxSelection
+                                onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
+                            />
+                        </InfiniteScroll>
+                    </Grid>
 
                 </Grid>
             </Container>

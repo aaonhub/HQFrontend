@@ -20,8 +20,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 
 
     const [addLog] = useMutation(ADD_LOG, {
-        onCompleted: (data) => {
-            console.log(data);
+        onCompleted: () => {
             setSnackbar({ open: true, message: 'Log added', severity: 'success' })
             setShowCommandLine(false)
             setCommandInput('')
@@ -36,7 +35,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
     const handleEnter = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter') {
 
-            
+
             // Log
             if (commandType === 'log') {
                 addLog({

@@ -68,17 +68,14 @@ function App(): JSX.Element {
 	const [timestamp, setTimestamp] = useState(0);
 	const commandInputRef = useRef<HTMLInputElement>(null);
 	const handleKeyPress = useCallback((event: KeyboardEvent) => {
-		if (event.key === 'Control') {
+		if (event.key === 'Control' && !event.repeat) {
 
-			console.log(isControlPressed)
-			console.log(Date.now() - timestamp)
 			if (isControlPressed && (Date.now() - timestamp < 300)) { // 300 ms as threshold
-				setShowCommandLine(true);
+				setShowCommandLine(!showCommandLine);
 				commandInputRef.current?.focus();
 			}
 			setIsControlPressed(true);
 			setTimestamp(Date.now());
-
 		}
 	}, [isControlPressed, timestamp]);
 	useEffect(() => {

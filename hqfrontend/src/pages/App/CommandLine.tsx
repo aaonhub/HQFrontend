@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import React, { useState } from "react";
-import { useQuery, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useGlobalContext } from "./GlobalContextProvider";
 
 // Queries and Mutations
@@ -17,6 +17,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
     const { setSnackbar } = useGlobalContext();
     const [commandInput, setCommandInput] = useState('');
     const [commandType, setCommandType] = useState('log');
+    const [placeholderText, setPlaceholderText] = useState('commands');
 
 
     const [addLog] = useMutation(ADD_LOG, {
@@ -30,13 +31,69 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
         }
     })
 
+    const [addTodo] = useMutation(ADD_TODO, {
+        onCompleted: () => {
+            setSnackbar({ open: true, message: 'Todo added', severity: 'success' })
+            setShowCommandLine(false)
+            setCommandInput('')
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    })
 
 
-    const handleEnter = (event: React.KeyboardEvent) => {
+    // Handle Input
+    const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        // Set Command Input
+        setCommandInput(event.target.value)
+
+        // Get the new character
+        const newChar = event.target.value[event.target.value.length - 1]
+
+
+        // Set Command Type
+        if (newChar === ' ') {
+            if (commandInput === 't') {
+                setCommandType('todo')
+                setCommandInput('')
+                setPlaceholderText('Add To Do')
+                console.log('todo')
+            }
+        }
+
+
+    }
+
+    // Handle Keydown
+    const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        // Escape
+        if (event.key === 'Escape') {
+            setShowCommandLine(false);
+            setCommandInput('')
+        }
+
+        // Backspace
+        if (event.key === 'Backspace' && commandInput === '') {
+            if (commandType === 'todo') {
+                event.preventDefault()
+                setCommandInput('t')
+                setCommandType('log')
+                setPlaceholderText('commands')
+            }
+        }
+
+        // Enter
         if (event.key === 'Enter') {
 
+            // 
+            if (commandInput === '') {
+                return
+            }
 
-            // Log
+
+            // Add Log
             if (commandType === 'log') {
                 addLog({
                     variables: {
@@ -47,9 +104,18 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
             }
 
 
+            // Add To Do
+            if (commandType === 'todo') {
+                addTodo({
+                    variables: {
+                        title: commandInput,
+                    }
+                })
+            }
+
+
         }
     }
-
 
 
 
@@ -75,10 +141,10 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
             variant="outlined"
             autoFocus
             value={commandInput}
-            onChange={(event) => setCommandInput(event.target.value)}
-            placeholder="commands"
+            onChange={handleInput}
+            placeholder={placeholderText}
             onBlur={() => { setShowCommandLine(false); setCommandInput('') }}
-            onKeyDown={handleEnter}
+            onKeyDown={handleKeydown}
         />
     )
 }

@@ -278,8 +278,9 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 									variant="outlined"
 									value={newInboxItem.description}
 									onChange={handleInputChange}
-									multiline // added this line
-									rows={4} // minimum 4 lines visible
+									multiline
+									minRows={12}
+									maxRows={24}
 									fullWidth
 								/>
 							</Box>

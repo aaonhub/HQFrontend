@@ -77,7 +77,7 @@ function App(): JSX.Element {
 			setIsControlPressed(true);
 			setTimestamp(Date.now());
 		}
-	}, [isControlPressed, timestamp]);
+	}, [isControlPressed, timestamp, showCommandLine]);
 	useEffect(() => {
 		// attach the event listener
 		document.addEventListener('keydown', handleKeyPress);

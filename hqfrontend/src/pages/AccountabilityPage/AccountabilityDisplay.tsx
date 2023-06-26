@@ -1,10 +1,13 @@
 import styles from './AccountabilityPage.module.css';
 import { useQuery, useMutation } from '@apollo/client';
-import { Box, Button, Typography, Tooltip } from '@mui/material';
+import { Box, Button, Typography, Tooltip, Grid } from '@mui/material';
+import { useGlobalContext } from '../App/GlobalContextProvider';
 
 // Queries and Mutations
-import { GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
+import { GET_ACCOUNTABILITY, GET_ACCOUNTABILITY_DATA } from '../../models/accountability';
 import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
+import { useState } from 'react';
+import UpdateAccountabilityDialog from './UpdateAccountabilityDialog';
 
 
 // User color assignment - add more colors as required
@@ -64,8 +67,6 @@ const DateSquare = ({ bars, date, records, currentMonth, currentYear }: any) => 
 };
 
 
-
-
 // Spacer Square
 const Spacer = () => (
 	<div
@@ -74,7 +75,23 @@ const Spacer = () => (
 	/>
 );
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 const AccountabilityDisplay = ({ id }: { id: string }) => {
+	const { globalProfile } = useGlobalContext();
+	const [showUpdateAccountabilityDialog, setShowUpdateAccountabilityDialog] = useState(false);
+
 
 	// Accountability data query
 	const { data, loading, error } = useQuery(GET_ACCOUNTABILITY_DATA, {
@@ -82,8 +99,13 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		onError: (error) => {
 			console.log(error.message);
 		},
-		onCompleted: (data) => {
-			console.log(data);
+	});
+
+	// GET_ACCOUNTABILITY
+	const { data: accountabilityData } = useQuery(GET_ACCOUNTABILITY, {
+		variables: { id: id },
+		onError: (error) => {
+			console.log(error.message);
 		},
 	});
 
@@ -114,7 +136,6 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		const day1 = date.slice(-2);
 		const day = day1[0] === '0' ? day1[1] : day1;
 		const codename = record.profile.codename;
-		console.log(day)
 
 		if (!recordsByDate[day]) recordsByDate[day] = {};
 		const completionPercentage = (record.completedTasks / record.totalTasks) * 100;
@@ -146,8 +167,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 
 
 	return (
-		// center the box
-		<Box>
+		<Box padding="20px">
 			<Typography
 				variant="h4"
 				gutterBottom
@@ -157,6 +177,39 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 				}}
 			>Accountability Page</Typography>
 
+			<Grid container spacing={3}>
+				<Grid item xs={6} sm={6}>
+					<Typography
+						variant="h5"
+						gutterBottom
+						style={{
+							textAlign: "center",
+							paddingTop: "20px",
+						}}
+					>Organizer: {accountabilityData?.getAccountability.organizer.codename}</Typography>
+				</Grid>
+
+
+				{/* Open Update Accountability Dialog */}
+				<Grid item xs={6} sm={6}>
+					{
+						globalProfile?.codename === accountabilityData?.getAccountability.organizer.codename ?
+							<Button
+								onClick={() => setShowUpdateAccountabilityDialog(true)}
+								color="primary"
+								variant="contained"
+								style={{ margin: "20px" }}
+							>
+								Edit
+							</Button>
+							: null
+					}
+				</Grid>
+
+
+			</Grid>
+
+
 			<div className={styles.legend}>
 				{Object.keys(codenamesById).map((id) => (
 					<div key={id} className={styles.legendItem}>
@@ -165,6 +218,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 					</div>
 				))}
 			</div>
+
 			{rows.map((row, rowIndex) => (
 				<div key={rowIndex} style={{ display: "flex" }}>
 					{row.map((date, dateIndex) => (
@@ -180,6 +234,16 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 					))}
 				</div>
 			))}
+
+
+			{showUpdateAccountabilityDialog && (
+				<UpdateAccountabilityDialog
+					onClose={() => setShowUpdateAccountabilityDialog(false)}
+					accountabilityId={id}
+				/>
+			)}
+
+
 		</Box>
 
 	);

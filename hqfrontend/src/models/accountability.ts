@@ -190,3 +190,15 @@ export const ACCEPT_ACCOUNTABILITY_INVITE = gql`
 		}
 	}
 `;
+
+export const UPDATE_ACCOUNTABILITY = gql`
+	mutation($id: ID!, $type: String) {
+		updateAccountability(id: $id, type: $type) {
+			accountability{
+				id
+				name
+				type
+			}
+		}
+	}
+`;

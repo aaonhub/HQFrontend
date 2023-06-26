@@ -87,14 +87,10 @@ export const GET_LOGS = gql`
 export const ADD_LOG = gql`
 	mutation createLog(
 		$text: String, 
-		$todoItemId: ID,
-		$habitId: ID,
 		$logTime: DateTime!
 	) {
 		createLog(
 			text: $text,
-			habitId: $habitId,
-			todoItemId: $todoItemId,
 			logTime: $logTime
 		) {
 			log {

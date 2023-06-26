@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Button, Container, Grid, TextField, Typography, Card, CardContent } from "@mui/material"
-import NewAccountabilityDialog from "./NewAccountabilityDialog"
 
 // Globals
 import { useGlobalContext } from '../App/GlobalContextProvider';
@@ -18,7 +17,6 @@ import { useMutation, useQuery } from "@apollo/client"
 const FriendsContent = () => {
     const { setSnackbar } = useGlobalContext()
 
-    const [dialogOpen, setDialogOpen] = useState(false)
     const [contactRequestName, setContactRequestName] = useState<string>("")
 
 
@@ -65,9 +63,6 @@ const FriendsContent = () => {
         onError: (error) => {
             console.log(error.message)
         },
-        onCompleted: (data) => {
-            console.log(data.friendRequests)
-        }
     })
 
 
@@ -77,9 +72,6 @@ const FriendsContent = () => {
         onError: (error) => {
             console.log(error.message)
         },
-        onCompleted: (data) => {
-            console.log(data.friendList)
-        }
     })
 
 
@@ -137,14 +129,6 @@ const FriendsContent = () => {
 
 
 
-
-
-
-
-
-    const handleClose = () => {
-        setDialogOpen(false)
-    }
 
 
 
@@ -211,8 +195,6 @@ const FriendsContent = () => {
 
 
             </Grid>
-
-            {<NewAccountabilityDialog open={dialogOpen} handleClose={handleClose} />}
 
 
         </Container>

@@ -27,17 +27,17 @@ const AccountabilityPage = () => {
         onError: (error) => {
             console.log(error.message)
         },
-        onCompleted: (data) => {
-            console.log(data)
-        },
     })
 
     const handleClose = () => {
         setDialogOpen(false)
     }
 
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error :(</p>
+
     return (
-        <Container style={{ padding: "2rem" }}>
+        <Container style={{ padding: "2rem" }} maxWidth="xl">
             <Typography variant="h3" align="center" gutterBottom>Accountability Page</Typography>
             <Grid container spacing={3}>
 

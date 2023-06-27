@@ -161,6 +161,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				padding: '10px',
 				textAlign: 'left',
 				width: '15%',
+				zIndex: 1000,
 			}}>
 				Current Command: {commandType}
 			</div>
@@ -174,6 +175,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 					right: 0,
 					backgroundColor: '#171717',
 					padding: 1,
+					zIndex: 1000,
 				}}
 				InputProps={{
 					sx: {

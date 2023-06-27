@@ -63,7 +63,6 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		variables: { id: inboxItemId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			console.log(data)
 			const project = data.toDoItem.project ? new Project(
 				data.toDoItem.project.id,
 				data.toDoItem.project.codename
@@ -104,6 +103,10 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 				}));
 			}
 
+		},
+		onError: (error) => {
+			console.log(error)
+			console.log(inboxItemId)
 		}
 	})
 

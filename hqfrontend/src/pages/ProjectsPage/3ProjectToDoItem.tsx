@@ -58,7 +58,6 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 		<React.Fragment key={toDoItem.id}>
 			<ListItem
 				onClick={() => {
-					console.log(toDoItem)
 					setSelectedInboxItem(toDoItem)
 				}}
 				secondaryAction={

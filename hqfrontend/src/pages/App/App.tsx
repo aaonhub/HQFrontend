@@ -68,7 +68,6 @@ function App(): JSX.Element {
 	const [timestamp, setTimestamp] = useState(0);
 	const commandInputRef = useRef<HTMLInputElement>(null);
 	const handleKeyPress = useCallback((event: KeyboardEvent) => {
-		console.log(event.key)
 		if ((event.key === 'Control' || event.key === "Escape") && !event.repeat) {
 
 			if (isControlPressed && (Date.now() - timestamp < 300)) { // 300 ms as threshold

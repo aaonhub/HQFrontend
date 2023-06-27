@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client';
+import { useGlobalContext } from '../../pages/App/GlobalContextProvider';
 
 // Models
 import DailyReview from '../../models/dailyreview';
@@ -8,6 +9,7 @@ import DailyReview from '../../models/dailyreview';
 // Queries and Mutations
 import { UPDATE_DAILY_REVIEW } from '../../models/dailyreview'
 import { CREATE_DAILY_REVIEW } from '../../models/dailyreview'
+import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 
 interface EditDailyReviewProps {
@@ -20,6 +22,7 @@ interface EditDailyReviewProps {
 }
 
 const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading, refetch }) => {
+	const {setDailyReviewBadgeCount} = useGlobalContext()
 	const [title, setTitle] = useState(dailyReview.title)
 	const [gratitudes, setGratitudes] = useState(dailyReview.gratitudes.join('\n'))
 	const [majorEvents, setMajorEvents] = useState(dailyReview.majorEvents.join('\n'))
@@ -93,6 +96,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					date: today,
 				},
 			});
+			if (getCurrentLocalDate() === today) setDailyReviewBadgeCount(false)
 		}
 		refetch()
 	}

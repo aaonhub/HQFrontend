@@ -5,38 +5,39 @@ import { Link } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
 
 import { useGlobalContext } from './GlobalContextProvider';
+import { DailyReviewBadge } from './Badges';
 
 
 
 
 
-const sidebarItems = [
-	[
-		{ id: '0', title: 'Today', link: '/', notifications: false },
-		{ id: '1', title: 'Log', link: '/log', notifications: false },
-		// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
-		{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
-		{ id: '3', title: 'Projects', link: '/projects', notifications: false },
-	],
-	[
-		{ id: '4', title: 'Habits', link: '/habits', notifications: false },
-		{ id: '5', title: 'Rituals', link: '/rituals', notifications: false },
-		{ id: '6', title: 'Reviews', link: '/dailyreview', notifications: false },
-		{ id: '8', title: 'Accountability', link: '/accountability', notifications: false },
-		{ id: '11', title: 'To Dos', link: '/todos', notifications: false },
-	],
-	[
-		{ id: '9', title: 'Settings', link: '/settings', notifications: false },
-		{ id: '10', title: 'Help', link: '/help', notifications: false },
-	],
-];
-
-
-
+// Sidebar
 export default function Sidebar({ onSidebarHide, showSidebar }) {
 	const { globalProfile } = useGlobalContext();
 	const location = useLocation();
 	const [selected, setSelected] = useState('0');
+
+
+	const sidebarItems = [
+		[
+			{ id: '0', title: 'Today', link: '/', notifications: false },
+			{ id: '1', title: 'Log', link: '/log', notifications: false },
+			// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
+			{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
+			{ id: '3', title: 'Projects', link: '/projects', notifications: false },
+		],
+		[
+			{ id: '4', title: 'Habits', link: '/habits', notifications: false },
+			{ id: '5', title: 'Rituals', link: '/rituals', notifications: false },
+			{ id: '6', title: 'Reviews', link: '/dailyreview', notifications: DailyReviewBadge() },
+			{ id: '8', title: 'Accountability', link: '/accountability', notifications: false },
+			{ id: '11', title: 'To Dos', link: '/todos', notifications: false },
+		],
+		[
+			{ id: '9', title: 'Settings', link: '/settings', notifications: false },
+			{ id: '10', title: 'Help', link: '/help', notifications: false },
+		],
+	];
 
 
 	// Use effect to listen to location change

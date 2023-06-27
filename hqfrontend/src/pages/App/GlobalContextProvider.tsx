@@ -15,10 +15,14 @@ interface IGlobalContext {
 		open: boolean;
 		severity: "success" | "error" | "info" | "warning";
 	}) => void;
+	todayBadgeCount: number | boolean;
+	setTodayBadgeCount: (value: number | boolean) => void;
+	dailyReviewBadgeCount: number | boolean;
+	setDailyReviewBadgeCount: (value: number | boolean) => void;
+
 }
 
 export const GlobalContext = createContext<IGlobalContext | null>(null);
-
 export const useGlobalContext = () => {
 	const context = useContext(GlobalContext);
 	if (!context) {
@@ -36,6 +40,10 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 		severity: "success" as "success" | "error" | "info" | "warning"
 	})
 
+	// Notifications
+	const [dailyReviewBadgeCount, setDailyReviewBadgeCount] = useState<number | boolean>(false);
+	const [todayBadgeCount, setTodayBadgeCount] = useState<number | boolean>(false);
+
 	return (
 		<GlobalContext.Provider value={{
 			loggedIn,
@@ -43,7 +51,11 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			globalProfile,
 			setGlobalProfile,
 			snackbar,
-			setSnackbar
+			setSnackbar,
+			dailyReviewBadgeCount,
+			setDailyReviewBadgeCount,
+			todayBadgeCount,
+			setTodayBadgeCount
 		}
 		}>
 			{children}

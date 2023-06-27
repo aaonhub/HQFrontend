@@ -1,6 +1,7 @@
-import { Box, Button, Grid, List, ListItem, ListItemText, Typography } from '@mui/material'
+import { Badge, Box, Button, Grid, List, ListItem, ListItemText, Typography } from '@mui/material'
 import { formatDateWithWeekday, getCurrentLocalDate } from '../../components/DateFunctions'
 import { format, sub } from 'date-fns';
+import { useGlobalContext } from '../../pages/App/GlobalContextProvider';
 
 
 interface DailyReviewListProps {
@@ -13,7 +14,7 @@ interface DailyReviewListProps {
 }
 
 const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, editMode, setEditMode, data, loading }) => {
-
+	const { dailyReviewBadgeCount } = useGlobalContext();
 
 
 	const goToToday = () => {
@@ -62,45 +63,60 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 				<Box>
 					<List>
 						{getRecentDates().map((date) => {
-							const dailyReview = data.dailyReviews.find(
-								(review: any) => review.date === date
-							);
+							const dailyReview = data.dailyReviews.find((review: any) => review.date === date);
 							const dateString = formatDateWithWeekday(date);
+							const isCurrentDay = date === getCurrentLocalDate();
+							const showBadge = isCurrentDay && dailyReviewBadgeCount === 1;
+
 							return (
-								<ListItem
-									key={date}
-									button
-									onClick={() => {
-										setToday(date)
-										if (dailyReview) {
-											setEditMode(false)
-										} else {
-											setEditMode(true)
-										}
-									}}
-								>
-									<ListItemText
-										primary={
-											<>
-												<Typography variant="caption" component="p">
-													{dateString}
-												</Typography>
-												<Typography component="p">
-													{dailyReview
-														? dailyReview.title || 'Untitled'
-														: <i>-----</i>
-													}
-												</Typography>
-											</>
-										}
-									/>
-								</ListItem>
+								<Box key={date} sx={{ width: '100%' }}>
+									<ListItem
+										key={date}
+										button
+										onClick={() => {
+											setToday(date);
+											if (dailyReview) {
+												setEditMode(false);
+											} else {
+												setEditMode(true);
+											}
+										}}
+										sx={{
+											position: 'relative',
+											width: '100%',
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+											paddingRight: '48px', // Adjust the padding to your needs
+										}}
+									>
+										<ListItemText
+											primary={
+												<>
+													<Typography variant="caption" component="p">
+														{dateString}
+													</Typography>
+													<Typography component="p">
+														{dailyReview ? dailyReview.title || 'Untitled' : <i>-----</i>}
+													</Typography>
+												</>
+											}
+										/>
+										<Badge
+											color="error"
+											badgeContent={showBadge ? 1 : 0}
+											variant="dot"
+											sx={{ display: showBadge ? 'inline-flex' : 'none' }}
+										/>
+									</ListItem>
+								</Box>
+
 							);
 						})}
 					</List>
 				</Box>
 			</div>
-		</Grid>
+		</Grid >
 	);
 }
 

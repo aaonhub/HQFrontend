@@ -581,6 +581,8 @@ const Itinerary: React.FC = () => {
 						</Box>
 					</CardContent>
 
+
+					{/* Completed Items */}
 					<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
 						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography variant="h6">Completed Items</Typography>

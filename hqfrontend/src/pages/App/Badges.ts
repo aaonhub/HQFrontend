@@ -38,14 +38,14 @@ export function TodayBadge() {
             // go through habits and see how many are past their start time
             let count = 0;
             data.habitsDueToday.forEach((habit: any) => {
-                if (habit.timeOfDay < currentLocalTime()) {
+                if (habit.timeOfDay < currentLocalTime() && !habit.completedToday) {
                     count++;
                 }
             });
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
-                if (item.startTime < currentLocalTime()) {
+                if (item.startTime < currentLocalTime() && !item.completed) {
                     count++;
                 }
             });

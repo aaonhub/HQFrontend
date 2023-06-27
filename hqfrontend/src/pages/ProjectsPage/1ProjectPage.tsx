@@ -41,6 +41,7 @@ const ProjectPage = () => {
 	const { data, loading, error, refetch } = useQuery(GET_PROJECT_ITEMS, {
 		variables: { projectId, completed: false },
 		onCompleted: (data) => {
+			console.log(data)
 
 			// Define the project items
 			const projectItems = data.project.toDoItems?.map((item: any) =>

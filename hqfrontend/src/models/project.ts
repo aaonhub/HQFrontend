@@ -73,7 +73,7 @@ export const DELETE_PROJECT = gql`
 
 
 export const CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION = gql`
-    mutation UpdateProject($projectId: ID!, $title: String!, $position: Int!) {
+    mutation ($projectId: ID!, $title: String!, $position: Int!) {
         createToDoAndAddToProject(projectId: $projectId, title: $title, position: $position) {
             project {
                 id

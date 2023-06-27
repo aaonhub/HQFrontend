@@ -6,6 +6,8 @@ import { useGlobalContext } from "./GlobalContextProvider";
 // Queries and Mutations
 import { ADD_TODO } from "../../models/inboxitem";
 import { ADD_LOG } from "../../models/log";
+import { ADD_TODO_TO_TODAY } from "../../models/inboxitem";
+import { getCurrentLocalDate } from "../../components/DateFunctions";
 
 
 interface CommandLineProps {
@@ -16,7 +18,7 @@ interface CommandLineProps {
 const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) => {
 	const { setSnackbar } = useGlobalContext();
 	const [commandInput, setCommandInput] = useState('');
-	const [commandType, setCommandType] = useState('Log');
+	const [commandType, setCommandType] = useState('Add Log');
 	const [placeholderText, setPlaceholderText] = useState('commands');
 
 
@@ -42,8 +44,19 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 		}
 	})
 
+	const [addToDoToToday] = useMutation(ADD_TODO_TO_TODAY, {
+		onCompleted: () => {
+			setSnackbar({ open: true, message: 'To do added to today', severity: 'success' })
+			setShowCommandLine(false)
+			setCommandInput('')
+		},
+		onError: (error) => {
+			console.log(error);
+		}
+	})
 
-	// Handle Input
+
+	// Sets command type
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 		// Set Command Input
@@ -55,17 +68,25 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 
 		// Set Command Type
 		if (newChar === ' ') {
+			// To Do
 			if (commandInput === 't') {
-				setCommandType('To Do')
+				setCommandType('Add To Do')
 				setCommandInput('')
 				setPlaceholderText('Add To Do')
+			}
+
+			// To Do Today
+			if (commandInput === 'tt') {
+				setCommandType('Add To Do Today')
+				setCommandInput('')
+				setPlaceholderText('Add To Do Today')
 			}
 		}
 
 
 	}
 
-	// Handle Keydown
+	// Handle Commands
 	const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		// Escape
 		if (event.key === 'Escape') {
@@ -86,14 +107,13 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 		// Enter
 		if (event.key === 'Enter') {
 
-			// 
+			// Nothing happens
 			if (commandInput === '') {
 				return
 			}
 
-
 			// Add Log
-			if (commandType === 'log') {
+			if (commandType === 'Add Log') {
 				addLog({
 					variables: {
 						text: commandInput,
@@ -102,9 +122,8 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				})
 			}
 
-
 			// Add To Do
-			if (commandType === 'todo') {
+			if (commandType === 'Add To Do') {
 				addTodo({
 					variables: {
 						title: commandInput,
@@ -112,6 +131,16 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				})
 			}
 
+			// Add To Do To Today
+			if (commandType === 'Add To Do Today') {
+				addToDoToToday({
+					variables: {
+						title: commandInput,
+						startDate: getCurrentLocalDate(),
+						Completed: false,
+					}
+				})
+			}
 
 		}
 	}

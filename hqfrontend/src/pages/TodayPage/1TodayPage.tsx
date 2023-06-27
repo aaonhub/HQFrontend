@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "@apollo/client";
 const TodayPage = () => {
 	const { setSnackbar } = useGlobalContext();
 	const [stickyNote, setStickyNote] = useState<string>("");
-	
+
 
 	// Sticky Note Query
 	useQuery(GET_STICKY_NOTE, {
@@ -77,17 +77,24 @@ const TodayPage = () => {
 					</Grid>
 
 					{/* Right side */}
-					<Grid item xs={2}>
+					<Grid item xs={2}
+						sx={{
+							height: "70vh"
+						}}
+					>
 						<TextField
 							id="sticky-note"
 							label="Sticky Note"
 							multiline
-							rows={30}
 							variant="outlined"
+							minRows={20}
+							maxRows={30}
 							fullWidth
 							value={stickyNote}
 							onChange={(e) => handleStickyNoteChange(e)}
-							sx={{ paddingBottom: 2 }}
+							sx={{
+								paddingBottom: 2,
+							}}
 						/>
 
 						<Button

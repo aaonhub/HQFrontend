@@ -24,6 +24,7 @@ interface EditHabitDialogProps {
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => {
 	const { setSnackbar } = useGlobalContext();
 	const [newHabit, setNewHabit] = useState<Habit>(habit);
+	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
 	// Delete Habit
 	const [deleteHabit] = useMutation(DELETE_HABIT);
@@ -42,6 +43,15 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 	useEffect(() => {
 		setNewHabit(habit);
 	}, [habit])
+
+	const handleDeleteClick = () => {
+		setOpenConfirmDelete(true);
+	}
+
+	const handleConfirmDelete = () => {
+		setOpenConfirmDelete(false);
+		handleDelete(habit.id);
+	}
 
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,9 +89,6 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 		});
 	};
 
-	const handleDeleteClick = () => {
-		handleDelete(habit.id)
-	}
 
 	return (
 		<Dialog open={true} onClose={onClose}>
@@ -142,6 +149,18 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 				<Button onClick={handleSaveClick}>Save</Button>
 				<Button onClick={handleDeleteClick} color="error">Delete</Button>
 			</DialogActions>
+
+			{/* Confirm deletion dialog */}
+			<Dialog open={openConfirmDelete} onClose={() => setOpenConfirmDelete(false)}>
+				<DialogTitle>Confirm Deletion</DialogTitle>
+				<DialogContent>Are you sure you want to delete this habit?</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setOpenConfirmDelete(false)}>No</Button>
+					<Button onClick={handleConfirmDelete} color="error">Yes</Button>
+				</DialogActions>
+			</Dialog>
+
+
 		</Dialog>
 	);
 };

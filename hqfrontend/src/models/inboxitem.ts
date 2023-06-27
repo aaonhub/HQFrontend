@@ -48,7 +48,7 @@ export default InboxItem;
 
 // Queries
 export const GET_TO_DO_LIST_ITEMS_BY_START_DATE = gql`
-	query GetTodaysToDoList($Today: Date!) {
+	query($Today: Date!) {
 		toDoItemsByStartDate(Today: $Today) {
 			id
 			title

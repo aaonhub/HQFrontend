@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
 
 import { useGlobalContext } from './GlobalContextProvider';
-import { DailyReviewBadge } from './Badges';
+import { DailyReviewBadge, TodayBadge } from './Badges';
 import { Badge } from '@mui/material';
 
 
@@ -21,7 +21,7 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 
 	const sidebarItems = [
 		[
-			{ id: '0', title: 'Today', link: '/', notifications: false },
+			{ id: '0', title: 'Today', link: '/', notifications: TodayBadge() },
 			{ id: '1', title: 'Log', link: '/log', notifications: false },
 			// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
 			{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },

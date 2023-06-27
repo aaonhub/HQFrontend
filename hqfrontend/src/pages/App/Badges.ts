@@ -22,7 +22,7 @@ export function DailyReviewBadge() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
-            if (hours >= 1 && minutes >= 0) {
+            if (hours >= 21 && minutes >= 0) {
                 setDailyReviewBadgeCount(1);
             }
             console.log(hours, minutes)

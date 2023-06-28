@@ -82,28 +82,34 @@ export const GET_LOGS = gql`
 	}
 `;
 
+export const LAST_LOG_TIME = gql`
+	query{
+		lastLogTime
+	}
+`;
+
 
 // Mutations
 export const ADD_LOG = gql`
 	mutation createLog(
-		$text: String, 
-		$logTime: DateTime!
+	$text: String,
+	$logTime: DateTime!
+) {
+	createLog(
+		text: $text,
+		logTime: $logTime
 	) {
-		createLog(
-			text: $text,
-			logTime: $logTime
-		) {
 			log {
-				id
-			}
+			id
 		}
 	}
+}
 `;
 
 export const DELETE_LOG = gql`
 	mutation deleteLog($id: ID!) {
-		deleteLog(logId: $id) {
-			success
-		}
+	deleteLog(logId: $id) {
+		success
 	}
+}
 `;

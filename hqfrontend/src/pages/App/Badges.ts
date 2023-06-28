@@ -7,6 +7,7 @@ import { useGlobalContext } from './GlobalContextProvider';
 import { GET_DAILY_REVIEW_BY_DATE } from '../../models/dailyreview';
 import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from '../../models/inboxitem';
+import { LAST_LOG_TIME } from '../../models/log';
 
 
 
@@ -101,3 +102,29 @@ export function DailyReviewBadge() {
 }
 
 
+export function LogBadge() {
+    const { logBadges, setLogBadges } = useGlobalContext();
+
+    const { data } = useQuery(LAST_LOG_TIME, {
+        fetchPolicy: 'network-only',
+        onCompleted: (data) => {
+            if (isOverAnHourAgo(data.lastLogTime)) {
+                setLogBadges([1, false]);
+            }
+        }
+    });
+
+    function isOverAnHourAgo(lastLogTime: string): boolean {
+        const truncatedLogTime = lastLogTime.slice(0, 23) + 'Z'; // Truncate microseconds to milliseconds
+        const lastLogDate = new Date(truncatedLogTime);
+        const currentDate = new Date();
+
+        const differenceInMilliseconds = currentDate.getTime() - lastLogDate.getTime();
+        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
+
+        return differenceInHours > 1;
+    }
+
+
+    return logBadges;
+}

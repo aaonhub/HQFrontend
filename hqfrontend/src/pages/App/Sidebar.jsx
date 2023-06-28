@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
 
 import { useGlobalContext } from './GlobalContextProvider';
-import { DailyReviewBadge, TodayBadge } from './Badges';
+import { DailyReviewBadge, LogBadge, TodayBadge } from './Badges';
 import { Badge } from '@mui/material';
 
 
@@ -22,7 +22,7 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 	const sidebarItems = [
 		[
 			{ id: '0', title: 'Today', link: '/', notifications: TodayBadge() },
-			{ id: '1', title: 'Log', link: '/log', notifications: false },
+			{ id: '1', title: 'Log', link: '/log', notifications: LogBadge() },
 			// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
 			{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
 			{ id: '3', title: 'Projects', link: '/projects', notifications: false },
@@ -195,7 +195,13 @@ function MenuItem({ item: { id, title, link, notifications }, onClick, selected 
 				<Badge
 					color="primary"
 					badgeContent={notifications[0]}
-					sx={{ mr: 3 }}
+					sx={{ mr: 2 }}
+				/>
+			)}
+			{notifications[1] && notifications[0] && (
+				<Icon
+					path="res-react-dash-sidebar-separator"
+					className="w-2"
 				/>
 			)}
 			{notifications[1] && (

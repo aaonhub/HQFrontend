@@ -96,9 +96,16 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 
 		// Backspace
 		if (event.key === 'Backspace' && commandInput === '') {
-			if (commandType === 'To Do') {
+			if (commandType === 'Add To Do') {
 				event.preventDefault()
 				setCommandInput('t')
+				setCommandType('Log')
+				setPlaceholderText('commands')
+			}
+
+			if (commandType === 'Add To Do Today') {
+				event.preventDefault()
+				setCommandInput('tt')
 				setCommandType('Log')
 				setPlaceholderText('commands')
 			}

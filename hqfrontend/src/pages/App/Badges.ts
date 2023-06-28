@@ -108,7 +108,7 @@ export function DailyReviewBadge() {
     return dailyReviewBadges;
 }
 
-
+// Log Badge
 export function LogBadge() {
     const { logBadges, setLogBadges } = useGlobalContext();
 

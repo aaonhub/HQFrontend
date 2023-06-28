@@ -40,6 +40,11 @@ const TodayPage = () => {
 					severity: "success",
 				});
 			},
+			refetchQueries: [
+				{
+					query: GET_STICKY_NOTE,
+				},
+			],
 			onError: (error) => {
 				console.log(error);
 			}

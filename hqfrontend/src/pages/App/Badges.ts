@@ -32,8 +32,8 @@ export function TodayBadge() {
     useEffect(() => {
         if (data && toDoListData) {
             // go through habits and see how many are past their start time
-            let currentEvents = 0;
-            let pastDueEvents = 0;
+            let currentEvents: any = 0;
+            let pastDueEvents: any = 0;
             data.habitsDueToday.forEach((habit: any) => {
                 if (habit.timeOfDay < currentLocalTime() && !habit.completedToday) {
                     if (!habit.length) {
@@ -63,6 +63,13 @@ export function TodayBadge() {
                     }
                 }
             });
+
+            if(currentEvents === 0) {
+                currentEvents = false;
+            }
+            if(pastDueEvents === 0) {
+                pastDueEvents = false;
+            }
 
             setTodayBadges([currentEvents, pastDueEvents]);
         }

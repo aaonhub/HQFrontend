@@ -3,10 +3,13 @@ import clsx from "clsx"
 import './Sidebar.css'
 import { Link } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
-
+import { useQuery } from '@apollo/client';
 import { useGlobalContext } from './GlobalContextProvider';
 import { DailyReviewBadge, LogBadge, TodayBadge } from './Badges';
 import { Badge } from '@mui/material';
+
+// Queries and Mutations
+import { GET_HIDDEN_SIDEBAR_ITEMS } from "../../models/settings"
 
 
 
@@ -15,8 +18,16 @@ import { Badge } from '@mui/material';
 // Sidebar
 export default function Sidebar({ onSidebarHide, showSidebar }) {
 	const { globalProfile } = useGlobalContext();
+	const { hiddenItems, setHiddenItems } = useGlobalContext();
 	const location = useLocation();
 	const [selected, setSelected] = useState('0');
+
+	useQuery(GET_HIDDEN_SIDEBAR_ITEMS, {
+		onCompleted: (data) => {
+			console.log(data)
+			setHiddenItems(data.hiddenSidebarItems);
+		},
+	});
 
 
 	const sidebarItems = [
@@ -100,23 +111,29 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 
 				{/* Sidebar Items */}
 				{sidebarItems[0].map((i) => (
-					<MenuItem
-						key={i.id}
-						item={i}
-						onClick={setSelected}
-						selected={selected}
-					/>
+					!hiddenItems.includes(i.id) && (
+						<MenuItem
+							key={i.id}
+							item={i}
+							onClick={setSelected}
+							selected={selected}
+						/>
+					)
 				))}
+
 				<div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block sidebar-item">
 					OTHER
 				</div>
+				
 				{sidebarItems[1].map((i) => (
-					<MenuItem
-						key={i.id}
-						item={i}
-						onClick={setSelected}
-						selected={selected}
-					/>
+					!hiddenItems.includes(i.id) && (
+						<MenuItem
+							key={i.id}
+							item={i}
+							onClick={setSelected}
+							selected={selected}
+						/>
+					)
 				))}
 
 

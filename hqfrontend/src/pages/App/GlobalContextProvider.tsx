@@ -21,6 +21,8 @@ interface IGlobalContext {
 	setDailyReviewBadges: (value: [number | boolean, number | boolean]) => void;
 	logBadges: [number | boolean, number | boolean];
 	setLogBadges: (value: [number | boolean, number | boolean]) => void;
+	hiddenItems: any;
+	setHiddenItems: (value: any) => void;
 
 }
 
@@ -46,6 +48,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 	const [dailyReviewBadges, setDailyReviewBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 	const [todayBadges, setTodayBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 	const [logBadges, setLogBadges] = useState<[number | boolean, number | boolean]>([false, false]);
+	const [hiddenItems, setHiddenItems] = useState(localStorage.getItem('hiddenSidebarItems') ? JSON.parse(localStorage.getItem('hiddenSidebarItems') || '') : []);
+
 
 	return (
 		<GlobalContext.Provider value={{
@@ -60,7 +64,9 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			dailyReviewBadges,
 			setDailyReviewBadges,
 			logBadges,
-			setLogBadges
+			setLogBadges,
+			hiddenItems,
+			setHiddenItems
 		}
 		}>
 			{children}

@@ -5,7 +5,7 @@ import {
 // import { ThemeContext } from './ThemeContext';
 import {
 	// FormControl, InputLabel, MenuItem, Select, 
-	TextField, Box, Typography, Button
+	TextField, Box, Typography, Button, Divider
 } from '@mui/material';
 import { useMutation, gql } from '@apollo/client';
 
@@ -14,6 +14,7 @@ import { useGlobalContext } from '../App/GlobalContextProvider';
 
 // Queries and Mutations
 import { CHANGE_CODENAME } from '../../models/social';
+import SidebarSettings from './SidebarSettings';
 
 
 const DELETE_REFRESH_TOEKN_MUTATION = gql`
@@ -41,15 +42,15 @@ const SettingsPage = () => {
 
 	// const { currentTheme, setTheme } = useContext(ThemeContext);
 	const { setLoggedIn, globalProfile, setGlobalProfile, setSnackbar } = useGlobalContext()
-	const [codeName, setCodeName] = useState<string>(globalProfile.codename);
+	const [codeName, setCodeName] = useState<string>(globalProfile.codename || '');
 	const [refreshTokenDeleted, setRefreshTokenDeleted] = useState<boolean>(false);
 	const [tokenDeleted, setTokenDeleted] = useState<boolean>(false);
 
 
 
 	useEffect(() => {
-		setCodeName(globalProfile.codename);
-	}, [globalProfile])
+		setCodeName(globalProfile.codename || '');
+	}, [globalProfile]);
 
 
 
@@ -124,6 +125,8 @@ const SettingsPage = () => {
 				<Typography variant="h3">Settings</Typography>
 			</Box>
 
+			<Divider />
+
 			{/* Set Theme */}
 			{/* <Box mb={2}>
 				<FormControl variant="outlined">
@@ -140,30 +143,45 @@ const SettingsPage = () => {
 				</FormControl>
 			</Box> */}
 
+			<Box mb={2}>
+				<Box mt={2}>
+					<Typography variant="h5">Sidebar</Typography>
+				</Box>
+				<SidebarSettings />
+			</Box>
+
+			<Divider />
 
 			{/* Set Codename */}
-			<TextField
-				label="Code Name"
-				value={codeName}
-				autoComplete="off"
-				onChange={(e) => setCodeName(e.target.value)}
-				onKeyDown={(e) => {
-					if (e.key === "Enter") {
-						handleChangeCodeName(e);
-					}
-				}}
-			/>
-
 			<Box mt={2}>
-				<Button
-					variant="contained"
-					color="primary"
-					disabled={codeName === globalProfile.codename}
-					onClick={handleChangeCodeName}
-				>
-					Change Codename
-				</Button>
+				<Typography variant="h5">Set Codename</Typography>
+				<Box mt={2}>
+					<TextField
+						label="Code Name"
+						value={codeName}
+						autoComplete="off"
+						onChange={(e) => setCodeName(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								handleChangeCodeName(e);
+							}
+						}}
+					/>
+				</Box>
+
+				<Box mt={2} mb={2}>
+					<Button
+						variant="contained"
+						color="primary"
+						disabled={codeName === globalProfile.codename}
+						onClick={handleChangeCodeName}
+					>
+						Change Codename
+					</Button>
+				</Box>
 			</Box>
+
+			<Divider />
 
 
 			{/* Logout */}

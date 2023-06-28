@@ -31,6 +31,12 @@ export const GET_STICKY_NOTE = gql`
 	}
 `
 
+export const GET_HIDDEN_SIDEBAR_ITEMS = gql`
+	query {
+		hiddenSidebarItems
+	}
+`
+
 
 // Mutations
 export const UPDATE_SETTING = gql`
@@ -64,6 +70,16 @@ export const UPDATE_STICKY_NOTE = gql`
 		updateStickyNoteContent(stickyNote: $stickyNote){
 			settings {
 				stickyNote
+			}
+		}
+	}
+`
+
+export const UPDATE_HIDDEN_SIDEBAR_ITEMS = gql`
+	mutation($HiddenSidebarItems: [String]!){
+		updateHiddenSidebarItems(hiddenSidebarItems: $HiddenSidebarItems){
+			settings{
+				hiddenSidebarItems
 			}
 		}
 	}

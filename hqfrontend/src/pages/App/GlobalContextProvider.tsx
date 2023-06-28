@@ -15,10 +15,10 @@ interface IGlobalContext {
 		open: boolean;
 		severity: "success" | "error" | "info" | "warning";
 	}) => void;
-	todayBadgeCount: number | boolean;
-	setTodayBadgeCount: (value: number | boolean) => void;
-	dailyReviewBadgeCount: number | boolean;
-	setDailyReviewBadgeCount: (value: number | boolean) => void;
+	todayBadges: [number | boolean, number | boolean];
+	setTodayBadges: (value: [number | boolean, number | boolean]) => void;
+	dailyReviewBadges: [number | boolean, number | boolean];
+	setDailyReviewBadges: (value: [number | boolean, number | boolean]) => void;
 
 }
 
@@ -41,8 +41,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 	})
 
 	// Notifications
-	const [dailyReviewBadgeCount, setDailyReviewBadgeCount] = useState<number | boolean>(false);
-	const [todayBadgeCount, setTodayBadgeCount] = useState<number | boolean>(false);
+	const [dailyReviewBadges, setDailyReviewBadges] = useState<[number | boolean, number | boolean]>([false, false]);
+	const [todayBadges, setTodayBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 
 	return (
 		<GlobalContext.Provider value={{
@@ -52,10 +52,10 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			setGlobalProfile,
 			snackbar,
 			setSnackbar,
-			dailyReviewBadgeCount,
-			setDailyReviewBadgeCount,
-			todayBadgeCount,
-			setTodayBadgeCount
+			todayBadges,
+			setTodayBadges,
+			dailyReviewBadges,
+			setDailyReviewBadges
 		}
 		}>
 			{children}

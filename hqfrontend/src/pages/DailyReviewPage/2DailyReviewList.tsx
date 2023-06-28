@@ -14,7 +14,7 @@ interface DailyReviewListProps {
 }
 
 const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, editMode, setEditMode, data, loading }) => {
-	const { dailyReviewBadgeCount } = useGlobalContext();
+	const { dailyReviewBadges } = useGlobalContext();
 
 
 	const goToToday = () => {
@@ -66,7 +66,7 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 							const dailyReview = data.dailyReviews.find((review: any) => review.date === date);
 							const dateString = formatDateWithWeekday(date);
 							const isCurrentDay = date === getCurrentLocalDate();
-							const showBadge = isCurrentDay && dailyReviewBadgeCount === 1;
+							const showBadge = isCurrentDay && dailyReviewBadges[1] === 1;
 
 							return (
 								<Box key={date} sx={{ width: '100%' }}>

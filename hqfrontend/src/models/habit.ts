@@ -67,6 +67,7 @@ export const GET_HABITS_DUE_TODAY = gql`
 			endDate
 			timeOfDay
 			completedToday
+			length
 		}
 	}
 `

@@ -191,13 +191,21 @@ function MenuItem({ item: { id, title, link, notifications }, onClick, selected 
 			<SidebarIcons id={id} />
 			<div className="block sm:hidden xl:block ml-2">{title}</div>
 			<div className="block sm:hidden xl:block flex-grow" />
-			{notifications && (
+			{notifications[0] && (
+				<Badge
+					color="primary"
+					badgeContent={notifications[0]}
+					sx={{ mr: 3 }}
+				/>
+			)}
+			{notifications[1] && (
 				<Badge
 					color="error"
-					badgeContent={notifications}
+					badgeContent={notifications[1]}
 					sx={{ mr: 2 }}
 				/>
 			)}
+
 
 		</Link>
 	);

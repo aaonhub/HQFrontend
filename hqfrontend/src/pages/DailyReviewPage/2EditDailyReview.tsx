@@ -22,7 +22,7 @@ interface EditDailyReviewProps {
 }
 
 const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading, refetch }) => {
-	const {setDailyReviewBadgeCount} = useGlobalContext()
+	const { setDailyReviewBadges } = useGlobalContext()
 	const [title, setTitle] = useState(dailyReview.title)
 	const [gratitudes, setGratitudes] = useState(dailyReview.gratitudes.join('\n'))
 	const [majorEvents, setMajorEvents] = useState(dailyReview.majorEvents.join('\n'))
@@ -96,7 +96,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					date: today,
 				},
 			});
-			if (getCurrentLocalDate() === today) setDailyReviewBadgeCount(false)
+			if (getCurrentLocalDate() === today) setDailyReviewBadges([false, false])
 		}
 		refetch()
 	}

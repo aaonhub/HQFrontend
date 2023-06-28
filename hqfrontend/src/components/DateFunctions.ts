@@ -19,6 +19,33 @@ export function currentLocalTime() {
 	return `${hours}:${minutes}:${seconds}`;
 }
 
+// Length is in "hh:mm" format
+// startTime is in "hh:mm:ss" format
+export function addLengthToTime(startTime: string, length: string): string {
+	const [startHour, startMinute, startSecond] = startTime.split(':').map(Number);
+	const [lengthHour, lengthMinute] = length.split(':').map(Number);
+
+	const date = new Date();
+	date.setHours(startHour, startMinute, startSecond);
+
+	// Create a new date for the length, we will use this just to extract the time duration
+	const lengthDate = new Date();
+	lengthDate.setHours(lengthHour, lengthMinute, 0); // Assuming length is always in "hh:mm" format
+
+	date.setSeconds(date.getSeconds() + lengthDate.getHours() * 3600 + lengthDate.getMinutes() * 60);
+
+	const hours = date.getHours().toString();
+	const minutes = date.getMinutes().toString();
+	const seconds = date.getSeconds().toString();
+
+	// If the hours, minutes or seconds are single digit, prepend with '0'
+	const formattedHours = hours.length < 2 ? '0' + hours : hours;
+	const formattedMinutes = minutes.length < 2 ? '0' + minutes : minutes;
+	const formattedSeconds = seconds.length < 2 ? '0' + seconds : seconds;
+
+	return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
 function getOrdinalSuffix(i: number) {
 	const j = i % 10;
 	const k = i % 100;

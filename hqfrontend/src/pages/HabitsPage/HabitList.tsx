@@ -18,7 +18,7 @@ import InboxIcon from "@mui/icons-material/Inbox"
 import { CHECK_HABIT } from "../../models/habit"
 
 // Components
-import EditHabitDialog from "./EditHabitDialog"
+import EditHabitDialog from "../../components/EditHabitDialog"
 
 // Models
 import Habit from "../../models/habit"
@@ -120,7 +120,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 							handleClose()
 						}
 					}
-					habit={habit}
+					habitId={habit.id}
 				/>
 			)}
 		</>

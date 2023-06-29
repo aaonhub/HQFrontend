@@ -5,26 +5,67 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 // Queries and Mutations
-import { UPDATE_HABIT } from '../../models/habit';
-import { DELETE_HABIT } from '../../models/habit';
+import { GET_HABIT } from '../models/habit';
+import { UPDATE_HABIT } from '../models/habit';
+import { DELETE_HABIT } from '../models/habit';
 
 // Models
-import Habit, { Frequency } from '../../models/habit';
-import { useGlobalContext } from '../App/GlobalContextProvider';
+import Habit, { Frequency } from '../models/habit';
+import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 
 
 interface EditHabitDialogProps {
 	onClose: () => void
-	habit: Habit
+	habitId: string
 }
 
-const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => {
+const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) => {
 	const { setSnackbar } = useGlobalContext();
-	const [newHabit, setNewHabit] = useState<Habit>(habit);
+
+	const [newHabit, setNewHabit] = useState<Habit>(new Habit(
+		"",
+		"",
+		true,
+		"DAILY",
+		new Date(),
+		0,
+		[],
+		[],
+		0,
+		new Date(),
+		new Date(),
+		"",
+		false
+	));
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+
+	const { loading, error } = useQuery(GET_HABIT, {
+		variables: { habitId: habitId },
+		fetchPolicy: "network-only",
+		onCompleted: (data) => {
+			setNewHabit(
+				new Habit(
+					data.getHabit.id,
+					data.getHabit.title,
+					data.getHabit.active,
+					data.getHabit.schedule.frequency,
+					data.getHabit.streak,
+					data.getHabit.history,
+					data.getHabit.reminders,
+					data.getHabit.reminderTime,
+					data.getHabit.createdAt,
+					data.getHabit.updatedAt,
+					data.getHabit.userId,
+					data.getHabit.schedule.timeOfDay,
+					data.getHabit.completedToday
+				)
+			)
+			console.log(data.getHabit)
+		}
+	});
 
 	// Delete Habit
 	const [deleteHabit] = useMutation(DELETE_HABIT);
@@ -39,18 +80,13 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 		})
 	}
 
-	// Required to update the state when the habit prop changes
-	useEffect(() => {
-		setNewHabit(habit);
-	}, [habit])
-
 	const handleDeleteClick = () => {
 		setOpenConfirmDelete(true);
 	}
 
 	const handleConfirmDelete = () => {
 		setOpenConfirmDelete(false);
-		handleDelete(habit.id);
+		handleDelete(habitId);
 	}
 
 
@@ -80,7 +116,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 	const handleSaveClick = () => {
 		updateHabit({
 			variables: {
-				id: habit.id,
+				id: habitId,
 				Title: newHabit.title,
 				Active: newHabit.active,
 				Frequency: newHabit.frequency,
@@ -96,6 +132,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 			<DialogContent>
 				<FormGroup>
 
+					{/* Title */}
 					<TextField
 						autoFocus
 						margin="dense"
@@ -105,7 +142,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 						autoComplete="off"
 					/>
 
-					{/* a checkbox for active */}
+					{/* Active */}
 					<FormControlLabel control={
 						<Checkbox
 							checked={newHabit.active}
@@ -114,6 +151,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 						/>
 					} label="Active" sx={{ paddingBottom: 2 }} />
 
+					{/* Frequency */}
 					<FormControl fullWidth sx={{ paddingBottom: 2 }}>
 						<InputLabel>New Frequency</InputLabel>
 						<Select
@@ -129,7 +167,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 						</Select>
 					</FormControl>
 
-					{/* Start Time Selector */}
+					{/* Start Time */}
 					<TextField
 						id="time"
 						label="Time of Day"

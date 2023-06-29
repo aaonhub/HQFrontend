@@ -42,6 +42,7 @@ import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
 import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
 import ItineraryList from './ItineraryList'
+import EditHabitDialog from '../../../components/EditHabitDialog'
 
 
 
@@ -55,6 +56,7 @@ const Itinerary: React.FC = () => {
 	const [inboxItems, setInboxItems] = useState<InboxItem[]>([])
 	const [expanded, setExpanded] = useState(false)
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
+	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 
 	// Calendar State
@@ -144,7 +146,7 @@ const Itinerary: React.FC = () => {
 
 
 	// Today's Habits Query
-	const { loading: habitsLoading, error: habitsError, data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
+	const { loading: habitsLoading, error: habitsError, data: habitsData, refetch: habitsRefetch } = useQuery(GET_HABITS_DUE_TODAY, {
 		fetchPolicy: 'network-only',
 		variables: { today: localDate },
 		onCompleted: (data) => {
@@ -419,9 +421,16 @@ const Itinerary: React.FC = () => {
 			}
 		})
 	}
-	const handleClose = () => {
+
+
+	// Dialog Close Handlers
+	const handleCloseInbox = () => {
 		setSelectedInboxItemId(null)
 		inboxRefetch()
+	}
+	const handleCloseHabit: any = () => {
+		setSelectedHabitId(null)
+		habitsRefetch()
 	}
 
 
@@ -565,7 +574,12 @@ const Itinerary: React.FC = () => {
 						<Box>
 							{/* Itinerary List */}
 							{uncompletedItems.length > 0 ? (
-								<ItineraryList list={uncompletedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckItem} />
+								<ItineraryList
+									list={uncompletedItems}
+									setSelectedInboxItemId={setSelectedInboxItemId}
+									setSelectedHabitId={setSelectedHabitId}
+									handleCheckItem={handleCheckItem}
+								/>
 							) : (
 								completedItems.length > 0 ? (
 									<Typography variant="h6" align="center" color="textSecondary">
@@ -589,7 +603,12 @@ const Itinerary: React.FC = () => {
 						</AccordionSummary>
 						<AccordionDetails>
 							{completedItems.length > 0 ? (
-								<ItineraryList list={completedItems} setSelectedInboxItemId={setSelectedInboxItemId} handleCheckItem={handleCheckItem} />
+								<ItineraryList
+									list={completedItems}
+									setSelectedInboxItemId={setSelectedInboxItemId}
+									setSelectedHabitId={setSelectedHabitId}
+									handleCheckItem={handleCheckItem}
+								/>
 							) : (
 								<Typography variant="h6" align="center" color="textSecondary">
 									No completed items
@@ -599,7 +618,8 @@ const Itinerary: React.FC = () => {
 					</Accordion>
 
 
-					{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
+					{selectedInboxItemId && <EditInboxItemDialog handleClose={handleCloseInbox} inboxItemId={selectedInboxItemId} />}
+					{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
 
 				</Grid>
 			</Grid>

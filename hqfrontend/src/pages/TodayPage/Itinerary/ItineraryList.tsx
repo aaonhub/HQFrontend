@@ -6,10 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 interface ItineraryListProps {
     list: any
     setSelectedInboxItemId: any
+    setSelectedHabitId: any
     handleCheckItem: any
 }
 
-const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxItemId, handleCheckItem }) => {
+const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxItemId, setSelectedHabitId, handleCheckItem }) => {
     const [id] = useState(uuidv4());
 
     // Calendar Stuff
@@ -49,6 +50,9 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
                     onClick={() => {
                         if ("i" === item.id.slice(-1)) {
                             setSelectedInboxItemId(item.id.slice(0, -1))
+                        }
+                        if ("h" === item.id.slice(-1)) {
+                            setSelectedHabitId(item.id.slice(0, -1))
                         }
                     }}
                     sx={{

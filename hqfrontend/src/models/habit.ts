@@ -48,7 +48,31 @@ export default Habit
 
 
 // Queries
-// Updated to django
+export const GET_HABIT = gql`
+	query($habitId: ID!){
+		getHabit(id: $habitId){
+			id
+			title
+			active
+			lastCompleted
+			order
+			length
+			schedule{
+				id
+				startDate
+				endDate
+				timeOfDay
+				daysOfTheMonth
+				dayOfTheYear
+				frequency
+				daysOfTheWeek{
+					name
+				}
+			}
+		}
+	}
+`
+
 export const GET_HABITS_DUE_TODAY = gql`
 	query GetHabitsDueToday($today: Date!) {
 		habitsDueToday(date: $today) {

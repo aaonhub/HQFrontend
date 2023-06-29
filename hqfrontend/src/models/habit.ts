@@ -55,17 +55,8 @@ export const GET_HABITS_DUE_TODAY = gql`
 			id
 			title
 			active
-			frequency
 			lastCompleted
 			order
-			daysOfTheWeek {
-				name
-			}
-			daysOfTheMonth
-			dayOfTheYear
-			startDate
-			endDate
-			timeOfDay
 			completedToday
 			length
 		}

@@ -16,7 +16,7 @@ interface CommandLineProps {
 }
 
 const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) => {
-	const { setSnackbar } = useGlobalContext();
+	const { setSnackbar, setLogBadges } = useGlobalContext();
 	const [commandInput, setCommandInput] = useState('');
 	const [commandType, setCommandType] = useState('Add Log');
 	const [placeholderText, setPlaceholderText] = useState('commands');
@@ -125,6 +125,9 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 					variables: {
 						text: commandInput,
 						logTime: new Date()
+					},
+					onCompleted: () => {
+						setLogBadges([false, false])
 					}
 				})
 			}

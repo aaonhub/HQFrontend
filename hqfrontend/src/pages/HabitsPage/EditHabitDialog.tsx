@@ -119,7 +119,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habit }) => 
 						<Select
 							labelId="demo-simple-select-label"
 							id="demo-simple-select"
-							value={newHabit.frequency ? newHabit.frequency : "Daily"}
+							value={newHabit.frequency ? newHabit.frequency : "DAILY"}
 							label="Age"
 							onChange={handleFrequencyChange}
 						>

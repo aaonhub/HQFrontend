@@ -59,6 +59,13 @@ export const GET_HABITS_DUE_TODAY = gql`
 			order
 			completedToday
 			length
+			schedule{
+				id
+				timeOfDay
+				frequency
+				startDate
+				endDate
+			}
 		}
 	}
 `

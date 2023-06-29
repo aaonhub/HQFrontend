@@ -161,7 +161,7 @@ const Itinerary: React.FC = () => {
 					habit.dayOfTheYear,
 					habit.startDate,
 					habit.endDate,
-					habit.timeOfDay,
+					habit.schedule.timeOfDay,
 					habit.completedToday,
 				)
 			})

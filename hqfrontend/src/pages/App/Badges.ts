@@ -35,11 +35,11 @@ export function TodayBadge() {
             let currentEvents: any = 0;
             let pastDueEvents: any = 0;
             data.habitsDueToday.forEach((habit: any) => {
-                if (habit.timeOfDay < currentLocalTime() && !habit.completedToday) {
+                if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
                     if (!habit.length) {
                         pastDueEvents++;
                     } else {
-                        if (addLengthToTime(habit.timeOfDay, habit.length) > currentLocalTime()) {
+                        if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
                             currentEvents++;
                         } else {
                             pastDueEvents++;
@@ -122,6 +122,9 @@ export function LogBadge() {
     });
 
     function isOverAnHourAgo(lastLogTime: string): boolean {
+        if (!lastLogTime) {
+            return true;
+        }
         const truncatedLogTime = lastLogTime.slice(0, 23) + 'Z'; // Truncate microseconds to milliseconds
         const lastLogDate = new Date(truncatedLogTime);
         const currentDate = new Date();

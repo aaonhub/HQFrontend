@@ -24,7 +24,6 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 
 	useQuery(GET_HIDDEN_SIDEBAR_ITEMS, {
 		onCompleted: (data) => {
-			console.log(data)
 			setHiddenItems(data.hiddenSidebarItems);
 		},
 	});

@@ -72,6 +72,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
             if (data && data.ritual) {
                 setRitualTitle(data.ritual.title)
                 setRitualItems(JSON.parse(data.ritual.ritualItems))
+                console.log(data.ritual.ritualItems)
             }
             if (!data.ritual.inProgress) {
                 startRitual({

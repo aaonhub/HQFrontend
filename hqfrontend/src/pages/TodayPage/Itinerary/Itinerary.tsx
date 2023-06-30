@@ -22,9 +22,11 @@ import { EventInput } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 
 // Components
-import { getCurrentLocalDate } from '../../../components/DateFunctions'
+import { addLengthToTime, currentLocalTime, getCurrentLocalDate } from '../../../components/DateFunctions'
 import { useGlobalContext } from '../../App/GlobalContextProvider'
 import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
+import ItineraryList from './ItineraryList'
+import EditHabitDialog from '../../../components/EditHabitDialog'
 
 
 // Models
@@ -41,13 +43,11 @@ import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
 import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
 import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
-import ItineraryList from './ItineraryList'
-import EditHabitDialog from '../../../components/EditHabitDialog'
 
 
 
 const Itinerary: React.FC = () => {
-	const { setSnackbar } = useGlobalContext()
+	const { setSnackbar, todayBadges, setTodayBadges } = useGlobalContext()
 
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
@@ -382,19 +382,12 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
-				setUncompletedItems((prevArray: SimpleItem[]) =>
-					// remove the item from the array
-					prevArray.filter((item) => item.id !== habit.id)
-				)
-				setCompletedItems((prevArray: SimpleItem[]) =>
-					// add the item to the array
-					[...prevArray, { id: habit.id, type: 'habit', completedToday: true, title: habit.title }]
-				)
+				moveItemToCompleted(habit)
+				updateBadge(habit)
 			}
 		})
 
 	}
-
 	// Check To Do
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
 	const handleCheckToDo = async (todo: any) => {
@@ -410,17 +403,64 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
-				setUncompletedItems((prevArray: SimpleItem[]) =>
-					// remove the item from the array
-					prevArray.filter((item) => item.id !== todo.id)
-				)
-				setCompletedItems((prevArray: SimpleItem[]) =>
-					// add the item to the array
-					[...prevArray, { id: todo.id, type: 'inbox', completedToday: true, title: todo.title }]
-				)
+				moveItemToCompleted(todo)
+				updateBadge(todo)
 			}
 		})
 	}
+	// Update Badge
+	const updateBadge = (item: any) => {
+		const newArray = [...todayBadges] as [number | boolean, number | boolean];
+		if (item.startTime < currentLocalTime() && !item.completedToday) {
+			if (!item.length) {
+				if (typeof newArray[1] === 'number') {
+					newArray[1] = newArray[1] - 1;
+				}
+			} else {
+				if (addLengthToTime(item.startTime, item.length) > currentLocalTime()) {
+					if (typeof newArray[0] === 'number') {
+						newArray[0] = newArray[0] - 1;
+					}
+				} else {
+					if (typeof newArray[1] === 'number') {
+						newArray[1] = newArray[1] - 1;
+					}
+				}
+			}
+
+		}
+		if (newArray[0] === 0) {
+			newArray[0] = false;
+		}
+		if (newArray[1] === 0) {
+			newArray[1] = false;
+		}
+		setTodayBadges(newArray);
+	}
+	// Move Item
+	const moveItemToCompleted = (moveItem: SimpleItem) => {
+		// FINISHLATER: If you check off an inbox item after a few habits then it'll reset the arrays to an earlier state for some reason
+		// setUncompletedItems((prevArray: SimpleItem[]) =>
+		// 	prevArray.filter((item) => item.id !== moveItem.id)
+		// )
+		// setCompletedItems((prevArray: SimpleItem[]) =>
+		// 	[...prevArray, { id: moveItem.id, type: moveItem.type, completedToday: true, title: moveItem.title }]
+		// )
+		inboxRefetch()
+		habitsRefetch()
+	}
+	// useEffect(() => {
+	// 	console.log(uncompletedItems);
+	// }, [uncompletedItems]);
+	
+	// useEffect(() => {
+	// 	console.log(completedItems);
+	// }, [completedItems]);
+
+
+
+
+
 
 
 	// Dialog Close Handlers

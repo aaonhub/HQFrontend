@@ -15,7 +15,7 @@ import { LAST_LOG_TIME } from '../../models/log';
 export function TodayBadge() {
     const { todayBadges, setTodayBadges } = useGlobalContext();
 
-    const { data } = useQuery(GET_HABITS_DUE_TODAY, {
+    const { data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
         fetchPolicy: 'network-only',
         variables: {
             today: getCurrentLocalDate(),
@@ -30,11 +30,12 @@ export function TodayBadge() {
     });
 
     useEffect(() => {
-        if (data && toDoListData) {
+        if (habitsData && toDoListData) {
             // go through habits and see how many are past their start time
             let currentEvents: any = 0;
             let pastDueEvents: any = 0;
-            data.habitsDueToday.forEach((habit: any) => {
+
+            habitsData.habitsDueToday.forEach((habit: any) => {
                 if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
                     if (!habit.length) {
                         pastDueEvents++;
@@ -64,16 +65,16 @@ export function TodayBadge() {
                 }
             });
 
-            if(currentEvents === 0) {
+            if (currentEvents === 0) {
                 currentEvents = false;
             }
-            if(pastDueEvents === 0) {
+            if (pastDueEvents === 0) {
                 pastDueEvents = false;
             }
 
             setTodayBadges([currentEvents, pastDueEvents]);
         }
-    }, [data, setTodayBadges, toDoListData]);
+    }, [habitsData, toDoListData, setTodayBadges]);
 
     return todayBadges;
 

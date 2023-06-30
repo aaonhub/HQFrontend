@@ -156,7 +156,7 @@ const ToDosPage = () => {
                                 >
                                     <MenuItem value={"-created_at"}>Created Date</MenuItem>
                                     <MenuItem value={"title"}>Title</MenuItem>
-                                    <MenuItem value={"-start_date"}>Start Date</MenuItem>
+                                    <MenuItem value={"start_date"}>Start Date</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>

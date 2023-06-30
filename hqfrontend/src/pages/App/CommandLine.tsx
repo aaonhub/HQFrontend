@@ -197,6 +197,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				value={commandInput}
 				onChange={handleInput}
 				placeholder={placeholderText}
+				// onBlur={() => { setShowCommandLine(false); setCommandInput('') }}
 				onKeyDown={handleKeydown}
 			/>
 		</>

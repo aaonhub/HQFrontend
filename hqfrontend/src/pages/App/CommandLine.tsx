@@ -27,6 +27,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 			setSnackbar({ open: true, message: 'Log added', severity: 'success' })
 			setShowCommandLine(false)
 			setCommandInput('')
+			setLogBadges([false, false])
 		},
 		onError: (error) => {
 			console.log(error);
@@ -111,7 +112,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 			}
 		}
 
-		// Enter
+		// Enter Command
 		if (event.key === 'Enter') {
 
 			// Nothing happens
@@ -125,9 +126,6 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 					variables: {
 						text: commandInput,
 						logTime: new Date()
-					},
-					onCompleted: () => {
-						setLogBadges([false, false])
 					}
 				})
 			}

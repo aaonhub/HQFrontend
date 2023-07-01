@@ -36,7 +36,7 @@ export function TodayBadge() {
             let pastDueEvents: any = 0;
 
             habitsData.habitsDueToday.forEach((habit: any) => {
-                if (currentLocalTime() < new Date().toISOString().slice(0, 10) && !habit.completedToday) {
+                if (getCurrentLocalDate() < new Date().toISOString().slice(0, 10) && !habit.completedToday) {
                     pastDueEvents++;
                 } else
                     if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
@@ -58,17 +58,17 @@ export function TodayBadge() {
                 if (currentLocalTime() < new Date().toISOString().slice(0, 10) && !item.completed) {
                     pastDueEvents++;
                 } else
-                if (item.startTime < currentLocalTime() && !item.completed) {
-                    if (!item.length) {
-                        pastDueEvents++;
-                    } else {
-                        if (addLengthToTime(item.startTime, item.length) > currentLocalTime()) {
-                            currentEvents++;
-                        } else {
+                    if (item.startTime < currentLocalTime() && !item.completed) {
+                        if (!item.length) {
                             pastDueEvents++;
+                        } else {
+                            if (addLengthToTime(item.startTime, item.length) > currentLocalTime()) {
+                                currentEvents++;
+                            } else {
+                                pastDueEvents++;
+                            }
                         }
                     }
-                }
             });
 
             if (currentEvents === 0) {

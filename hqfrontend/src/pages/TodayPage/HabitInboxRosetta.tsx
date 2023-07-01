@@ -24,6 +24,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				type: 'habit',
 				id: habit.id + "h",
 				startTime: habit.timeOfDay ?? "",
+				startDate: habit.startDate ?? "",
 			});
 		});
 	}
@@ -37,6 +38,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				type: 'inbox',
 				startTime: inboxItem.startTime ? inboxItem.startTime : undefined,
 				length: inboxItem.length ? inboxItem.length : undefined,
+				startDate: inboxItem.startDate ?? undefined,
 			});
 		});
 	}

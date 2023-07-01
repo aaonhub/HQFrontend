@@ -8,6 +8,7 @@ export class SimpleItem {
 		public type: 'habit' | 'inbox',
 		public startTime?: string,
 		public length?: string,
+		public startDate?: Date,
 	) {
 		this.id = id;
 		this.completedToday = completedToday;
@@ -15,6 +16,7 @@ export class SimpleItem {
 		this.type = type;
 		this.startTime = startTime;
 		this.length = length;
+		this.startDate = startDate;
 	}
 }
 

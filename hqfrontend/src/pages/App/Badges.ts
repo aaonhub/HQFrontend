@@ -36,22 +36,28 @@ export function TodayBadge() {
             let pastDueEvents: any = 0;
 
             habitsData.habitsDueToday.forEach((habit: any) => {
-                if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
-                    if (!habit.length) {
-                        pastDueEvents++;
-                    } else {
-                        if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
-                            currentEvents++;
-                        } else {
+                if (currentLocalTime() < new Date().toISOString().slice(0, 10) && !habit.completedToday) {
+                    pastDueEvents++;
+                } else
+                    if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
+                        if (!habit.length) {
                             pastDueEvents++;
+                        } else {
+                            if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
+                                currentEvents++;
+                            } else {
+                                pastDueEvents++;
+                            }
                         }
-                    }
 
-                }
+                    }
             });
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
+                if (currentLocalTime() < new Date().toISOString().slice(0, 10) && !item.completed) {
+                    pastDueEvents++;
+                } else
                 if (item.startTime < currentLocalTime() && !item.completed) {
                     if (!item.length) {
                         pastDueEvents++;

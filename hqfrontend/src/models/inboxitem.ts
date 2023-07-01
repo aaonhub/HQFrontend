@@ -10,7 +10,7 @@ interface InboxItem {
 	project?: Project | null;
 	dueDateTime: Date | null;
 	startTime: string | null;
-	startDate: string | null;
+	startDate: Date | null;
 	timeCompleted: Date | null;
 	length?: string | null;
 }

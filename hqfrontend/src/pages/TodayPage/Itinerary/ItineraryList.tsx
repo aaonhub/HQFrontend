@@ -42,9 +42,11 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
             {list.map((item: any) => {
 
 
+                // Border color
                 let color = "grey"
-
-                if (item.startTime < currentLocalTime() && !item.completed) {
+                if (item.startDate < new Date().toISOString().slice(0, 10)) {
+                    color = "red"
+                } else if (item.startTime < currentLocalTime() && !item.completed) {
                     if (!item.length) {
                         color = "red"
                     } else {

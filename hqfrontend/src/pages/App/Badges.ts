@@ -66,15 +66,24 @@ export function TodayBadge() {
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
                 if (currentLocalTime() < getCurrentLocalDateUnadjusted() && !item.completed) {
                     pastDueEvents++;
+                    console.log("4")
+                    console.log(currentLocalTime())
+                    console.log(getCurrentLocalDateUnadjusted())
                 } else
                     if (item.startTime < currentLocalTime() && !item.completed) {
                         if (!item.length) {
                             pastDueEvents++;
+                            console.log("5")
+                            console.log(item.startTime)
+                            console.log(currentLocalTime())
                         } else {
                             if (addLengthToTime(item.startTime, item.length) > currentLocalTime()) {
                                 currentEvents++;
                             } else {
                                 pastDueEvents++;
+                                console.log("6")
+                                console.log(addLengthToTime(item.startTime, item.length))
+                                console.log(currentLocalTime())
                             }
                         }
                     }

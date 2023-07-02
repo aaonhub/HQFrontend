@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Checkbox, List, ListItem, ListItemText } from '@mui/material'
 import { Draggable } from '@fullcalendar/interaction'
 import { v4 as uuidv4 } from 'uuid';
-import { addLengthToTime, currentLocalTime, getCurrentLocalDate } from '../../../components/DateFunctions';
+import { addLengthToTime, currentLocalTime, getCurrentLocalDate, getCurrentLocalDateUnadjusted } from '../../../components/DateFunctions';
 
 interface ItineraryListProps {
 	list: any
@@ -47,9 +47,8 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 				if (!item.startDate) {
 					item.startDate = getCurrentLocalDate()
 				}
-				if (item.startDate < new Date().toISOString().slice(0, 10)) {
+				if (item.startDate < getCurrentLocalDateUnadjusted()) {
 					color = "red"
-					console.log("1")
 				} else if (!item.startTime) {
 					color = "grey"
 				} else

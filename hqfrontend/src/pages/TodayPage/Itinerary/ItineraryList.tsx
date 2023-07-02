@@ -47,12 +47,15 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 				if (!item.startDate) {
 					item.startDate = getCurrentLocalDate()
 				}
+
 				if (item.startDate < getCurrentLocalDateUnadjusted()) {
 					color = "red"
 				} else if (!item.startTime) {
 					color = "grey"
+				} else if(item.completedToday){
+					color = "grey"
 				} else
-					if (item.startTime < currentLocalTime() && !item.completed) {
+					if (item.startTime < currentLocalTime()) {
 						if (!item.length) {
 							color = "red"
 						} else {

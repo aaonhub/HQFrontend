@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getCurrentLocalDate, currentLocalTime, addLengthToTime } from '../../components/DateFunctions';
+import { getCurrentLocalDate, currentLocalTime, addLengthToTime, getCurrentLocalDateUnadjusted } from '../../components/DateFunctions';
 import { useQuery } from '@apollo/client';
 import { useGlobalContext } from './GlobalContextProvider';
 
@@ -36,7 +36,7 @@ export function TodayBadge() {
             let pastDueEvents: any = 0;
 
             habitsData.habitsDueToday.forEach((habit: any) => {
-                if (getCurrentLocalDate() < new Date().toISOString().slice(0, 10) && !habit.completedToday) {
+                if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
                     pastDueEvents++;
                 } else
                     if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
@@ -55,7 +55,7 @@ export function TodayBadge() {
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
-                if (currentLocalTime() < new Date().toISOString().slice(0, 10) && !item.completed) {
+                if (currentLocalTime() < getCurrentLocalDateUnadjusted() && !item.completed) {
                     pastDueEvents++;
                 } else
                     if (item.startTime < currentLocalTime() && !item.completed) {

@@ -21,6 +21,8 @@ const graphqlURI = process.env.NODE_ENV === 'production'
 	? "https://hqlink.herokuapp.com/graphql/"
 	: "http://localhost:8000/graphql/";
 
+// const graphqlURI = "https://hqlink.herokuapp.com/graphql/"
+
 const customFetch = (uri: RequestInfo, options?: RequestInit): Promise<Response> => {
 	const retries = 10;
 	const retryDelay = 1000; // milliseconds

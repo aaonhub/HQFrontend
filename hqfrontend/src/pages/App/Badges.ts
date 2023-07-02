@@ -38,24 +38,15 @@ export function TodayBadge() {
             habitsData.habitsDueToday.forEach((habit: any) => {
                 if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
                     pastDueEvents++;
-                    console.log("1")
-                    console.log(getCurrentLocalDate())
-                    console.log(getCurrentLocalDateUnadjusted())
                 } else
                     if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
                         if (!habit.length) {
                             pastDueEvents++;
-                            console.log("2")
-                            console.log(habit.schedule.timeOfDay)
-                            console.log(currentLocalTime())
                         } else {
                             if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
                                 currentEvents++;
                             } else {
                                 pastDueEvents++;
-                                console.log("3")
-                                console.log(addLengthToTime(habit.schedule.timeOfDay, habit.length))
-                                console.log(currentLocalTime())
                             }
                         }
 
@@ -64,26 +55,17 @@ export function TodayBadge() {
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
-                if (currentLocalTime() < getCurrentLocalDateUnadjusted() && !item.completed) {
+                if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !item.completed) {
                     pastDueEvents++;
-                    console.log("4")
-                    console.log(currentLocalTime())
-                    console.log(getCurrentLocalDateUnadjusted())
                 } else
                     if (item.startTime < currentLocalTime() && !item.completed) {
                         if (!item.length) {
                             pastDueEvents++;
-                            console.log("5")
-                            console.log(item.startTime)
-                            console.log(currentLocalTime())
                         } else {
                             if (addLengthToTime(item.startTime, item.length) > currentLocalTime()) {
                                 currentEvents++;
                             } else {
                                 pastDueEvents++;
-                                console.log("6")
-                                console.log(addLengthToTime(item.startTime, item.length))
-                                console.log(currentLocalTime())
                             }
                         }
                     }

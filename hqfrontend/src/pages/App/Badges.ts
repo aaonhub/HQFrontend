@@ -38,15 +38,24 @@ export function TodayBadge() {
             habitsData.habitsDueToday.forEach((habit: any) => {
                 if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
                     pastDueEvents++;
+                    console.log("1")
+                    console.log(getCurrentLocalDate())
+                    console.log(getCurrentLocalDateUnadjusted())
                 } else
                     if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
                         if (!habit.length) {
                             pastDueEvents++;
+                            console.log("2")
+                            console.log(habit.schedule.timeOfDay)
+                            console.log(currentLocalTime())
                         } else {
                             if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
                                 currentEvents++;
                             } else {
                                 pastDueEvents++;
+                                console.log("3")
+                                console.log(addLengthToTime(habit.schedule.timeOfDay, habit.length))
+                                console.log(currentLocalTime())
                             }
                         }
 

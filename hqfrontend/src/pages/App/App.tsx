@@ -110,7 +110,8 @@ function App(): JSX.Element {
 
 					{/* Content */}
 					<Box sx={{ flexGrow: 1 }}>
-						<Box sx={{ p: 3, paddingBottom: "128px" }}>
+						{/* <Box sx={{ p: 3, paddingBottom: "128px" }}> */}
+						<Box sx={{ p: 3 }}>
 							<ContentRoutes />
 						</Box>
 

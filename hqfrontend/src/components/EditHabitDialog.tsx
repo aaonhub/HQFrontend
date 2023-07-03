@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -38,11 +38,12 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		new Date(),
 		new Date(),
 		"",
-		false
+		false,
+		"0",
 	));
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-	const { loading, error } = useQuery(GET_HABIT, {
+	useQuery(GET_HABIT, {
 		variables: { habitId: habitId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
@@ -60,7 +61,8 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 					data.getHabit.updatedAt,
 					data.getHabit.userId,
 					data.getHabit.schedule.timeOfDay,
-					data.getHabit.completedToday
+					data.getHabit.completedToday,
+					data.getHabit.length,
 				)
 			)
 			console.log(data.getHabit)

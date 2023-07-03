@@ -27,6 +27,7 @@ import { useGlobalContext } from '../../App/GlobalContextProvider'
 import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
+import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
 
 
 // Models
@@ -58,6 +59,8 @@ const Itinerary: React.FC = () => {
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
 	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
+	const [inboxEvents, setInboxEvents] = useState<EventInput[]>([])
+	const [habitEvents, setHabitEvents] = useState<EventInput[]>([])
 
 	// Calendar State
 	const [events, setEvents] = useState<EventInput[]>([])
@@ -68,50 +71,7 @@ const Itinerary: React.FC = () => {
 	const localDate = getCurrentLocalDate()
 
 
-	function computeEndTime(startTime: string, length: string): string {
-		const startTimeParts = startTime.split(':').map(Number);
-		const lengthParts = length.split(':').map(Number);
 
-		const startDate = new Date();
-		startDate.setHours(startTimeParts[0], startTimeParts[1], startTimeParts[2]);
-
-		const endDate = new Date(startDate.getTime());
-		endDate.setHours(endDate.getHours() + lengthParts[0]);
-		endDate.setMinutes(endDate.getMinutes() + lengthParts[1]);
-
-		const endHours = endDate.getHours().toString().padStart(2, '0');
-		const endMinutes = endDate.getMinutes().toString().padStart(2, '0');
-		const endSeconds = endDate.getSeconds().toString().padStart(2, '0');
-
-		return `${endHours}:${endMinutes}:${endSeconds}`;
-	}
-
-
-	// Helper function to convert to-do list item to an event
-	function toDoItemToEvent(item: InboxItem): EventInput | null {
-		const startTime = item.startTime;
-		const length = item.length;
-		const date = item.startDate ?? '2023-06-21';  // use a default date or throw an error if the date is undefined
-
-		if (!startTime || !length) {
-			return null;
-		}
-
-		return {
-			id: item.id + 'i',
-			title: item.title,
-			start: `${date}T${startTime}`,
-			end: `${date}T${computeEndTime(startTime, length)}`,
-			extendedProps: {
-				description: item.description,
-				completed: item.completed,
-				project: item.project,
-				dueDateTime: item.dueDateTime,
-				startDate: item.startDate,
-				length: length,
-			},
-		};
-	}
 	// Today's To Do Items Query
 	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TO_DO_LIST_ITEMS_BY_START_DATE, {
 		fetchPolicy: 'network-only',
@@ -137,7 +97,7 @@ const Itinerary: React.FC = () => {
 
 			// Convert inboxItems to events and update the state
 			const newEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
-			setEvents(newEvents);
+			setInboxEvents(newEvents);
 		},
 		onError: (error) => {
 			console.log(error);
@@ -165,9 +125,14 @@ const Itinerary: React.FC = () => {
 					habit.endDate,
 					habit.schedule.timeOfDay,
 					habit.completedToday,
+					habit.length,
 				)
 			})
 			setHabits(habits)
+
+			// Convert habits to events and update the state
+			const newEvents = habits.map(habitToEvent).filter(Boolean)
+			setHabitEvents(newEvents);
 		},
 		onError: (error) => {
 			console.log(error)
@@ -201,14 +166,15 @@ const Itinerary: React.FC = () => {
 	}, [habitsData, inboxData, habits, inboxItems])
 
 
+	useEffect(() => {
+		if (habitEvents && inboxEvents) {
+			const newEvents = [...habitEvents, ...inboxEvents]
+			setEvents(newEvents)
+		}
+	}, [habitEvents, inboxEvents])
 
 
 	// Calendar Logic
-	function formatTime(date: Date): string {
-		const hours = date.getHours().toString().padStart(2, '0');
-		const minutes = date.getMinutes().toString().padStart(2, '0');
-		return `${hours}:${minutes}`;
-	}
 	const handleEventChange = debounce((changeInfo) => {
 
 		// Find the index of the event that was changed
@@ -461,8 +427,6 @@ const Itinerary: React.FC = () => {
 
 
 
-
-
 	// Dialog Close Handlers
 	const handleCloseInbox = () => {
 		setSelectedInboxItemId(null)
@@ -509,27 +473,6 @@ const Itinerary: React.FC = () => {
 		}
 	}, [uncompletedItems, scheduledNotifications])
 
-
-	function getHourBeforeCurrentTime() {
-		const date = new Date();
-		let hour = date.getHours();
-		let minute = date.getMinutes();
-		let second = date.getSeconds();
-
-		// adjust hour to be one hour earlier and check it does not go beyond 00:00
-		hour = hour === 0 ? 0 : hour - 1;
-
-		// Ensuring double digit formatting
-		hour = hour < 10 ? 0 + hour : hour;
-		minute = minute < 10 ? 0 + minute : minute;
-		second = second < 10 ? 0 + second : second;
-
-		let hourString = hour < 10 ? "0" + hour.toString() : hour.toString();
-		let minuteString = minute < 10 ? "0" + minute.toString() : minute.toString();
-		let secondString = second < 10 ? "0" + second.toString() : second.toString();
-
-		return hourString + ":" + minuteString + ":" + secondString;
-	}
 
 
 	if (inboxLoading || habitsLoading) return <p>Loading...</p>

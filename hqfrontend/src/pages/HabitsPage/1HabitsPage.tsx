@@ -45,6 +45,7 @@ const HabitsPage = () => {
 					habit.schedule.endDate,
 					habit.schedule.timeOfDay,
 					habit.completedToday,
+					habit.length,
 				);
 			});
 			setHabits(habits);

@@ -1,15 +1,5 @@
 import { gql } from '@apollo/client';
 
-export type HabitFrequency = {
-	startDate: Date
-	endDate: Date | null
-	timeOfDay: string
-	repetitionFrequency: number
-	daysOfTheWeek: Array<string>
-	daysOfTheMonth: Array<number>
-	dayOfTheYear: number
-}
-
 export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'RITUALONLY'
 
 class Habit {
@@ -26,7 +16,8 @@ class Habit {
 		public startDate: Date,
 		public endDate: Date | null,
 		public timeOfDay: string,
-		public completedToday: boolean
+		public completedToday: boolean,
+		public length: string,
 	) {
 		this.id = id;
 		this.title = title;
@@ -41,6 +32,7 @@ class Habit {
 		this.endDate = endDate;
 		this.timeOfDay = timeOfDay || '';
 		this.completedToday = completedToday;
+		this.length = length;
 	}
 }
 

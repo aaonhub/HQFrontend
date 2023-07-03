@@ -22,9 +22,9 @@ const DisplayDailyReview: React.FC<DisplayDailyReviewProps> = ({ dailyReview }) 
 					<Typography variant="subtitle1" color="text.secondary">
 						Gratitudes:
 					</Typography>
-					<List>
+					<List sx={{ ml: 3 }}>
 						{gratitudes.map((item, index) => (
-							<ListItem key={index}>
+							<ListItem key={index} sx={{ mb: -2 }}>
 								<Box component="span" sx={{ pr: 2 }}>&bull;</Box>
 								{item}
 							</ListItem>
@@ -38,9 +38,9 @@ const DisplayDailyReview: React.FC<DisplayDailyReviewProps> = ({ dailyReview }) 
 					<Typography variant="subtitle1" color="text.secondary">
 						Major Events:
 					</Typography>
-					<List>
+					<List sx={{ ml: 3 }}>
 						{majorEvents.map((item, index) => (
-							<ListItem key={index}>
+							<ListItem key={index} sx={{ mb: -2 }}>
 								<Box component="span" sx={{ pr: 2 }}>&bull;</Box>
 								{item}
 							</ListItem>

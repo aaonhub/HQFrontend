@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import EditToDoItemDialog from '../../components/EditToDoItemDialog';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useGlobalContext } from '../App/GlobalContextProvider';
+import dayjs from 'dayjs';
 
 // Queries and Mutations
 import { TO_DO_ITEM_PAGINATION } from '../../models/inboxitem';
@@ -67,7 +68,18 @@ const ToDosPage = () => {
         { field: 'title', headerName: 'Title', width: 600 },
         { field: 'completed', headerName: 'Completed', width: 150 },
         { field: 'startDate', headerName: 'Start Date', width: 150 },
-        { field: 'dueDateTimeFormatted', headerName: 'Due Date Time', width: 150 },
+        {
+            field: 'dueDateTime',
+            headerName: 'Due Date Time',
+            width: 150,
+            valueFormatter: (params) => {
+                if (params.value) {
+                    return dayjs(params.value).format('MM/DD/YYYY');
+                } else {
+                    return "";
+                }
+            }
+        },
         // { field: 'description', headerName: 'Description', width: 300 },
         {
             field: 'createdAtFormatted',

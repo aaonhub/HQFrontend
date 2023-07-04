@@ -67,7 +67,7 @@ const TodayPage = () => {
 
 	return (
 		<>
-			<Container>
+			<Container maxWidth="xl">
 				<Grid container>
 					{/* Day Display */}
 					<Grid item xs={12}>

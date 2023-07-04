@@ -51,7 +51,7 @@ const ProjectPage = () => {
 					description: item.description,
 					completed: item.completed,
 					project: item.project,
-					dueDateTime: item.due_date_time ? new Date(item.due_date_time) : null,
+					dueDateTime: item.due_date_time ? item.due_date_time : "",
 					startDate: item.start_date,
 					startTime: item.start_time,
 					timeCompleted: item.time_completed ? new Date(item.time_completed) : null,

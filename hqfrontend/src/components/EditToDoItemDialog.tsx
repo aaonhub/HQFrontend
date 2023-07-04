@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
 	Dialog,
 	DialogActions,
@@ -74,7 +74,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					description: data.toDoItem.description,
 					completed: data.toDoItem.completed,
 					project: project,
-					dueDateTime: data.toDoItem.dueDateTime,
+					dueDateTime: data.toDoItem.dueDateTime ? new Date(data.toDoItem.dueDateTime).toISOString().slice(0, 16) : "",
 					startDate: data.toDoItem.startDate,
 					startTime: data.toDoItem.startTime,
 					timeCompleted: data.toDoItem.timeCompleted,
@@ -231,6 +231,9 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		setNewInboxItem((prev) => ({ ...prev, [name]: selectedProject }))
 	}
 
+	useEffect(() => {
+		console.log(newInboxItem.dueDateTime)
+	}, [newInboxItem])
 
 
 
@@ -339,7 +342,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 										shrink: true,
 									}}
 									sx={{ marginRight: "2ch" }}
-									value={newInboxItem.dueDateTime ? newInboxItem.dueDateTime : ''}
+									value={newInboxItem.dueDateTime}
 									onChange={handleInputChange}
 								/>
 							</Box>

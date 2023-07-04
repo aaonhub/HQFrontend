@@ -8,7 +8,7 @@ interface InboxItem {
 	description?: string;
 	completed: boolean;
 	project?: Project | null;
-	dueDateTime: Date | null;
+	dueDateTime: string | null;
 	startTime: string | null;
 	startDate: Date | null;
 	timeCompleted: Date | null;

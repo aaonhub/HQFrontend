@@ -63,7 +63,7 @@ const ToDosPage = () => {
         { field: 'title', headerName: 'Title', width: 600 },
         { field: 'completed', headerName: 'Completed', width: 150 },
         { field: 'startDate', headerName: 'Start Date', width: 150 },
-        // { field: 'dueDateTime', headerName: 'Due Date Time', width: 150 },
+        { field: 'dueDateTimeFormatted', headerName: 'Due Date Time', width: 150 },
         // { field: 'description', headerName: 'Description', width: 300 },
         {
             field: 'createdAtFormatted',
@@ -133,7 +133,7 @@ const ToDosPage = () => {
 
     return (
         <>
-            <Container maxWidth="lg">
+            <Container maxWidth="xl">
                 <Grid container direction="column" spacing={2}>
 
                     <Grid item xs={12}>
@@ -142,6 +142,9 @@ const ToDosPage = () => {
                         </Typography>
                     </Grid>
 
+                    {/* Input */}
+
+                    {/* Filters and Sorters */}
                     <Grid item xs={12} direction={"row"} container spacing={2}>
 
                         <Grid item xs={4}>
@@ -171,6 +174,7 @@ const ToDosPage = () => {
 
                     </Grid>
 
+                    {/* Table */}
                     <Grid item xs={12}>
                         <InfiniteScroll
                             dataLength={rows.length}
@@ -183,6 +187,7 @@ const ToDosPage = () => {
                                 columns={columns}
                                 checkboxSelection
                                 onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
+                                disableRowSelectionOnClick
                             />
                         </InfiniteScroll>
                     </Grid>

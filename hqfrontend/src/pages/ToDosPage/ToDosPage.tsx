@@ -1,12 +1,14 @@
-import { Container, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { Button, Container, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
 import EditToDoItemDialog from '../../components/EditToDoItemDialog';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useGlobalContext } from '../App/GlobalContextProvider';
 
 // Queries and Mutations
 import { TO_DO_ITEM_PAGINATION } from '../../models/inboxitem';
+import { ADD_TODO } from '../../models/inboxitem';
 
 
 type Node = {
@@ -25,11 +27,13 @@ interface Edge {
 
 
 const ToDosPage = () => {
+    const { setSnackbar } = useGlobalContext();
     const [rows, setRows] = useState<Node[]>([]);
     const [endCursor, setEndCursor] = useState<string>('');
     const [hasNextPage, setHasNextPage] = useState<boolean>(false);
     const [selectedRow, setSelectedRow] = useState<Node | null>(null);
     const [sortBy, setSortBy] = useState<string>('-created_at');
+    const [newTodo, setNewTodo] = useState<string>('');
 
 
     const rowsRef = useRef<Record<string, Node>>({});
@@ -105,6 +109,28 @@ const ToDosPage = () => {
         });
     }
 
+    const [addTodo] = useMutation(ADD_TODO, {
+        onCompleted: (data) => {
+            setSnackbar({
+                open: true,
+                message: 'To Do Added',
+                severity: 'success',
+            });
+            setNewTodo('');
+            setRows([]);
+            refetch();
+
+        }
+    });
+    const handleAddTodo = () => {
+        addTodo({
+            variables: {
+                title: newTodo,
+                completed: false,
+            }
+        });
+    };
+
 
 
 
@@ -143,6 +169,31 @@ const ToDosPage = () => {
                     </Grid>
 
                     {/* Input */}
+                    <Grid item xs={12} container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField
+                                id="standard-basic"
+                                label="Add To Do"
+                                fullWidth
+                                value={newTodo}
+                                onChange={(event) => setNewTodo(event.target.value)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        handleAddTodo();
+                                    }
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleAddTodo}
+                            >
+                                Add
+                            </Button>
+                        </Grid>
+                    </Grid>
 
                     {/* Filters and Sorters */}
                     <Grid item xs={12} direction={"row"} container spacing={2}>

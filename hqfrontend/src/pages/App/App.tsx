@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Box, CssBaseline, Snackbar } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ThemeProvider from '../SettingsPage/ThemeContext'
-import { Analytics } from '@vercel/analytics/react';
 import Sidebar from './Sidebar'
 import './App.css'
 
@@ -93,7 +92,6 @@ function App(): JSX.Element {
 		<ThemeProvider>
 			<Router>
 				<Box sx={{ display: 'flex', overflow: 'hidden' }}> {/* Add this here */}
-					<Analytics />
 					<CssBaseline />
 					{/* Sidebar */}
 					<Box sx={{

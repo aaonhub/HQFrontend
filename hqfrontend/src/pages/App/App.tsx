@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, Box, CssBaseline, Snackbar } from '@mui/material'
+import { Alert, Box, CssBaseline, Grid, Snackbar } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ThemeProvider from '../SettingsPage/ThemeContext'
 import Sidebar from './Sidebar'
@@ -56,7 +56,6 @@ function RequireAuth({ children }: any) {
 
 function App(): JSX.Element {
 	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
-	const [showSidebar, onSetShowSidebar] = useState(false);
 
 	useAuth(setLoggedIn, setGlobalProfile);
 
@@ -91,33 +90,37 @@ function App(): JSX.Element {
 	return (
 		<ThemeProvider>
 			<Router>
-				<Box sx={{ display: 'flex', overflow: 'hidden' }}> {/* Add this here */}
+				<Box sx={{ display: 'flex', overflow: 'hidden' }}>
 					<CssBaseline />
-					{/* Sidebar */}
-					<Box sx={{
-						width: !showSidebar ? 240 : 56, // Adjust the width based on the value of `showSidebar`
-						transition: 'width 0.2s',
-					}}>
-						<Sidebar
-							onSidebarHide={() => {
-								onSetShowSidebar(false)
-							}}
-							showSidebar={showSidebar}
-						/>
-					</Box>
 
-					{/* Content */}
-					<Box sx={{ flexGrow: 1 }}>
-						{/* <Box sx={{ p: 3, paddingBottom: "128px" }}> */}
-						<Box sx={{ p: 3 }}>
-							<ContentRoutes />
-						</Box>
+					<Grid container spacing={0}>
 
-						{/* Snackbar */}
-						<SnackbarComponent />
+						{/* Sidebar */}
+						<Grid item xs={2}>
+							<Box sx={{
+								transition: 'width 0.2s',
+							}}>
+								<Sidebar />
+							</Box>
+						</Grid>
 
-					</Box>
 
+
+						{/* Content */}
+						<Grid item xs={10}>
+							<Box sx={{ flexGrow: 1 }}>
+								{/* <Box sx={{ p: 3, paddingBottom: "128px" }}> */}
+								<Box sx={{ p: 3 }}>
+									<ContentRoutes />
+								</Box>
+
+
+							</Box>
+						</Grid>
+					</Grid>
+
+					{/* Snackbar */}
+					<SnackbarComponent />
 
 					{/* Constant Input at Bottom */}
 					{showCommandLine &&

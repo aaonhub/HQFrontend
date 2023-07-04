@@ -16,7 +16,7 @@ import { GET_HIDDEN_SIDEBAR_ITEMS } from "../../models/settings"
 
 
 // Sidebar
-export default function Sidebar({ onSidebarHide, showSidebar }) {
+export default function Sidebar() {
 	const { globalProfile } = useGlobalContext();
 	const { hiddenItems, setHiddenItems } = useGlobalContext();
 	const location = useLocation();
@@ -71,7 +71,6 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 		<div
 			className={clsx(
 				'fixed inset-y-0 left-0 bg-card w-full sm:w-20 xl:w-60 sm:flex flex-col z-10',
-				showSidebar ? 'flex' : 'hidden',
 			)}
 		>
 
@@ -90,7 +89,6 @@ export default function Sidebar({ onSidebarHide, showSidebar }) {
 					<IconButton
 						icon="res-react-dash-sidebar-close"
 						className="block sm:hidden"
-						onClick={onSidebarHide}
 					/>
 				</div>
 			</div>

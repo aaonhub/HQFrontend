@@ -185,7 +185,7 @@ const SettingsPage = () => {
 
 
 			{/* Logout */}
-			<Box mt={2} position="absolute" bottom="0">
+			<Box mt={2}>
 				<Button variant="contained" color="error" onClick={handleLogout}>Logout</Button>
 			</Box>
 

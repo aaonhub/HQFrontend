@@ -65,7 +65,7 @@ const ToDosPage = () => {
 
 
     const columns: GridColDef[] = [
-        { field: 'title', headerName: 'Title', width: 600 },
+        { field: 'title', headerName: 'Title', width: 400 },
         { field: 'completed', headerName: 'Completed', width: 150 },
         { field: 'startDate', headerName: 'Start Date', width: 150 },
         {

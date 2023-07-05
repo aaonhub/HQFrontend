@@ -126,7 +126,6 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 	// InboxItem Update
 	const [updateInboxItem] = useMutation(UPDATE_TODO)
 	const handleSave = () => {
-		console.log(newInboxItem)
 
 		const dueDateTime = newInboxItem.dueDateTime ? new Date(newInboxItem.dueDateTime) : null
 		const length = showCustomInput ? customLength : newInboxItem.length
@@ -230,10 +229,6 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		const selectedProject = projects.find(project => project.id === value)
 		setNewInboxItem((prev) => ({ ...prev, [name]: selectedProject }))
 	}
-
-	useEffect(() => {
-		console.log(newInboxItem.dueDateTime)
-	}, [newInboxItem])
 
 
 

@@ -15,14 +15,14 @@ interface HabitInboxRosettaProps {
 const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 	const SimpleItemArray: SimpleItem[] = [];
 
-	
+
 	if (habits) {
 		habits.forEach((habit) => {
 			SimpleItemArray.push({
+				id: habit.id + "h",
 				completedToday: habit.completedToday,
 				title: habit.title ?? '',
 				type: 'habit',
-				id: habit.id + "h",
 				startTime: habit.timeOfDay ?? "",
 				startDate: habit.startDate ?? "",
 			});
@@ -39,6 +39,7 @@ const HabitInboxRosetta = ({ habits, inboxItems }: HabitInboxRosettaProps) => {
 				startTime: inboxItem.startTime ? inboxItem.startTime : undefined,
 				length: inboxItem.length ? inboxItem.length : undefined,
 				startDate: inboxItem.startDate ?? undefined,
+				description: inboxItem.description ?? undefined,
 			});
 		});
 	}

@@ -3,9 +3,14 @@ import { Checkbox, List, ListItem, ListItemText } from '@mui/material'
 import { Draggable } from '@fullcalendar/interaction'
 import { v4 as uuidv4 } from 'uuid';
 import { addLengthToTime, currentLocalTime, getCurrentLocalDate, getCurrentLocalDateUnadjusted } from '../../../components/DateFunctions';
+import DescriptionIcon from '@mui/icons-material/Description';
+
+// Models
+import SimpleItem from '../../../models/simpleitem';
+
 
 interface ItineraryListProps {
-	list: any
+	list: SimpleItem[]
 	setSelectedInboxItemId: any
 	setSelectedHabitId: any
 	handleCheckItem: any
@@ -52,7 +57,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 					color = "red"
 				} else if (!item.startTime) {
 					color = "grey"
-				} else if(item.completedToday){
+				} else if (item.completedToday) {
 					color = "grey"
 				} else
 					if (item.startTime < currentLocalTime()) {
@@ -107,7 +112,14 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 						/>
 						<ListItemText
 							primary={item.title}
-							secondary={item.startTime?.slice(0, -3)}
+							secondary={
+								<div style={{ display: 'flex', alignItems: 'center' }}>
+									{item.description && (
+										<DescriptionIcon style={{ fontSize: '1rem', marginRight: '0.5rem' }} />
+									)}
+									{item.startTime?.slice(0, -3)}
+								</div>
+							}
 						/>
 					</ListItem>
 				)

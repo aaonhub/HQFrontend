@@ -9,6 +9,7 @@ export class SimpleItem {
 		public startTime?: string,
 		public length?: string,
 		public startDate?: Date,
+		public description?: string
 	) {
 		this.id = id;
 		this.completedToday = completedToday;
@@ -17,6 +18,7 @@ export class SimpleItem {
 		this.startTime = startTime;
 		this.length = length;
 		this.startDate = startDate;
+		this.description = description;
 	}
 }
 

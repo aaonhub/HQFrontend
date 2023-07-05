@@ -113,12 +113,12 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 						<ListItemText
 							primary={item.title}
 							secondary={
-								<div style={{ display: 'flex', alignItems: 'center' }}>
+								<span style={{ display: 'flex', alignItems: 'center' }}>
 									{item.description && (
 										<DescriptionIcon style={{ fontSize: '1rem', marginRight: '0.5rem' }} />
 									)}
 									{item.startTime?.slice(0, -3)}
-								</div>
+								</span>
 							}
 						/>
 					</ListItem>

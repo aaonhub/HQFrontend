@@ -171,10 +171,10 @@ export default function Sidebar() {
 						}
 					</div>
 					<div className="flex-grow block sm:hidden xl:block" />
-					<Icon
+					{/* <Icon
 						path="res-react-dash-options"
 						className="block sm:hidden xl:block w-3 h-3"
-					/>
+					/> */}
 				</div>
 			</div>
 

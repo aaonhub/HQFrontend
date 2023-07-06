@@ -238,20 +238,22 @@ const ToDosPage = () => {
                     </Grid>
 
                     {/* Table */}
-                    <Grid item xs={12}>
+                    <Grid item xs={12} style={{ width: '100%', overflowX: 'auto' }}>
                         <InfiniteScroll
                             dataLength={rows.length}
                             next={fetchMoreData}
                             hasMore={hasNextPage}
                             loader={<h4>Loading...</h4>}
                         >
-                            <DataGrid
-                                rows={rows.map(row => ({ ...row, id: row.id }))}
-                                columns={columns}
-                                checkboxSelection
-                                onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
-                                disableRowSelectionOnClick
-                            />
+                            <div style={{ width: 'max-content' }}>
+                                <DataGrid
+                                    rows={rows.map(row => ({ ...row, id: row.id }))}
+                                    columns={columns}
+                                    checkboxSelection
+                                    onRowClick={(rowParams) => setSelectedRow(rowParams.row)}
+                                    disableRowSelectionOnClick
+                                />
+                            </div>
                         </InfiniteScroll>
                     </Grid>
 

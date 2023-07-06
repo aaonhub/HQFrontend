@@ -96,7 +96,7 @@ function App(): JSX.Element {
 					<Grid container spacing={0}>
 
 						{/* Sidebar */}
-						<Grid item xs={2}>
+						<Grid item xs={1} md={2}>
 							<Box sx={{
 								transition: 'width 0.2s',
 							}}>

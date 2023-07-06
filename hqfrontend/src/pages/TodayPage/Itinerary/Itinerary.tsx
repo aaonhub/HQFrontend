@@ -496,7 +496,7 @@ const Itinerary: React.FC = () => {
 
 
 				{/* Calendar */}
-				<Grid item xs={6} md={6} style={{ height: '100%', overflowY: 'auto' }}>
+				<Grid item xs={12} md={6} order={{ xs: 2, md: 1 }} style={{ height: '100%', overflowY: 'auto' }}>
 
 					<FullCalendar
 						ref={calendarRef}
@@ -521,7 +521,7 @@ const Itinerary: React.FC = () => {
 
 
 				{/* Itinerary */}
-				<Grid item xs={6} md={6} style={{ height: '100%', overflowY: 'auto' }}>
+				<Grid item xs={12} md={6} order={{ xs: 1, md: 2 }} style={{ height: '100%', overflowY: 'auto' }}>
 					<CardContent>
 						<Typography variant="h5" gutterBottom>
 							Itinerary

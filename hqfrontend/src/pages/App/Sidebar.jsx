@@ -70,7 +70,7 @@ export default function Sidebar() {
 	return (
 		<div
 			className={clsx(
-				'fixed inset-y-0 left-0 bg-card w-full sm:w-20 xl:w-60 sm:flex flex-col z-10',
+				'fixed inset-y-0 left-0 bg-card md:w-20 xl:w-60 sm:flex flex-col z-10',
 			)}
 		>
 
@@ -121,7 +121,7 @@ export default function Sidebar() {
 				<div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block sidebar-item">
 					OTHER
 				</div>
-				
+
 				{sidebarItems[1].map((i) => (
 					!hiddenItems.includes(i.id) && (
 						<MenuItem

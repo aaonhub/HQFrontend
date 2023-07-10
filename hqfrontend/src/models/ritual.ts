@@ -31,7 +31,6 @@ export default Ritual
 
 
 // Queries
-// Updated to django
 export const GET_RITUALS = gql`
 	query {
 		rituals {
@@ -59,11 +58,25 @@ export const CREATE_RITUAL = gql`
 		$title: String!
 		$habits: [ID]!
 		$ritualItems: JSONString!
+		$frequency: String!
+		$start_date: String!
+		$end_date: String!
+		$time_of_day: String!
+		$days_of_the_week: [String]!
+		$days_of_the_month: [Int]!
+		$days_of_the_year: Int!
 	) {
 		createRitual(
 			title: $title
 			habits: $habits
 			ritualItems: $ritualItems
+			frequency: $frequency
+			startDate: $start_date
+			endDate: $end_date
+			timeOfDay: $time_of_day
+			daysOfTheWeek: $days_of_the_week
+			daysOfTheMonth: $days_of_the_month
+			daysOfTheYear: $days_of_the_year
 		) {
 			ritual {
 				id

@@ -68,11 +68,9 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId }) 
         fetchPolicy: 'network-only',
         variables: { id: ritualId },
         onCompleted: (data) => {
-            console.log(data)
             if (data && data.ritual) {
                 setRitualTitle(data.ritual.title)
                 setRitualItems(JSON.parse(data.ritual.ritualItems))
-                console.log(data.ritual.ritualItems)
             }
             if (!data.ritual.inProgress) {
                 startRitual({

@@ -1,25 +1,10 @@
 import { gql } from '@apollo/client'
 
 
-export type Type = 'TEXT' | 'COMPLETE_HABIT' | 'COMPLETE_TODOITEM'
-
-interface LogHabit {
-	id: string
-	title: string
-}
-
-interface LogToDoItem {
-	id: string
-	title: string
-}
-
 interface Log {
 	id: string
 	logTime: Date
-	type?: Type
 	text?: string
-	habit?: LogHabit
-	toDoItem?: LogToDoItem
 }
 
 class Log {
@@ -27,16 +12,10 @@ class Log {
 		id,
 		text,
 		logTime,
-		type,
-		habit,
-		toDoItem,
 	}: Log) {
 		this.id = id;
 		this.text = text;
 		this.logTime = logTime;
-		this.type = type;
-		this.habit = habit;
-		this.toDoItem = toDoItem;
 	}
 }
 
@@ -50,15 +29,6 @@ export const GET_TODAY_LOGS = gql`
 			id
 			text
 			logTime
-			type
-			completeHabit {
-				id
-				title
-			}
-			completeTodoitem {
-				id
-				title
-			}
 		}
 	}
 `;
@@ -68,16 +38,7 @@ export const GET_LOGS = gql`
 		logs {
 			text
 			id
-			completeHabit {
-				id
-				title
-			}
-			completeTodoitem {
-				id
-				title
-			}
 			logTime
-			type
 		}
 	}
 `;
@@ -92,18 +53,18 @@ export const LAST_LOG_TIME = gql`
 // Mutations
 export const ADD_LOG = gql`
 	mutation createLog(
-	$text: String,
-	$logTime: DateTime!
-) {
-	createLog(
-		text: $text,
-		logTime: $logTime
+		$text: String,
+		$logTime: DateTime!
 	) {
-			log {
-			id
+		createLog(
+			text: $text,
+			logTime: $logTime
+		) {
+				log {
+				id
+			}
 		}
 	}
-}
 `;
 
 export const DELETE_LOG = gql`

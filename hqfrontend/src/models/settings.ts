@@ -12,6 +12,7 @@ export default Settings
 
 
 // Queries
+// Update Later
 export const GET_SETTINGS = gql`
 	query GetSetting($userId: ID!) {
 		setting(id: $userId) {
@@ -39,6 +40,7 @@ export const GET_HIDDEN_SIDEBAR_ITEMS = gql`
 
 
 // Mutations
+// Update Later
 export const UPDATE_SETTING = gql`
 	mutation UpdateSetting($userId: ID!, $theme: ENUM_SETTING_THEME) {
 		updateSetting(id: $userId, data: { theme: $theme}) {
@@ -51,7 +53,7 @@ export const UPDATE_SETTING = gql`
 		}
 	}
 `
-
+// Update Later
 export const CREATE_SETTING = gql`
 	mutation CreateSetting($userId: ID!, $theme: ENUM_SETTING_THEME) {
 		createSetting(data: { user: $userId, theme: $theme }) {

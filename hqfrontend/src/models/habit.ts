@@ -137,7 +137,7 @@ export const CHECK_HABIT = gql`
 		}
 	}
 `
-
+// Update Later
 export const DELETE_HABIT_HISTORY = gql`
 	mutation DeleteHabitHistoryAndUpdateLastCompleted($id: ID!, $habitId: ID!, $lastCompleted: Date!) {
 		deleteHabitHistory(id: $id) {

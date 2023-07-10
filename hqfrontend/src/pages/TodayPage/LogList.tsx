@@ -31,22 +31,9 @@ const LogList = () => {
 				const newLog = new Log({
 					id: log.id,
 					logTime: log.logTime,
-					type: log.type,
+					text: log.text,
 				})
-
-				if (log.type === "TEXT") {
-					newLog.text = log.text
-				} else if (log.type === 'COMPLETE_TODOITEM') {
-					newLog.toDoItem = {
-						id: log.completeTodoitem.id,
-						title: log.completeTodoitem.title,
-					}
-				} else if (log.type === 'COMPLETE_HABIT') {
-					newLog.habit = {
-						id: log.completeHabit.id,
-						title: log.completeHabit.title,
-					}
-				}
+				
 				return newLog
 
 			})
@@ -72,7 +59,7 @@ const LogList = () => {
 					logTime: new Date(),
 				}
 			})
-			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date(), type: 'TEXT' }))
+			logArray.unshift(new Log({ id: "", text: logText, logTime: new Date() }))
 		}
 	}
 
@@ -141,12 +128,7 @@ const LogList = () => {
 						{logArray.map((log) => (
 							<ListItem key={log.id}>
 								<ListItemText
-									primary={
-										log.type === 'TEXT' ? log.text :
-											log.type === 'COMPLETE_TODOITEM' ? `Completed to do item: ${log.toDoItem && log.toDoItem.title}` :
-												log.type === 'COMPLETE_HABIT' ? `Completed habit: ${log.habit && log.habit.title}` :
-													null
-									}
+									primary={log.text}
 									secondary={format(new Date(log.logTime), 'hh:mm a').toString()}
 								/>
 								<IconButton onClick={() => handleDeleteLog(log.id)} color="secondary" aria-label="delete log">

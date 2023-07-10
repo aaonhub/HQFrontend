@@ -32,22 +32,10 @@ const LogPage = () => {
 				const newLog = new Log({
 					id: log.id,
 					logTime: log.logTime,
-					type: log.type,
 				})
 
-				if (log.type === "TEXT") {
-					newLog.text = log.text
-				} else if (log.type === 'COMPLETE_TODOITEM') {
-					newLog.toDoItem = {
-						id: log.completeTodoitem.id,
-						title: log.completeTodoitem.title,
-					}
-				} else if (log.type === 'COMPLETE_HABIT') {
-					newLog.habit = {
-						id: log.completeHabit.id,
-						title: log.completeHabit.title,
-					}
-				}
+				newLog.text = log.text
+
 				return newLog
 
 			})
@@ -71,7 +59,7 @@ const LogPage = () => {
 				setLogText('')
 			})
 
-			logArray.unshift(new Log({ id: '', text: logText, logTime: new Date(), type: 'TEXT' }))
+			logArray.unshift(new Log({ id: '', text: logText, logTime: new Date() }))
 
 			refetch()
 		}

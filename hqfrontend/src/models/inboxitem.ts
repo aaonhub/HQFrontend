@@ -84,7 +84,7 @@ export const GET_INBOX_TODOS = gql`
 		}
 	}
 `;
-
+// Backend Tested
 export const GET_INBOX_TODO = gql`
 	query getToDoItem($id: ID!) {
 		toDoItem(id: $id) {

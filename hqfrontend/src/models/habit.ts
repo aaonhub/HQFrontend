@@ -55,7 +55,7 @@ export const GET_HABIT = gql`
 				endDate
 				timeOfDay
 				daysOfTheMonth
-				dayOfTheYear
+				daysOfTheYear
 				frequency
 				daysOfTheWeek{
 					name

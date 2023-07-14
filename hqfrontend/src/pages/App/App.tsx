@@ -38,6 +38,7 @@ import AccountabilityPage from '../AccountabilityPage/1AccountabilityPage'
 import ToDosPage from '../ToDosPage/ToDosPage';
 import { useAuth } from './auth';
 import CommandLine from './CommandLine';
+import PlanningPage from '../PlanningPage/PlanningPage'
 
 
 
@@ -92,46 +93,34 @@ function App(): JSX.Element {
 			<Router>
 				<Box sx={{ display: 'flex', overflow: 'hidden' }}>
 					<CssBaseline />
-
-					<Grid container spacing={0}>
-
-						{/* Sidebar */}
-						<Grid item xs={1} md={2}>
-							<Box sx={{
-								transition: 'width 0.2s',
-							}}>
-								<Sidebar />
-							</Box>
-						</Grid>
-
-
-
-						{/* Content */}
-						<Grid item xs={10}>
-							<Box sx={{ flexGrow: 1 }}>
-								{/* <Box sx={{ p: 3, paddingBottom: "128px" }}> */}
-								<Box sx={{ p: 3 }}>
-									<ContentRoutes />
-								</Box>
-
-
-							</Box>
-						</Grid>
-					</Grid>
-
+	
+					{/* Sidebar */}
+					<Box sx={{
+						width: '240px', // Specify a fixed width for the sidebar
+						transition: 'width 0.2s',
+					}}>
+						<Sidebar />
+					</Box>
+	
+					{/* Content */}
+					<Box sx={{ flexGrow: 1 }}>
+						<Box sx={{ p: 3 }}>
+							<ContentRoutes />
+						</Box>
+					</Box>
+	
 					{/* Snackbar */}
 					<SnackbarComponent />
-
+	
 					{/* Constant Input at Bottom */}
 					{showCommandLine &&
 						<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
 					}
-
-
 				</Box>
 			</Router>
 		</ThemeProvider>
 	);
+	
 }
 
 
@@ -173,6 +162,9 @@ function ContentRoutes(): JSX.Element {
 			</RequireAuth>} />
 			<Route path="/todos" element={<RequireAuth>
 				<ToDosPage />
+			</RequireAuth>} />
+			<Route path="/plan" element={<RequireAuth>
+				<PlanningPage />
 			</RequireAuth>} />
 
 

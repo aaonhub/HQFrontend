@@ -120,7 +120,8 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 			<TextField
 				label="Gratitudes"
 				multiline
-				rows={4}
+				minRows={4}
+				maxRows={32}
 				value={gratitudes}
 				autoComplete="off"
 				onChange={(e) => setGratitudes(e.target.value)}
@@ -132,7 +133,8 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 			<TextField
 				label="Major Events"
 				multiline
-				rows={4}
+				minRows={4}
+				maxRows={32}
 				value={majorEvents}
 				autoComplete="off"
 				onChange={(e) => setMajorEvents(e.target.value)}

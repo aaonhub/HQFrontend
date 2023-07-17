@@ -4,6 +4,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useQuery, useMutation } from '@apollo/client'
 import YearDayTitles from '../../models/daytitles'
+import { useGlobalContext } from '../App/GlobalContextProvider'
 
 // Queries and Mutations
 import { GET_DAY_TITLES_BY_YEAR } from '../../models/daytitles'
@@ -34,6 +35,8 @@ function useDebounce(value: any, delay: number) {
 }
 
 const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
+	const { setSnackbar } = useGlobalContext();
+
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const [year, setYear] = useState<number>(new Date().getFullYear());
 	const [showSelect, setShowSelect] = useState<boolean>(false)
@@ -80,11 +83,15 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 				},
 			});
 		}
-	}, [data, loading, error, createDayTitles]);
+	}, [data, loading, error, createDayTitles, year]);
 
 	const [updateDayTitles] = useMutation(UPDATE_DAY_TITLES, {
 		onCompleted: (data) => {
-			console.log(data)
+			setSnackbar({
+				open: true,
+				message: "Yearly plan updated",
+				severity: "success"
+			})
 		},
 		onError: (error) => {
 			console.log(error)

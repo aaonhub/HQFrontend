@@ -12,16 +12,11 @@ export default Settings
 
 
 // Queries
-// Update Later
 export const GET_SETTINGS = gql`
-	query GetSetting($userId: ID!) {
-		setting(id: $userId) {
-			data {
-				id
-				attributes {
-					theme
-				}
-			}
+	query {
+		settings {
+			id
+			projectOrder
 		}
 	}
 `
@@ -82,6 +77,16 @@ export const UPDATE_HIDDEN_SIDEBAR_ITEMS = gql`
 		updateHiddenSidebarItems(hiddenSidebarItems: $HiddenSidebarItems){
 			settings{
 				hiddenSidebarItems
+			}
+		}
+	}
+`
+
+export const UPDATE_OR_CREATE_PROJECT_ORDER = gql`
+	mutation($projectOrder: String!){
+		updateOrCreateProjectOrder(projectOrder: $projectOrder){
+			settings{
+				id
 			}
 		}
 	}

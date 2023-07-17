@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 interface IGlobalContext {
+	// Globals
 	loggedIn: boolean;
 	setLoggedIn: (value: boolean) => void;
 	globalProfile: any;
@@ -15,6 +16,8 @@ interface IGlobalContext {
 		open: boolean;
 		severity: "success" | "error" | "info" | "warning";
 	}) => void;
+
+	// Sidebar
 	todayBadges: [number | boolean, number | boolean];
 	setTodayBadges: (value: [number | boolean, number | boolean]) => void;
 	dailyReviewBadges: [number | boolean, number | boolean];
@@ -23,6 +26,16 @@ interface IGlobalContext {
 	setLogBadges: (value: [number | boolean, number | boolean]) => void;
 	hiddenItems: any;
 	setHiddenItems: (value: any) => void;
+
+	// Projects
+	projectOrder: {
+		pinned: string[];
+		unpinned: string[];
+	};
+	setProjectOrder: (value: {
+		pinned: string[];
+		unpinned: string[];
+	}) => void;
 
 }
 
@@ -36,6 +49,7 @@ export const useGlobalContext = () => {
 };
 
 export const GlobalContextProvider = ({ children }: { children: React.ReactNode }) => {
+	// Globals
 	const [loggedIn, setLoggedIn] = useState(false);
 	const [globalProfile, setGlobalProfile] = useState<string>("");
 	const [snackbar, setSnackbar] = useState({
@@ -50,15 +64,24 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 	const [logBadges, setLogBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 	const [hiddenItems, setHiddenItems] = useState(localStorage.getItem('hiddenSidebarItems') ? JSON.parse(localStorage.getItem('hiddenSidebarItems') || '') : []);
 
+	// Projects
+	const [projectOrder, setProjectOrder] = useState({
+		pinned: [] as string[],
+		unpinned: [] as string[],
+	});
+
 
 	return (
 		<GlobalContext.Provider value={{
+			// Globals
 			loggedIn,
 			setLoggedIn,
 			globalProfile,
 			setGlobalProfile,
 			snackbar,
 			setSnackbar,
+
+			// Sidebar
 			todayBadges,
 			setTodayBadges,
 			dailyReviewBadges,
@@ -66,7 +89,12 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			logBadges,
 			setLogBadges,
 			hiddenItems,
-			setHiddenItems
+			setHiddenItems,
+
+			// Projects
+			projectOrder,
+			setProjectOrder,
+
 		}
 		}>
 			{children}

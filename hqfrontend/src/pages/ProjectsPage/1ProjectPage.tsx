@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, Typography, TextField, List, Container } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
+import styles from './ProjectPage.module.css'
 
 // Components
 import EditInboxItemDialog from '../../components/EditToDoItemDialog'
@@ -173,21 +174,6 @@ const ProjectPage = () => {
 	}
 
 
-
-
-	// Edit to do item
-	const handleClose = () => {
-		setSelectedInboxItem(undefined)
-		refetch()
-	}
-
-
-
-
-	// Change order of to do items
-	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
-		onError: (error) => console.log(error.networkError),
-	})
 	const handleProjectItemOrderChangeComplete = (evt: SortableEvent) => {
 		const newIndex = evt.newIndex
 		const oldIndex = evt.oldIndex
@@ -212,6 +198,20 @@ const ProjectPage = () => {
 		})
 	}
 
+
+	// Edit to do item
+	const handleClose = () => {
+		setSelectedInboxItem(undefined)
+		refetch()
+	}
+
+
+
+
+	// Change order of to do items
+	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
+		onError: (error) => console.log(error.networkError),
+	})
 
 
 
@@ -260,10 +260,15 @@ const ProjectPage = () => {
 
 
 			{/* To-Do Items */}
-			<List sx={{ width: '100%', bgcolor: 'background.paper', marginBottom: 2 }}>
+			<List sx={{ width: '100%', marginBottom: 2 }}>
 				<ReactSortable
 					list={projectItemArray}
 					setList={setProjectItemArray}
+					group="groupName"
+					animation={50}
+					delayOnTouchOnly={true}
+					delay={1}
+					swapThreshold={.9}
 					onEnd={handleProjectItemOrderChangeComplete}
 				>
 					{projectItemArray.map((toDoItem) =>

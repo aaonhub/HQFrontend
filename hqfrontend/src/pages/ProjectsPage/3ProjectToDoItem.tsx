@@ -68,6 +68,10 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 					</>
 				}
 				disablePadding
+				style={{ 
+					marginBottom: 4,
+					backgroundColor: "black",
+				}}
 			>
 				<ListItemButton role={undefined} dense>
 

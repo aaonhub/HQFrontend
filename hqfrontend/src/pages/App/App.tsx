@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, Box, CssBaseline, Grid, Snackbar } from '@mui/material'
+import { Alert, Box, CssBaseline, Snackbar } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ThemeProvider from '../SettingsPage/ThemeContext'
 import Sidebar from './Sidebar'

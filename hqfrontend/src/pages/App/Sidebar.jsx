@@ -43,6 +43,7 @@ export default function Sidebar() {
 			{ id: '6', title: 'Reviews', link: '/dailyreview', notifications: DailyReviewBadge() },
 			{ id: '8', title: 'Accountability', link: '/accountability', notifications: false },
 			{ id: '11', title: 'To Dos', link: '/todos', notifications: false },
+			{ id: '12', title: 'Plan', link: '/plan', notifications: false}
 		],
 		[
 			{ id: '9', title: 'Settings', link: '/settings', notifications: false },
@@ -272,7 +273,7 @@ function SidebarIcons({ id }) {
 		),
 		4: (
 			<>
-				<path d="M19 22H5C3.89543 22 3 21.1046 3 20V6C3 4.89543 3.89543 4 5 4H7V2H9V4H15V2H17V4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22ZM5 10V20H19V10H5ZM5 6V8H19V6H5ZM17 14H7V12H17V14Z" />
+				<svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /><ellipse cx="256" cy="256" rx="267.57" ry="173.44" transform="rotate(-45 256 256.002)" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32" /></svg>
 			</>
 		),
 		5: (
@@ -294,6 +295,11 @@ function SidebarIcons({ id }) {
 		11: (
 			<>
 				<svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><path d="M256 48L80 240h352L256 48z" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" /><path d="M256 48v288h208M256 48v288H48" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" /><path d="M368 448l-96-160-96 160M368 448H144" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" /></svg>
+			</>
+		),
+		12: (
+			<>
+				<path d="M19 22H5C3.89543 22 3 21.1046 3 20V6C3 4.89543 3.89543 4 5 4H7V2H9V4H15V2H17V4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22ZM5 10V20H19V10H5ZM5 6V8H19V6H5ZM17 14H7V12H17V14Z" />
 			</>
 		),
 	};

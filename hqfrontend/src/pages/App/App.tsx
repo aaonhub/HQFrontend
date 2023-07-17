@@ -93,25 +93,26 @@ function App(): JSX.Element {
 			<Router>
 				<Box sx={{ display: 'flex', overflow: 'hidden' }}>
 					<CssBaseline />
-	
+
 					{/* Sidebar */}
 					<Box sx={{
 						width: '240px', // Specify a fixed width for the sidebar
 						transition: 'width 0.2s',
+						flexShrink: 0, // Prevents the sidebar from shrinking
 					}}>
 						<Sidebar />
 					</Box>
-	
+
 					{/* Content */}
-					<Box sx={{ flexGrow: 1 }}>
+					<Box sx={{ flexGrow: 1, flexShrink: 1, overflow: 'auto' }}> {/* Add overflow: 'auto' */}
 						<Box sx={{ p: 3 }}>
 							<ContentRoutes />
 						</Box>
 					</Box>
-	
+
 					{/* Snackbar */}
 					<SnackbarComponent />
-	
+
 					{/* Constant Input at Bottom */}
 					{showCommandLine &&
 						<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
@@ -120,7 +121,7 @@ function App(): JSX.Element {
 			</Router>
 		</ThemeProvider>
 	);
-	
+
 }
 
 

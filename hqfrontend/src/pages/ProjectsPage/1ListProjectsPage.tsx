@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, List, Typography, TextField } from '@mui/material'
 import ProjectListItem from './3ListProjectItem'
-import { useGlobalContext } from '../App/GlobalContextProvider'
 
 // Queries and Mutations
 import { GET_PROJECTS } from '../../models/project'
@@ -22,6 +21,7 @@ const ProjectsPage = () => {
 	}, []);
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
+	const [orderLoaded, setOrderLoaded] = useState(false)
 
 
 	// Projects Query
@@ -43,7 +43,7 @@ const ProjectsPage = () => {
 
 
 	// Project Order
-	const { data: projectOrderData, loading: projectOrderLoading, error: projectOrderError } = useQuery(GET_SETTINGS, {
+	const { data: projectOrderData } = useQuery(GET_SETTINGS, {
 		fetchPolicy: 'network-only',
 		onError: (error) => console.log(error),
 	})
@@ -78,6 +78,7 @@ const ProjectsPage = () => {
 
 			console.log(projects);
 			setProjects(projects);
+			setOrderLoaded(true);
 		}
 	}, [data, projectOrderData]);
 
@@ -129,8 +130,13 @@ const ProjectsPage = () => {
 
 
 
-	if (loading || projectOrderLoading) {
-		return <div>Loading...</div>
+	if (!orderLoaded || loading) {
+		return (
+			<div>
+				{orderLoaded && <div>1Loading...</div>}
+				{loading && <div>2Loading...</div>}
+			</div>
+		)
 	}
 
 	if (error) {

@@ -33,6 +33,7 @@ const SidebarSettings: FC = () => {
         "6",
         "8",
         "11",
+        "12",
     ];
 
     const titles: TitleMapping = {
@@ -45,6 +46,7 @@ const SidebarSettings: FC = () => {
         "6": "Reviews",
         "8": "Accountability",
         "11": "To Dos",
+        "12": "Plan",
     };
 
     const [updateHiddenSidebarItems] = useMutation(UPDATE_HIDDEN_SIDEBAR_ITEMS);

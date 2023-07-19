@@ -99,7 +99,7 @@ const ProjectPage = () => {
 	// Tab Title
 	useEffect(() => {
 		if (data) {
-			document.title = data.project.codename ? data.project.codename : "Project"
+			document.title = data.project.codename ? data.project.codename + " - HQ" : "Project"
 		}
 	}, [data]);
 
@@ -196,6 +196,11 @@ const ProjectPage = () => {
 			},
 		})
 	}
+	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
+		onError: (error) => console.log(error.networkError),
+	})
+
+
 
 
 	// Edit to do item
@@ -206,11 +211,6 @@ const ProjectPage = () => {
 
 
 
-
-	// Change order of to do items
-	const [changeProjectItemOrder] = useMutation(UPDATE_PROJECT_ITEM_ORDER, {
-		onError: (error) => console.log(error.networkError),
-	})
 
 
 

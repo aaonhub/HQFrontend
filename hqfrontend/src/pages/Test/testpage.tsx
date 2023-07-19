@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Box, Button, Container, Divider } from '@mui/material';
-import TemplateDialog from './DialogTemplate';
-import { ReactSortable } from "react-sortablejs";
+import { Box, Button, Container, Divider,  } from '@mui/material';
+
+import ReactDNDTest from './TestFiles/ReactDNDTest';
+import SortableList from './TestFiles/SortableList';
+import DraggableTest from './TestFiles/DraggableTest';
 
 
 const Test = () => {
-	const [currentView, setCurrentView] = useState<string>('dragtest');
+	const [currentView, setCurrentView] = useState<string>('reactdnd');
 
 	return (
 		<Container>
 			<Box>
+				<Button onClick={() => setCurrentView('reactdnd')}>React DND Test</Button>
 				<Button onClick={() => setCurrentView('dragtest')}>Draggable Test</Button>
-				<Button onClick={() => setCurrentView('dialog')}>Dialog Test</Button>
+				<Button onClick={() => setCurrentView('sortable')}>Sortable Test</Button>
 			</Box>
 
 			<Divider
@@ -22,13 +25,9 @@ const Test = () => {
 			/>
 
 			<Box>
-				{currentView === 'dragtest' &&
-					<DraggableTest />
-				}
-
-				{currentView === 'dialog' &&
-					<DialogTest />
-				}
+				{currentView === 'reactdnd' && <ReactDNDTest />}
+				{currentView === 'sortable' && <SortableList />}
+				{currentView === 'dragtest' && <DraggableTest />}
 			</Box>
 
 		</Container>
@@ -44,20 +43,6 @@ export default Test;
 
 
 
-const DraggableTest = () => {
-	const [state, setState] = useState([
-		{ id: 1, name: "shrek" },
-		{ id: 2, name: "fiona" },
-	]);
-
-	return (
-		<ReactSortable list={state} setList={setState}>
-			{state.map((item) => (
-				<div key={item.id}>{item.name}</div>
-			))}
-		</ReactSortable>
-	);
-}
 
 
 
@@ -65,24 +50,3 @@ const DraggableTest = () => {
 
 
 
-
-
-
-
-
-
-
-
-const DialogTest = () => {
-	const [showTemplateDialog, setShowTemplateDialog] = useState<boolean>(false);
-
-	return (
-		<Box>
-			<Button onClick={() => setShowTemplateDialog(true)}>Open</Button>
-
-			{showTemplateDialog &&
-				<TemplateDialog id="1" handleClose={() => setShowTemplateDialog(false)} />
-			}
-		</Box>
-	);
-}

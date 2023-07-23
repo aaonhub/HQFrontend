@@ -7,26 +7,27 @@ import ProjectListItem from './3ListProjectItem'
 import { GET_PROJECTS } from '../../models/project'
 import { CREATE_PROJECT } from '../../models/project'
 import { UPDATE_OR_CREATE_PROJECT_ORDER } from '../../models/settings'
-import { GET_SETTINGS } from '../../models/settings'
 
 // Models
 import Project from '../../models/project'
 import { ReactSortable, SortableEvent } from 'react-sortablejs'
+import { sortObjectsByIds } from '../../components/MiscFunctions'
 
 
 const ProjectsPage = () => {
 	// Tab Title
-	useEffect(() => {
-		document.title = "Projects - HQ";
-	}, []);
+	useEffect(() => { document.title = "Projects - HQ"; }, []);
+
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
-	const [orderLoaded, setOrderLoaded] = useState(false)
 
 
 	// Projects Query
-	const { data, loading, error, refetch } = useQuery(GET_PROJECTS, {
+	const { loading, error, refetch } = useQuery(GET_PROJECTS, {
+		fetchPolicy: 'network-only',
+
 		onCompleted: (data) => {
+			const order = JSON.parse(data.settings.projectOrder);
 			const projects = data.projects.map((project: any) => {
 				return new Project(
 					project.id,
@@ -34,57 +35,18 @@ const ProjectsPage = () => {
 					project.to_do_items?.data || []
 				)
 			})
-			setProjects(projects)
+			const sortedProjects = sortObjectsByIds(projects, order) as Project[];
+			setProjects(sortedProjects)
 		},
+
 		onError: (error) => console.log(error.networkError),
 	})
 
 
 
-
-	// Project Order
-	const { data: projectOrderData } = useQuery(GET_SETTINGS, {
-		fetchPolicy: 'network-only',
-		onError: (error) => console.log(error),
-	})
-
-
-	useEffect(() => {
-		if ((projectOrderData && data) && projectOrderData.settings.projectOrder) {
-			// Add all projects that are in the order
-			const order = JSON.parse(projectOrderData.settings.projectOrder);
-			let projects = order.map((projectId: string) => {
-				return new Project(
-					projectId,
-					data.projects.find((project: any) => project.id === projectId)?.codename || '',
-					data.projects.find((project: any) => project.id === projectId)?.to_do_items?.data || []
-				)
-			});
-
-			// Add all projects that are not in the order to the
-			data.projects.forEach((project: any) => {
-				if (!projects.find((p: any) => p.id === project.id)) {
-					projects.unshift(new Project(
-						project.id,
-						project.codename,
-						project.to_do_items?.data || []
-					));
-				}
-			});
-
-			// Filter out the projects with empty codename and to_do_items
-			projects = projects.filter((project: any) => project.codename !== '');
-
-
-			console.log(projects);
-			setProjects(projects);
-			setOrderLoaded(true);
-		}
-	}, [data, projectOrderData]);
-
 	const [updateOrCreateProjectOrder] = useMutation(UPDATE_OR_CREATE_PROJECT_ORDER, {
 		onError: (error) => console.log(error),
-		refetchQueries: [{ query: GET_SETTINGS }],
+		refetchQueries: [{ query: GET_PROJECTS }],
 	})
 	const handleProjectOrderChange = (evt: SortableEvent) => {
 		const newIndex = evt.newIndex
@@ -108,10 +70,6 @@ const ProjectsPage = () => {
 
 
 
-
-
-
-
 	// Create project mutation
 	const [createProject] = useMutation(CREATE_PROJECT, {
 		onError: (error) => console.log(error.networkError),
@@ -130,14 +88,7 @@ const ProjectsPage = () => {
 
 
 
-	if (!orderLoaded || loading) {
-		return (
-			<div>
-				{orderLoaded && <div>1Loading...</div>}
-				{loading && <div>2Loading...</div>}
-			</div>
-		)
-	}
+	if (loading) { return (<div>Loading...</div>) }
 
 	if (error) {
 		return <div>Error! {error.message}</div>

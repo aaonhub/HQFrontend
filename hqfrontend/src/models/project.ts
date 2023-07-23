@@ -27,6 +27,10 @@ export const GET_PROJECTS = gql`
 			id
 			codename
 		}
+		settings {
+			id
+			projectOrder
+		}
 	}
 `;
 

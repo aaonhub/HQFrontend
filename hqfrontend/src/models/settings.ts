@@ -12,15 +12,6 @@ export default Settings
 
 
 // Queries
-export const GET_SETTINGS = gql`
-	query {
-		settings {
-			id
-			projectOrder
-		}
-	}
-`
-
 export const GET_STICKY_NOTE = gql`
 	query{
 		stickyNote

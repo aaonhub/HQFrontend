@@ -257,7 +257,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 								<Box
 									key={`${month.month}-${day.day}`}
 									id={`day-${year}-${month.month}-${day.day}`}  // Unique id for each day
-									sx={{ display: 'flex', alignItems: 'center', gap: '0', maxHeight: '25px' }}
+									sx={{ display: 'flex', alignItems: 'center', gap: '0', maxHeight: '23px' }}
 								>
 
 									<label style={{ width: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{day.day}:</label>
@@ -274,7 +274,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 										}}
 										style={{
 											width: '200px',
-											maxHeight: '23px',
+											maxHeight: '21px',
 											overflow: 'auto',
 											backgroundColor:
 												day.day === currentDay && month.month === currentMonth ? 'rgba(0, 255, 0, 0.3)' :  // Current day

@@ -12,6 +12,15 @@ export default Settings
 
 
 // Queries
+export const GET_ITINERARY_ORDER = gql`
+	query {
+		settings{
+			id
+			itineraryOrder
+		}
+	}
+`
+
 export const GET_STICKY_NOTE = gql`
 	query{
 		stickyNote
@@ -78,6 +87,16 @@ export const UPDATE_OR_CREATE_PROJECT_ORDER = gql`
 		updateOrCreateProjectOrder(projectOrder: $projectOrder){
 			settings{
 				id
+			}
+		}
+	}
+`
+
+export const UPDATE_OR_CREATE_ITINERARY_ORDER = gql`
+	mutation($itineraryOrder: String!){
+		updateOrCreateItineraryOrder(itineraryOrder: $itineraryOrder){
+			settings{
+				itineraryOrder
 			}
 		}
 	}

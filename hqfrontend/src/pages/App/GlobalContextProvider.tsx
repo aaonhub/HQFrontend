@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 
+interface DebugTextItem {
+    title: string;
+    content: any;
+}
+
 interface IGlobalContext {
 	// Globals
 	loggedIn: boolean;
@@ -16,6 +21,10 @@ interface IGlobalContext {
 		open: boolean;
 		severity: "success" | "error" | "info" | "warning";
 	}) => void;
+	debugPanelVisible: boolean;
+	setDebugPanelVisible: (value: boolean) => void;
+    debugText: DebugTextItem[];
+    setDebugText: (value: DebugTextItem[]) => void;
 
 	// Sidebar
 	todayBadges: [number | boolean, number | boolean];
@@ -57,6 +66,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 		open: false,
 		severity: "success" as "success" | "error" | "info" | "warning"
 	})
+	const [debugPanelVisible, setDebugPanelVisible] = useState(false);
+	const [debugText, setDebugText] = useState<DebugTextItem[]>([]);
 
 	// Notifications
 	const [dailyReviewBadges, setDailyReviewBadges] = useState<[number | boolean, number | boolean]>([false, false]);
@@ -80,6 +91,10 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			setGlobalProfile,
 			snackbar,
 			setSnackbar,
+			debugPanelVisible,
+			setDebugPanelVisible,
+			debugText,
+			setDebugText,
 
 			// Sidebar
 			todayBadges,

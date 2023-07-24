@@ -16,7 +16,7 @@ interface CommandLineProps {
 }
 
 const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) => {
-	const { setSnackbar, setLogBadges } = useGlobalContext();
+	const { setSnackbar, setLogBadges, debugPanelVisible, setDebugPanelVisible } = useGlobalContext();
 	const [commandInput, setCommandInput] = useState('');
 	const [commandType, setCommandType] = useState('Add Log');
 	const [placeholderText, setPlaceholderText] = useState('commands');
@@ -69,6 +69,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 
 		// Set Command Type
 		if (newChar === ' ') {
+
 			// To Do
 			if (commandInput === 't') {
 				setCommandType('Add To Do')
@@ -82,6 +83,14 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				setCommandInput('')
 				setPlaceholderText('Add To Do Today')
 			}
+
+			// Set Debug Panel
+			if (commandInput === '/debug') {
+				setDebugPanelVisible(!debugPanelVisible)
+				setShowCommandLine(false)
+				setCommandInput('')
+			}
+
 		}
 
 

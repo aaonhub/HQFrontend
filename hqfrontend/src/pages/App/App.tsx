@@ -39,6 +39,7 @@ import ToDosPage from '../ToDosPage/ToDosPage';
 import { useAuth } from './auth';
 import CommandLine from './CommandLine';
 import PlanningPage from '../PlanningPage/PlanningPage'
+import DebugPanel from './DebugPanel'
 
 
 
@@ -56,7 +57,7 @@ function RequireAuth({ children }: any) {
 
 
 function App(): JSX.Element {
-	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
+	const { setLoggedIn, setGlobalProfile, debugPanelVisible } = useGlobalContext();
 
 	useAuth(setLoggedIn, setGlobalProfile);
 
@@ -118,6 +119,7 @@ function App(): JSX.Element {
 						<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
 					}
 				</Box>
+				{debugPanelVisible && <DebugPanel />}
 			</Router>
 		</ThemeProvider>
 	);

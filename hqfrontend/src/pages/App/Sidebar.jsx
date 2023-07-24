@@ -283,7 +283,7 @@ function SidebarIcons({ id }) {
 		),
 		6: (
 			<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-				<g stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+				<g stroke="#000000">
 					<path d="M3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8h-4" />
 					<path d="M3 4h14v14a2 2 0 0 0 2 2v0M13 8H7m6 4H9" />
 				</g>

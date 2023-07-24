@@ -28,7 +28,7 @@ import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
 import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
-
+import { useMutation, useQuery } from '@apollo/client'
 
 // Models
 import Habit from "../../../models/habit"
@@ -36,19 +36,22 @@ import InboxItem, { UPDATE_TODO } from "../../../models/inboxitem"
 import SimpleItem from "../../../models/simpleitem"
 import HabitInboxRosetta from '../HabitInboxRosetta'
 
-// Queries and Mutations
-import { useMutation, useQuery } from '@apollo/client'
+// Queries 
+import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
+import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
+import { GET_ITINERARY_ORDER } from '../../../models/settings';
+// Mutations
+import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
 import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem'
 import { CHECK_HABIT } from '../../../models/habit'
 import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
-import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
-import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
+import { sortObjectsByIds } from '../../../components/MiscFunctions'
 
 
 
 const Itinerary: React.FC = () => {
-	const { setSnackbar, todayBadges, setTodayBadges } = useGlobalContext()
+	const { setSnackbar, todayBadges, setTodayBadges, setDebugText } = useGlobalContext()
 
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
@@ -69,6 +72,42 @@ const Itinerary: React.FC = () => {
 
 
 	const localDate = getCurrentLocalDate()
+
+	useEffect(() => {
+		setDebugText([
+			{ title: "Today's Date", content: localDate },
+			{ title: "Current Time", content: currentLocalTime() },
+			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
+			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
+			{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
+			{ title: "Habits", content: JSON.stringify(habits, null, 2) },
+			{ title: "Inbox Items", content: JSON.stringify(inboxItems, null, 2) },
+			{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
+			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
+			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
+			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
+			{ title: "Inbox Events", content: JSON.stringify(inboxEvents, null, 2) },
+			{ title: "Habit Events", content: JSON.stringify(habitEvents, null, 2) },
+			{ title: "Events", content: JSON.stringify(events, null, 2) }
+		])
+	}, [
+		setDebugText,
+		localDate,
+		todayBadges,
+		uncompletedItems,
+		completedItems,
+		habits,
+		inboxItems,
+		expanded,
+		selectedInboxItemId,
+		selectedHabitId,
+		scheduledNotifications,
+		inboxEvents,
+		habitEvents,
+		events,
+		calendarRef,
+	])
+
 
 
 
@@ -138,6 +177,39 @@ const Itinerary: React.FC = () => {
 			console.log(error)
 		}
 	})
+
+	// Itinirary Order Query
+	const { loading: itineraryOrderLoading, error: itineraryOrderError, data: itineraryOrderData, refetch: itineraryOrderRefetch } = useQuery(GET_ITINERARY_ORDER, {
+		fetchPolicy: 'network-only',
+		onError: (error) => {
+			console.log(error)
+		}
+	})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// Set up Simple Item Array
 	useEffect(() => {
 		if (habitsData && inboxData) {
@@ -147,23 +219,76 @@ const Itinerary: React.FC = () => {
 				return !simpleItem.completedToday
 			})
 
-			// Sort uncompletedItems by startTime
-			simpleItemArrayFiltered.sort((a, b) => {
-				const aTime = a.startTime || ''
-				const bTime = b.startTime || ''
-				if (aTime < bTime) return -1
-				if (aTime > bTime) return 1
-				return 0
-			})
+			if (itineraryOrderData && itineraryOrderData.settings && itineraryOrderData.settings.itineraryOrder && itineraryOrderData.settings.itineraryOrder.length > 0) {
+				const stuff = JSON.parse(itineraryOrderData.settings.itineraryOrder)
+				if (stuff.date === getCurrentLocalDate()) {
+					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, stuff.ids)
+					setUncompletedItems(sortedArray as SimpleItem[])
+				} else {
+					// Sort uncompletedItems by startTime
+					simpleItemArrayFiltered.sort((a, b) => {
+						const aTime = a.startTime || ''
+						const bTime = b.startTime || ''
+						if (aTime < bTime) return -1
+						if (aTime > bTime) return 1
+						return 0
+					})
+					setUncompletedItems(simpleItemArrayFiltered)
+				}
+			}
 
-			setUncompletedItems(simpleItemArrayFiltered)
 
 			const simpleItemArrayCompleted = combinedArray.filter((simpleItem) => {
 				return simpleItem.completedToday
 			})
 			setCompletedItems(simpleItemArrayCompleted)
 		}
-	}, [habitsData, inboxData, habits, inboxItems])
+	}, [habitsData, inboxData, habits, inboxItems, itineraryOrderData])
+
+	const [updateOrCreateItineraryOrder] = useMutation(UPDATE_OR_CREATE_ITINERARY_ORDER)
+	useEffect(() => {
+		if (uncompletedItems.length > 0) {
+			const ids = uncompletedItems.map((item) => item.id);
+			const date = getCurrentLocalDate();
+			const order = JSON.stringify({ date, ids });
+
+			updateOrCreateItineraryOrder({
+				variables: {
+					itineraryOrder: order,
+				},
+				onError: (error) => {
+					console.log(error);
+				}
+			});
+		}
+	}, [uncompletedItems, updateOrCreateItineraryOrder]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	useEffect(() => {
@@ -418,7 +543,7 @@ const Itinerary: React.FC = () => {
 	// useEffect(() => {
 	// 	console.log(uncompletedItems);
 	// }, [uncompletedItems]);
-	
+
 	// useEffect(() => {
 	// 	console.log(completedItems);
 	// }, [completedItems]);
@@ -554,11 +679,12 @@ const Itinerary: React.FC = () => {
 							</IconButton>
 						</Box>
 
+						{/* Itinerary List */}
 						<Box>
-							{/* Itinerary List */}
 							{uncompletedItems.length > 0 ? (
 								<ItineraryList
 									list={uncompletedItems}
+									setList={setUncompletedItems}
 									setSelectedInboxItemId={setSelectedInboxItemId}
 									setSelectedHabitId={setSelectedHabitId}
 									handleCheckItem={handleCheckItem}
@@ -588,6 +714,7 @@ const Itinerary: React.FC = () => {
 							{completedItems.length > 0 ? (
 								<ItineraryList
 									list={completedItems}
+									setList={setCompletedItems}
 									setSelectedInboxItemId={setSelectedInboxItemId}
 									setSelectedHabitId={setSelectedHabitId}
 									handleCheckItem={handleCheckItem}

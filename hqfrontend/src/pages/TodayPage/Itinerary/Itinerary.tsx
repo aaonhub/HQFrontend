@@ -64,6 +64,9 @@ const Itinerary: React.FC = () => {
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [inboxEvents, setInboxEvents] = useState<EventInput[]>([])
 	const [habitEvents, setHabitEvents] = useState<EventInput[]>([])
+	const [itineraryOrder, setItineraryOrder] = useState<string[]>([])
+	const [itineraryOrderDate, setItineraryOrderDate] = useState<string>('')
+
 
 	// Calendar State
 	const [events, setEvents] = useState<EventInput[]>([])
@@ -181,6 +184,13 @@ const Itinerary: React.FC = () => {
 	// Itinirary Order Query
 	const { loading: itineraryOrderLoading, error: itineraryOrderError, data: itineraryOrderData, refetch: itineraryOrderRefetch } = useQuery(GET_ITINERARY_ORDER, {
 		fetchPolicy: 'network-only',
+		onCompleted: (data) => {
+			if (data.settings && data.settings.itineraryOrder && data.settings.itineraryOrder.length > 0) {
+				const stuff = JSON.parse(data.settings.itineraryOrder)
+				setItineraryOrder(stuff.ids)
+				setItineraryOrderDate(stuff.date)
+			}
+		},
 		onError: (error) => {
 			console.log(error)
 		}
@@ -219,10 +229,9 @@ const Itinerary: React.FC = () => {
 				return !simpleItem.completedToday
 			})
 
-			if (itineraryOrderData && itineraryOrderData.settings && itineraryOrderData.settings.itineraryOrder && itineraryOrderData.settings.itineraryOrder.length > 0) {
-				const stuff = JSON.parse(itineraryOrderData.settings.itineraryOrder)
-				if (stuff.date === getCurrentLocalDate()) {
-					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, stuff.ids)
+			if (itineraryOrder.length > 0) {
+				if (itineraryOrderDate === getCurrentLocalDate()) {
+					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, itineraryOrder)
 					setUncompletedItems(sortedArray as SimpleItem[])
 				} else {
 					// Sort uncompletedItems by startTime
@@ -258,6 +267,10 @@ const Itinerary: React.FC = () => {
 				},
 				onError: (error) => {
 					console.log(error);
+				},
+				onCompleted: () => {
+					setItineraryOrder(ids);
+					setItineraryOrderDate(date);
 				}
 			});
 		}

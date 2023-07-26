@@ -9,7 +9,7 @@ import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from '../../models/inboxitem';
 import { LAST_LOG_TIME } from '../../models/log';
 
-
+const date = getCurrentLocalDate()
 
 // Today Badge
 export function TodayBadge() {
@@ -18,14 +18,14 @@ export function TodayBadge() {
     const { data: habitsData } = useQuery(GET_HABITS_DUE_TODAY, {
         fetchPolicy: 'network-only',
         variables: {
-            today: getCurrentLocalDate(),
+            today: date,
         },
     });
 
     const { data: toDoListData } = useQuery(GET_TO_DO_LIST_ITEMS_BY_START_DATE, {
         fetchPolicy: 'network-only',
         variables: {
-            Today: getCurrentLocalDate(),
+            Today: date,
         },
     });
 
@@ -36,7 +36,7 @@ export function TodayBadge() {
             let pastDueEvents: any = 0;
 
             habitsData.habitsDueToday.forEach((habit: any) => {
-                if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
+                if (date < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
                     pastDueEvents++;
                 } else
                     if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
@@ -55,7 +55,7 @@ export function TodayBadge() {
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
-                if (getCurrentLocalDate() < getCurrentLocalDateUnadjusted() && !item.completed) {
+                if (date < getCurrentLocalDateUnadjusted() && !item.completed) {
                     pastDueEvents++;
                 } else
                     if (item.startTime < currentLocalTime() && !item.completed) {
@@ -119,8 +119,7 @@ export function DailyReviewBadge() {
 export function LogBadge() {
     const { logBadges, setLogBadges } = useGlobalContext();
 
-    const { data } = useQuery(LAST_LOG_TIME, {
-        fetchPolicy: 'network-only',
+    useQuery(LAST_LOG_TIME, {
         onCompleted: (data) => {
             if (isOverAnHourAgo(data.lastLogTime)) {
                 setLogBadges([1, false]);

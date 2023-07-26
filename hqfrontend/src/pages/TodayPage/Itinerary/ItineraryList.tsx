@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Checkbox, List, ListItem, ListItemText } from '@mui/material'
+import { Checkbox, List, ListItem, ListItemText, Typography } from '@mui/material'
 import { Draggable } from '@fullcalendar/interaction'
 import { v4 as uuidv4 } from 'uuid';
 import { addLengthToTime, currentLocalTime, getCurrentLocalDate, getCurrentLocalDateUnadjusted } from '../../../components/DateFunctions';
@@ -63,6 +63,13 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 		setList(newOrder)
 	}
 
+	if (list.length === 0) {
+		return (
+			<Typography variant="h6" align="center" color="textSecondary">
+				No items
+			</Typography>
+		)
+	}
 
 	return (
 		<List
@@ -110,7 +117,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 						else itemColor = '1px solid grey';
 
 						return (
-							<motion.li
+							<motion.div
 								key={item.id}
 								initial={{ opacity: 1, y: 0 }}
 								animate={{ opacity: 1, y: 0 }}
@@ -122,7 +129,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 										damping: 20,   // Added damping
 										mass: 1,       // Added mass
 									},
-									default: { duration: 1 },
+									default: { duration: .5 },
 								}}
 								style={{ overflow: "hidden" }}
 							>
@@ -196,7 +203,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 									/>
 
 								</ListItem>
-							</motion.li>
+							</motion.div>
 						)
 					})}
 				</AnimatePresence>

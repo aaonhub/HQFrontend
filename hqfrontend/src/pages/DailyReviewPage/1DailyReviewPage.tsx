@@ -17,7 +17,6 @@ import DailyReview from '../../models/dailyreview'
 
 
 const DailyReviewPage = () => {
-	// Tab Title
 	useEffect(() => {
 		document.title = "Reviews - HQ";
 	}, []);

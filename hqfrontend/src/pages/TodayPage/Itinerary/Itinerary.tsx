@@ -29,24 +29,21 @@ import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
 import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
 import { useMutation, useQuery } from '@apollo/client'
+import { sortObjectsByIds } from '../../../components/MiscFunctions'
 
 // Models
 import Habit from "../../../models/habit"
-import InboxItem, { UPDATE_TODO } from "../../../models/inboxitem"
+import InboxItem, { ITINERARY_QUERY, UPDATE_TODO } from "../../../models/inboxitem"
 import SimpleItem from "../../../models/simpleitem"
 import HabitInboxRosetta from '../HabitInboxRosetta'
 
 // Queries 
-import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from "../../../models/inboxitem"
-import { GET_HABITS_DUE_TODAY } from "../../../models/habit"
-import { GET_ITINERARY_ORDER } from '../../../models/settings';
 // Mutations
 import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
 import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem'
 import { CHECK_HABIT } from '../../../models/habit'
 import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
-import { sortObjectsByIds } from '../../../components/MiscFunctions'
 
 
 
@@ -62,23 +59,21 @@ const Itinerary: React.FC = () => {
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
 	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
-	const [inboxEvents, setInboxEvents] = useState<EventInput[]>([])
-	const [habitEvents, setHabitEvents] = useState<EventInput[]>([])
-	const [itineraryOrder, setItineraryOrder] = useState<string[]>([])
-	const [itineraryOrderDate, setItineraryOrderDate] = useState<string>('')
+	const [orderIds, setOrderIds] = useState<string[]>([])
 
 
 	// Calendar State
 	const [events, setEvents] = useState<EventInput[]>([])
 	const calendarRef = useRef(null)
 
-
-
 	const localDate = getCurrentLocalDate()
 
+
+	// Debugging
 	useEffect(() => {
 		setDebugText([
 			{ title: "Today's Date", content: localDate },
+			{ title: "Order Ids", content: JSON.stringify(orderIds, null, 2) },
 			{ title: "Current Time", content: currentLocalTime() },
 			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
 			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
@@ -89,8 +84,6 @@ const Itinerary: React.FC = () => {
 			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
 			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
 			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
-			{ title: "Inbox Events", content: JSON.stringify(inboxEvents, null, 2) },
-			{ title: "Habit Events", content: JSON.stringify(habitEvents, null, 2) },
 			{ title: "Events", content: JSON.stringify(events, null, 2) }
 		])
 	}, [
@@ -105,22 +98,22 @@ const Itinerary: React.FC = () => {
 		selectedInboxItemId,
 		selectedHabitId,
 		scheduledNotifications,
-		inboxEvents,
-		habitEvents,
 		events,
 		calendarRef,
 	])
 
 
-
-
-	// Today's To Do Items Query
-	const { loading: inboxLoading, error: inboxError, data: inboxData, refetch: inboxRefetch } = useQuery(GET_TO_DO_LIST_ITEMS_BY_START_DATE, {
+	// Query
+	const { loading, error, refetch } = useQuery(ITINERARY_QUERY, {
 		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
 		},
 		onCompleted: (data) => {
+
+			console.log("yes")
+
+			// Set inbox items
 			const inboxItems = data.toDoItemsByStartDate.map((toDoItems: any) => {
 				return new InboxItem({
 					id: toDoItems.id,
@@ -137,21 +130,8 @@ const Itinerary: React.FC = () => {
 			});
 			setInboxItems(inboxItems);
 
-			// Convert inboxItems to events and update the state
-			const newEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
-			setInboxEvents(newEvents);
-		},
-		onError: (error) => {
-			console.log(error);
-		},
-	});
 
-
-	// Today's Habits Query
-	const { loading: habitsLoading, error: habitsError, data: habitsData, refetch: habitsRefetch } = useQuery(GET_HABITS_DUE_TODAY, {
-		fetchPolicy: 'network-only',
-		variables: { today: localDate },
-		onCompleted: (data) => {
+			// Set habit items
 			const habits = data.habitsDueToday.map((habit: any) => {
 				return new Habit(
 					habit.id,
@@ -172,66 +152,27 @@ const Itinerary: React.FC = () => {
 			})
 			setHabits(habits)
 
-			// Convert habits to events and update the state
-			const newEvents = habits.map(habitToEvent).filter(Boolean)
-			setHabitEvents(newEvents);
-		},
-		onError: (error) => {
-			console.log(error)
-		}
-	})
-
-	// Itinirary Order Query
-	const { loading: itineraryOrderLoading, error: itineraryOrderError, data: itineraryOrderData, refetch: itineraryOrderRefetch } = useQuery(GET_ITINERARY_ORDER, {
-		fetchPolicy: 'network-only',
-		onCompleted: (data) => {
-			if (data.settings && data.settings.itineraryOrder && data.settings.itineraryOrder.length > 0) {
-				const stuff = JSON.parse(data.settings.itineraryOrder)
-				setItineraryOrder(stuff.ids)
-				setItineraryOrderDate(stuff.date)
-			}
-		},
-		onError: (error) => {
-			console.log(error)
-		}
-	})
 
 
+			// Set order
+			const orderData = JSON.parse(data.settings.itineraryOrder)
+			const orderIds = orderData.ids
+			const orderDate = orderData.date
 
 
+			setOrderIds(orderIds)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// Set up Simple Item Array
-	useEffect(() => {
-		if (habitsData && inboxData) {
+			// Combine the inbox items and habits into one array
 			const combinedArray = HabitInboxRosetta({ habits: habits, inboxItems: inboxItems })
 
 			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
 				return !simpleItem.completedToday
 			})
 
-			if (itineraryOrder.length > 0) {
-				if (itineraryOrderDate === getCurrentLocalDate()) {
-					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, itineraryOrder)
+			if (orderIds.length > 0) {
+				if (orderDate === getCurrentLocalDate()) {
+					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds)
 					setUncompletedItems(sortedArray as SimpleItem[])
 				} else {
 					// Sort uncompletedItems by startTime
@@ -247,13 +188,34 @@ const Itinerary: React.FC = () => {
 			}
 
 
+
+
 			const simpleItemArrayCompleted = combinedArray.filter((simpleItem) => {
 				return simpleItem.completedToday
 			})
 			setCompletedItems(simpleItemArrayCompleted)
-		}
-	}, [habitsData, inboxData, habits, inboxItems, itineraryOrderData])
 
+
+
+
+			// Calendar Stuff
+			const newInboxEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
+			const newHabitEvents = habits.map(habitToEvent).filter(Boolean)
+			const newEvents = [...newInboxEvents, ...newHabitEvents]
+			setEvents(newEvents)
+
+
+
+		},
+		onError: (error) => {
+			console.log(error);
+		},
+	})
+
+
+
+
+	// Update Order
 	const [updateOrCreateItineraryOrder] = useMutation(UPDATE_OR_CREATE_ITINERARY_ORDER)
 	useEffect(() => {
 		if (uncompletedItems.length > 0) {
@@ -267,10 +229,6 @@ const Itinerary: React.FC = () => {
 				},
 				onError: (error) => {
 					console.log(error);
-				},
-				onCompleted: () => {
-					setItineraryOrder(ids);
-					setItineraryOrderDate(date);
 				}
 			});
 		}
@@ -279,37 +237,6 @@ const Itinerary: React.FC = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	useEffect(() => {
-		if (habitEvents && inboxEvents) {
-			const newEvents = [...habitEvents, ...inboxEvents]
-			setEvents(newEvents)
-		}
-	}, [habitEvents, inboxEvents])
 
 
 	// Calendar Logic
@@ -344,12 +271,20 @@ const Itinerary: React.FC = () => {
 					Length: formattedLength,
 					StartTime: formatTime(changeInfo.event.start),
 				},
+				onCompleted: () => {
+					refetch()
+				}
 			})
-			inboxRefetch()
 		} catch (error) {
 			console.log(error)
 		}
 	}, 100);
+
+
+
+
+
+
 
 	const [updateInboxItem] = useMutation(UPDATE_TODO)
 	const eventReceive = (info: any) => {
@@ -399,10 +334,6 @@ const Itinerary: React.FC = () => {
 				startDate: getCurrentLocalDate(),
 				Completed: false,
 			},
-			refetchQueries: [
-				{ query: GET_TO_DO_LIST_ITEMS_BY_START_DATE, variables: { Today: localDate } },
-				{ query: GET_HABITS_DUE_TODAY, variables: { Today: localDate } },
-			],
 			onCompleted: () => {
 				setInputValue('')
 				setSnackbar({
@@ -410,6 +341,7 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
+				refetch()
 			}
 		})
 	}
@@ -443,9 +375,10 @@ const Itinerary: React.FC = () => {
 				open: true,
 				severity: "success"
 			})
-			inboxRefetch()
+			refetch()
 		} else { // If there is only one line
 			setInputValue(pasteData) // Paste the data into the input field
+			refetch()
 		}
 	}
 
@@ -486,7 +419,6 @@ const Itinerary: React.FC = () => {
 					open: true,
 					severity: "success"
 				})
-				moveItemToCompleted(habit)
 				updateBadge(habit)
 			}
 		})
@@ -499,19 +431,21 @@ const Itinerary: React.FC = () => {
 			variables: {
 				// get rid of the h at the end of the id
 				id: todo.id.slice(0, -1),
-				Completed: true,
+				Completed: !todo.completedToday,
 			},
 			onCompleted: () => {
 				setSnackbar({
-					message: "Task completed!",
+					message: `Task ${todo.completedToday ? 'unchecked' : 'checked'}!`,
 					open: true,
 					severity: "success"
 				})
-				moveItemToCompleted(todo)
 				updateBadge(todo)
 			}
 		})
 	}
+
+
+
 	// Update Badge
 	const updateBadge = (item: any) => {
 		const newArray = [...todayBadges] as [number | boolean, number | boolean];
@@ -541,25 +475,6 @@ const Itinerary: React.FC = () => {
 		}
 		setTodayBadges(newArray);
 	}
-	// Move Item
-	const moveItemToCompleted = (moveItem: SimpleItem) => {
-		// FINISHLATER: If you check off an inbox item after a few habits then it'll reset the arrays to an earlier state for some reason
-		// setUncompletedItems((prevArray: SimpleItem[]) =>
-		// 	prevArray.filter((item) => item.id !== moveItem.id)
-		// )
-		// setCompletedItems((prevArray: SimpleItem[]) =>
-		// 	[...prevArray, { id: moveItem.id, type: moveItem.type, completedToday: true, title: moveItem.title }]
-		// )
-		inboxRefetch()
-		habitsRefetch()
-	}
-	// useEffect(() => {
-	// 	console.log(uncompletedItems);
-	// }, [uncompletedItems]);
-
-	// useEffect(() => {
-	// 	console.log(completedItems);
-	// }, [completedItems]);
 
 
 
@@ -568,11 +483,11 @@ const Itinerary: React.FC = () => {
 	// Dialog Close Handlers
 	const handleCloseInbox = () => {
 		setSelectedInboxItemId(null)
-		inboxRefetch()
+		refetch()
 	}
 	const handleCloseHabit: any = () => {
 		setSelectedHabitId(null)
-		habitsRefetch()
+		refetch()
 	}
 
 
@@ -613,8 +528,8 @@ const Itinerary: React.FC = () => {
 
 
 
-	if (inboxLoading || habitsLoading) return <p>Loading...</p>
-	if (inboxError || habitsError) return <p>Error :(</p>
+	if (loading) return <p>Loading...</p>
+	if (error) return <p>Error :(</p>
 
 	return (
 

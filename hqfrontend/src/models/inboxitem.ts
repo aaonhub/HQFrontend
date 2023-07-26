@@ -47,6 +47,47 @@ export default InboxItem;
 
 
 // Queries
+export const ITINERARY_QUERY = gql`
+	query($Today: Date!) {
+		toDoItemsByStartDate(Today: $Today) {
+			id
+			title
+			completed
+			project {
+				id
+				codename
+			}
+			dueDateTime
+			description
+			startDate
+			startTime
+			timeCompleted
+			length
+		}
+		habitsDueToday(date: $Today) {
+			id
+			title
+			active
+			lastCompleted
+			order
+			completedToday
+			length
+			schedule{
+				id
+				timeOfDay
+				frequency
+				startDate
+				endDate
+			}
+		}
+		settings{
+			id
+			itineraryOrder
+		}
+	}  
+`;
+
+
 export const GET_TO_DO_LIST_ITEMS_BY_START_DATE = gql`
 	query($Today: Date!) {
 		toDoItemsByStartDate(Today: $Today) {

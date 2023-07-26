@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TextField, Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client';
 import { useGlobalContext } from '../../pages/App/GlobalContextProvider';
@@ -22,7 +22,8 @@ interface EditDailyReviewProps {
 }
 
 const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDailyReview, setEditMode, today, loading, refetch }) => {
-	const { setDailyReviewBadges } = useGlobalContext()
+	const { setDailyReviewBadges, setSnackbar } = useGlobalContext()
+
 	const [title, setTitle] = useState(dailyReview.title)
 	const [gratitudes, setGratitudes] = useState(dailyReview.gratitudes.join('\n'))
 	const [majorEvents, setMajorEvents] = useState(dailyReview.majorEvents.join('\n'))
@@ -38,11 +39,6 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 	}, [dailyReview]);
 
 
-	const handleSave = () => {
-		const gratitudesList = gratitudes.split('\n')
-		const majorEventsList = majorEvents.split('\n')
-		onSave(title, gratitudesList, majorEventsList, details)
-	}
 
 	const [createDailyReview] = useMutation(CREATE_DAILY_REVIEW, {
 		onCompleted: (data) => {
@@ -56,7 +52,6 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					date: data.createDailyReview.dailyReview.date,
 				})
 			)
-			setEditMode(false)
 		},
 	})
 	const [updateDailyReview] = useMutation(UPDATE_DAILY_REVIEW, {
@@ -71,11 +66,15 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					date: data.updateDailyReview.dailyReview.date,
 				})
 			)
-			setEditMode(false)
+			setSnackbar({
+				open: true,
+				message: 'Daily Review Saved',
+				severity: 'success'
+			})
 		},
 	})
 
-	const onSave = (title: string, gratitudes: string[], majorEvents: string[], details: string) => {
+	const onSave = useCallback((title: string, gratitudes: string[], majorEvents: string[], details: string) => {
 		if (dailyReview.id) {
 			updateDailyReview({
 				variables: {
@@ -84,7 +83,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					gratitudeList: JSON.stringify(gratitudes),
 					majorEvents: JSON.stringify(majorEvents),
 					details: details,
-				},
+				}
 			});
 		} else {
 			createDailyReview({
@@ -99,7 +98,24 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 			if (getCurrentLocalDate() === today) setDailyReviewBadges([false, false])
 		}
 		refetch()
-	}
+	}, [dailyReview.id, updateDailyReview, createDailyReview, today, setDailyReviewBadges, refetch]);
+
+
+
+	const handleSave = useCallback(() => {
+		const gratitudesList = gratitudes.split('\n')
+		const majorEventsList = majorEvents.split('\n')
+		onSave(title, gratitudesList, majorEventsList, details)
+	}, [title, gratitudes, majorEvents, details, onSave])
+
+
+	// useEffect(() => {
+	// 	// This function will be called when the component is about to unmount
+	// 	return () => {
+	// 		handleSave();
+	// 	};
+	// }, [handleSave]);  // Make sure to include handleSave in the dependency array
+
 
 	if (loading) return <p>Loading...</p>
 

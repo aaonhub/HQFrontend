@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Grid, Menu, MenuItem, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Box, Button, Divider, Grid, Typography } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useQuery, useMutation } from '@apollo/client'
@@ -10,6 +10,7 @@ import { useGlobalContext } from '../App/GlobalContextProvider'
 import { GET_DAY_TITLES_BY_YEAR } from '../../models/daytitles'
 import { CREATE_DAY_TITLES } from '../../models/daytitles'
 import { UPDATE_DAY_TITLES } from '../../models/daytitles'
+import PlanSelectDropdown from './PlanSelectDropdown'
 
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -37,7 +38,6 @@ function useDebounce(value: any, delay: number) {
 const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 	const { setSnackbar } = useGlobalContext();
 
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const [year, setYear] = useState<number>(new Date().getFullYear());
 	const [showSelect, setShowSelect] = useState<boolean>(false)
 	const [yearData, setYearData] = useState<YearDayTitles | null>(null);
@@ -45,12 +45,65 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 
 	const debouncedYear = useDebounce(year, 500);
 
+
+
 	const { loading, error, data } = useQuery(GET_DAY_TITLES_BY_YEAR, {
 		variables: { year: debouncedYear },
 		onError: (error) => {
 			console.log(error)
 		}
 	});
+
+
+
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		// Initialize the x position
+		let startX = 0;
+		// Initialize the scroll left position
+		let startScrollLeft = 0;
+		// Initialize a flag to check if we are dragging
+		let isDragging = false;
+
+		// Get the scroll container element
+		const scrollContainerElement = scrollContainerRef.current;
+
+		if (scrollContainerElement) {
+			// Add the mousedown event listener
+			scrollContainerElement.addEventListener('mousedown', (e: any) => {
+				isDragging = true;
+				// Record the initial x position when mouse is down
+				startX = e.pageX - scrollContainerElement.offsetLeft;
+				// Record the initial scroll left position when mouse is down
+				startScrollLeft = scrollContainerElement.scrollLeft;
+			});
+
+			// Add the mouseleave event listener
+			scrollContainerElement.addEventListener('mouseleave', () => {
+				isDragging = false;
+			});
+
+			// Add the mouseup event listener
+			scrollContainerElement.addEventListener('mouseup', () => {
+				isDragging = false;
+			});
+
+			// Add the mousemove event listener
+			scrollContainerElement.addEventListener('mousemove', (e: any) => {
+				if (!isDragging) return;
+				// Prevent the default behavior
+				e.preventDefault();
+				// Calculate the new x position when mouse is moving
+				const x = e.pageX - scrollContainerElement.offsetLeft;
+				// Calculate the walk distance (how far we have moved)
+				const walk = (x - startX) * 1; // The multiplier can be adjusted for the speed of the scroll
+				// Set the scroll left position
+				scrollContainerElement.scrollLeft = startScrollLeft - walk;
+			});
+		}
+	}, [yearData]);
+
 
 
 
@@ -114,18 +167,40 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 	}
 
 
-	useEffect(() => {
-		if (data) {
-			console.log(data)
-		}
-	}, [data])
-
 
 	useEffect(() => {
 		const currentDate = new Date();
-		const currentDayElement = document.getElementById(`day-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`);
-		currentDayElement?.scrollIntoView();
+		const currentDayId = `day-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+
+		// Create a new observer
+		const observer = new MutationObserver((mutations, observer) => {
+			// Look through all mutations that just occured
+			for (let mutation of mutations) {
+				// If the addedNodes property has one or more nodes
+				if (mutation.addedNodes.length) {
+					const currentDayElement = document.getElementById(currentDayId);
+					if (currentDayElement) {
+						// Scroll the currentDayElement into view
+						currentDayElement.scrollIntoView({ inline: 'start' });
+						// Stop observing after scrolling into view
+						observer.disconnect();
+					}
+				}
+			}
+		});
+
+		// Start observing the scroll container with the configured parameters
+		const scrollContainerElement = scrollContainerRef.current;
+		if (scrollContainerElement) {
+			observer.observe(scrollContainerElement, { childList: true, subtree: true });
+		}
+
+		// Clean up
+		return () => observer.disconnect();
 	}, [data]);
+
+
+
 
 
 	const handleTitleChange = (monthIndex: number, dayIndex: number, newTitle: string) => {
@@ -135,23 +210,6 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 			const updatedYearData = new YearDayTitles(year, updatedMonths);
 			setYearData(updatedYearData);
 		}
-	}
-
-
-
-
-
-	// const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-	// 	setAnchorEl(event.currentTarget)
-	// }
-
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
-
-	const handleMenuItemClick = (value: string) => {
-		setCurrentView(value)
-		handleClose()
 	}
 
 	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -173,36 +231,17 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 	if (loading) return <p>Loading...</p>
 	if (error) return <p>Error :(</p>
 
+	
 	return (
 		<Grid container spacing={3}>
+
+			{/* Planning Type */}
 			<Grid item xs={12}>
 				<Box display="flex" alignItems="center">
 
-					{/* Planning Type */}
-					<Button
-						aria-controls="simple-menu"
-						aria-haspopup="true"
-						// onClick={handleClick}
-						sx={{ textTransform: 'none' }}
-					>
-						<Typography variant="h5" component="h1">
-							Year Planning
-						</Typography>
-					</Button>
-					<Menu
-						id="simple-menu"
-						anchorEl={anchorEl}
-						open={Boolean(anchorEl)}
-						onClose={handleClose}
-						MenuListProps={{
-							sx: { color: 'white' },
-						}}
-					>
-						<MenuItem onClick={() => handleMenuItemClick('day')}>Day Planning</MenuItem>
-						<MenuItem onClick={() => handleMenuItemClick('week')}>Week Planning</MenuItem>
-						<MenuItem onClick={() => handleMenuItemClick('year')}>Year Planning</MenuItem>
-					</Menu>
 
+					{/* Plan Select Dropdown */}
+					<PlanSelectDropdown setCurrentView={setCurrentView} />
 
 
 					{/* Year Select */}
@@ -232,70 +271,89 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 				</Box>
 			</Grid>
 
-			{/* DIVIDER */}
+			{/* Divider */}
 			<Grid item xs={12}>
 				<Divider />
 			</Grid>
 
-			<Box style={{ overflowX: 'auto', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', paddingLeft: '1rem' }}>
-				{yearData && yearData.months.map((month, monthIndex) => (
-					<div style={{ margin: '0.5rem' }} key={month.month}>
-						<h2 style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', paddingBottom: '.5em' }}>{monthNames[month.month - 1]}</h2>
-						{month.titles.map((day, dayIndex) => {
-							// Get the current day
-							const currentDate = new Date();
-							const currentDay = currentDate.getDate();
-							const currentMonth = currentDate.getMonth() + 1; // JavaScript's getMonth() method starts at 0 for January
+			{/* Year Planning */}
+			<Grid item xs={12}>
+				<div
+					ref={scrollContainerRef}
+					style={{
+						overflowX: 'auto',
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'nowrap',
+						paddingLeft: '1rem',
+						scrollbarWidth: 'none', // For Firefox
+					}}
+				>
+					{/* Hide scrollbar for Chrome, Safari and Opera */}
+					<style>
+						{`
+			::-webkit-scrollbar {
+				display: none;
+			}
+		`}
+					</style>
+					{yearData && yearData.months.map((month, monthIndex) => (
+						<div style={{ margin: '0.5rem' }} key={month.month}>
+							<h2 style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', paddingBottom: '.5em' }}>
+								{monthNames[month.month - 1]}
+							</h2>
+							{month.titles.map((day, dayIndex) => {
+								// Get the current day
+								const currentDate = new Date();
+								const currentDay = currentDate.getDate();
+								const currentMonth = currentDate.getMonth() + 1; // JavaScript's getMonth() method starts at 0 for January
 
-							// Determine whether it's a weekend
-							// Determine whether it's a weekend
-							const date = new Date(year, month.month - 1, day.day); // month in JavaScript Date is 0-indexed
-							const isWeekend = date.getDay() === 0 || date.getDay() === 6; // getDay() returns 0 for Sunday and 6 for Saturday
+								// Determine whether it's a weekend
+								const date = new Date(year, month.month - 1, day.day); // month in JavaScript Date is 0-indexed
+								const isWeekend = date.getDay() === 0 || date.getDay() === 6; // getDay() returns 0 for Sunday and 6 for Saturday
 
+								return (
+									<Box
+										key={`${month.month}-${day.day}`}
+										id={`day-${year}-${month.month}-${day.day}`}  // Unique id for each day
+										sx={{ display: 'flex', alignItems: 'center', gap: '0', maxHeight: '23px' }}
+									>
 
-							return (
-								<Box
-									key={`${month.month}-${day.day}`}
-									id={`day-${year}-${month.month}-${day.day}`}  // Unique id for each day
-									sx={{ display: 'flex', alignItems: 'center', gap: '0', maxHeight: '23px' }}
-								>
+										<label style={{ width: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+											{day.day}:
+										</label>
 
-									<label style={{ width: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{day.day}:</label>
+										<input
+											value={day.title}
+											onChange={event => handleTitleChange(monthIndex, dayIndex, event.target.value)}
+											onBlur={handleUpdateDayTitles}
+											onKeyPress={(event) => {
+												if (event.key === 'Enter') {
+													handleUpdateDayTitles();
+													event.preventDefault();  // Prevents form submission
+												}
+											}}
+											style={{
+												width: '200px',
+												maxHeight: '21px',
+												overflow: 'auto',
+												backgroundColor:
+													day.day === currentDay && month.month === currentMonth ? 'rgba(0, 255, 0, 0.3)' :  // Current day
+														isWeekend ? 'black' :  // Weekend
+															'none'  // Other days
+											}}
+										/>
+									</Box>
+								)
+							})}
+						</div>
+					))}
+				</div>
+			</Grid>
 
-									<input
-										value={day.title}
-										onChange={event => handleTitleChange(monthIndex, dayIndex, event.target.value)}
-										onBlur={handleUpdateDayTitles}
-										onKeyPress={(event) => {
-											if (event.key === 'Enter') {
-												handleUpdateDayTitles();
-												event.preventDefault();  // Prevents form submission
-											}
-										}}
-										style={{
-											width: '200px',
-											maxHeight: '21px',
-											overflow: 'auto',
-											backgroundColor:
-												day.day === currentDay && month.month === currentMonth ? 'rgba(0, 255, 0, 0.3)' :  // Current day
-													isWeekend ? 'black' :  // Weekend
-														'none'  // Other days
-										}}
-									/>
+			<Grid item xs={12} sx={{ paddingBottom: '50vh' }}>
 
-
-								</Box>
-							)
-						})}
-					</div>
-				))}
-			</Box>
-
-
-
-
-
-
+			</Grid>
 
 
 

@@ -100,6 +100,7 @@ const Itinerary: React.FC = () => {
 		scheduledNotifications,
 		events,
 		calendarRef,
+		orderIds,
 	])
 
 
@@ -420,6 +421,7 @@ const Itinerary: React.FC = () => {
 					severity: "success"
 				})
 				updateBadge(habit)
+				refetch()
 			}
 		})
 
@@ -440,6 +442,7 @@ const Itinerary: React.FC = () => {
 					severity: "success"
 				})
 				updateBadge(todo)
+				refetch()
 			}
 		})
 	}

@@ -1,5 +1,6 @@
-import { Box, Button, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
+import PlanSelectDropdown from './PlanSelectDropdown';
 
 
 interface DayPlanningProps {
@@ -7,20 +8,7 @@ interface DayPlanningProps {
 }
 
 const DayPlanning = ({ setCurrentView }: DayPlanningProps) => {
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
-	const handleMenuItemClick = (value: string) => {
-		setCurrentView(value);
-		handleClose();
-	};
 
 	return (
 		<Grid container spacing={3}>
@@ -28,30 +16,9 @@ const DayPlanning = ({ setCurrentView }: DayPlanningProps) => {
 			<Grid item xs={12}>
 				<Box>
 
-					<Button
-						aria-controls="simple-menu"
-						aria-haspopup="true"
-						onClick={handleClick}
-						sx={{ textTransform: 'none' }}
-					>
-						<Typography variant="h5" component="h1">
-							Day Planning
-						</Typography>
-					</Button>
+					{/* Plan Select Dropdown */}
+					<PlanSelectDropdown setCurrentView={setCurrentView} />
 
-					<Menu
-						id="simple-menu"
-						anchorEl={anchorEl}
-						open={Boolean(anchorEl)}
-						onClose={handleClose}
-						MenuListProps={{
-							sx: { color: 'white' },
-						}}
-					>
-						<MenuItem onClick={() => handleMenuItemClick('day')}>Day Planning</MenuItem>
-						<MenuItem onClick={() => handleMenuItemClick('week')}>Week Planning</MenuItem>
-						<MenuItem onClick={() => handleMenuItemClick('year')}>Year Planning</MenuItem>
-					</Menu>
 
 					<Typography variant="h6" component="h2">
 						{new Date().toDateString()}

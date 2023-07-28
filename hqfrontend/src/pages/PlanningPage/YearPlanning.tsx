@@ -351,7 +351,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 				</div>
 			</Grid>
 
-			<Grid item xs={12} sx={{ paddingBottom: '50vh' }}>
+			<Grid item xs={12}>
 
 			</Grid>
 

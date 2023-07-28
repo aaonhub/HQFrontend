@@ -14,6 +14,7 @@ import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import './Itinerary.css'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import { useMutation, useQuery } from '@apollo/client'
 
 // Full Calendar
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -28,21 +29,22 @@ import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
 import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
-import { useMutation, useQuery } from '@apollo/client'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
+import HabitInboxRosetta from '../HabitInboxRosetta'
 
 // Models
 import Habit from "../../../models/habit"
-import InboxItem, { ITINERARY_QUERY, UPDATE_TODO } from "../../../models/inboxitem"
+import InboxItem from "../../../models/inboxitem"
 import SimpleItem from "../../../models/simpleitem"
-import HabitInboxRosetta from '../HabitInboxRosetta'
 
 // Queries 
+import { ITINERARY_QUERY } from '../../../models/inboxitem'
 // Mutations
-import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
+import { UPDATE_TODO } from '../../../models/inboxitem'
 import { CHECK_UNCHECK_TODO } from '../../../models/inboxitem'
-import { CHECK_HABIT } from '../../../models/habit'
 import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
+import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
+import { CHECK_HABIT } from '../../../models/habit'
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
 
 

@@ -19,7 +19,7 @@ const ProjectsPage = () => {
 	// Tab Title
 	useEffect(() => { document.title = "Projects - HQ"; }, []);
 
-	const {setDebugText} = useGlobalContext()
+	const { setDebugText } = useGlobalContext()
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
 
@@ -27,17 +27,9 @@ const ProjectsPage = () => {
 
 
 
-		// Debugging
-		useEffect(() => {
-			setDebugText([
-				{ title: 'Projects',  content: JSON.stringify(projects, null, 2) },
-			])
-		}, [projects])
-
-
 
 	// Projects Query
-	const { loading, error, refetch } = useQuery(GET_PROJECTS, {
+	const { loading, error, data, refetch } = useQuery(GET_PROJECTS, {
 		fetchPolicy: 'network-only',
 
 		onCompleted: (data) => {
@@ -53,9 +45,17 @@ const ProjectsPage = () => {
 			setProjects(sortedProjects)
 		},
 
-		onError: (error) => console.log(error.networkError),
+		onError: (error) => console.log(error),
 	})
 
+
+	// Debugging
+	useEffect(() => {
+		setDebugText([
+			{ title: 'Projects', content: JSON.stringify(projects, null, 2) },
+			{ title: "data", content: JSON.stringify(data, null, 2) }
+		])
+	}, [projects, data])
 
 
 	const [updateOrCreateProjectOrder] = useMutation(UPDATE_OR_CREATE_PROJECT_ORDER, {

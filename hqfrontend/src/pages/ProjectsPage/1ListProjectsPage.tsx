@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, List, Typography, TextField } from '@mui/material'
 import ProjectListItem from './3ListProjectItem'
+import { useGlobalContext } from '../App/GlobalContextProvider'
 
 // Queries and Mutations
 import { GET_PROJECTS } from '../../models/project'
@@ -18,8 +19,21 @@ const ProjectsPage = () => {
 	// Tab Title
 	useEffect(() => { document.title = "Projects - HQ"; }, []);
 
+	const {setDebugText} = useGlobalContext()
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
+
+
+
+
+
+		// Debugging
+		useEffect(() => {
+			setDebugText([
+				{ title: 'Projects',  content: JSON.stringify(projects, null, 2) },
+			])
+		}, [projects])
+
 
 
 	// Projects Query

@@ -18,13 +18,10 @@ import { sortObjectsByIds } from '../../components/MiscFunctions'
 const ProjectsPage = () => {
 	// Tab Title
 	useEffect(() => { document.title = "Projects - HQ"; }, []);
-
+	
 	const { setDebugText } = useGlobalContext()
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
-
-
-
 
 
 

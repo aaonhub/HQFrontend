@@ -28,6 +28,11 @@ interface Edge {
 
 
 const ToDosPage = () => {
+    useEffect(() => {
+        document.title = 'To Dos - HQ';
+    }
+    );
+
     const { setSnackbar } = useGlobalContext();
     const [rows, setRows] = useState<Node[]>([]);
     const [endCursor, setEndCursor] = useState<string>('');

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DayPlanning from './DayPlanning';
 import WeekPlanning from './WeekPlanning';
 import YearPlanning from './YearPlanning';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const PlanningPage = () => {
+	useEffect(() => {
+		document.title = 'Planning - HQ';
+	}, []);
+
 	const [currentView, setCurrentView] = React.useState("year");
 
 	const pageVariants = {

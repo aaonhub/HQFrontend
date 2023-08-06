@@ -1,7 +1,7 @@
 
 export function getCurrentLocalDate() {
 	const now = new Date();
-	if (now.getHours() < 3) {
+	if (now.getHours() < 6) {
 		now.setDate(now.getDate() - 1);
 	}
 	const year = now.getFullYear();

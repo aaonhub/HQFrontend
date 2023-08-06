@@ -572,7 +572,7 @@ const Itinerary: React.FC = () => {
 						events={events}
 						eventChange={handleEventChange}
 						editable={true}
-						slotMaxTime="26:00:00"
+						slotMaxTime="27:00:00"
 					/>
 
 				</Grid>
@@ -643,6 +643,7 @@ const Itinerary: React.FC = () => {
 						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography variant="h6">Completed Items</Typography>
 						</AccordionSummary>
+
 						<AccordionDetails>
 							{completedItems.length > 0 ? (
 								<ItineraryList
@@ -658,6 +659,7 @@ const Itinerary: React.FC = () => {
 								</Typography>
 							)}
 						</AccordionDetails>
+
 					</Accordion>
 
 
@@ -665,6 +667,8 @@ const Itinerary: React.FC = () => {
 					{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
 
 				</Grid>
+
+				
 			</Grid>
 		</Card>
 	)

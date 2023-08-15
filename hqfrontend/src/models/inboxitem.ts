@@ -208,8 +208,16 @@ export const ADD_TODO_TO_TODAY = gql`
 				id
 				title
 				completed
+				project {
+					id
+					codename
+				}
 				dueDateTime
 				description
+				startDate
+				startTime
+				timeCompleted
+				length
 			}
 		}
 	}
@@ -244,10 +252,16 @@ export const UPDATE_TODO = gql`
 				id
 				title
 				completed
-				project{
+				project {
 					id
 					codename
 				}
+				dueDateTime
+				description
+				startDate
+				startTime
+				timeCompleted
+				length
 			}
 		}
 	}
@@ -270,8 +284,16 @@ export const CHECK_UNCHECK_TODO = gql`
 				id
 				title
 				completed
+				project {
+					id
+					codename
+				}
 				dueDateTime
 				description
+				startDate
+				startTime
+				timeCompleted
+				length
 			}
 		}
 	}

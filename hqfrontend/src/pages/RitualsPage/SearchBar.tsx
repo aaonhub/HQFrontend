@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import { useQuery } from "@apollo/client";
+import CustomList from "../../components/CustomChecklist";
 
 import { GET_ALL_HABITS } from "../../models/habit";
 import { List, ListItem } from "@mui/material";
@@ -80,17 +81,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 			</IconButton>
 
 
-			<List>
-				{filteredData?.map((item: any) => (
-					<ListItem
-						key={item.id}
-						onClick={() => handleSelect(item)}
-					>
-						{item.title}
-					</ListItem>
-				))}
-			</List>
-
+			{/* Checklist */}
+			<CustomList list={filteredData} handleCheckItem={handleSelect} checklistType="highlight" />
 
 
 

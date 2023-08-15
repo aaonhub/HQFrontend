@@ -1,14 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {
-	Typography,
-	Card,
-	CardContent,
-	Input,
-	IconButton,
-	Box,
-	Grid,
-	debounce,
-} from '@mui/material'
+import { Typography, Card, CardContent, Input, IconButton, Box, Grid, debounce } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -71,50 +62,13 @@ const Itinerary: React.FC = () => {
 	const localDate = getCurrentLocalDate()
 
 
-	// Debugging
-	useEffect(() => {
-		setDebugText([
-			{ title: "Today's Date", content: localDate },
-			{ title: "Order Ids", content: JSON.stringify(orderIds, null, 2) },
-			{ title: "Current Time", content: currentLocalTime() },
-			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
-			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
-			{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
-			{ title: "Habits", content: JSON.stringify(habits, null, 2) },
-			{ title: "Inbox Items", content: JSON.stringify(inboxItems, null, 2) },
-			{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
-			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
-			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
-			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
-			{ title: "Events", content: JSON.stringify(events, null, 2) }
-		])
-	}, [
-		setDebugText,
-		localDate,
-		todayBadges,
-		uncompletedItems,
-		completedItems,
-		habits,
-		inboxItems,
-		expanded,
-		selectedInboxItemId,
-		selectedHabitId,
-		scheduledNotifications,
-		events,
-		calendarRef,
-		orderIds,
-	])
-
-
 	// Query
-	const { loading, error, refetch } = useQuery(ITINERARY_QUERY, {
-		fetchPolicy: 'network-only',
+	const { loading, error, data, refetch } = useQuery(ITINERARY_QUERY, {
+		// fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
 		},
 		onCompleted: (data) => {
-
-			console.log("yes")
 
 			// Set inbox items
 			const inboxItems = data.toDoItemsByStartDate.map((toDoItems: any) => {
@@ -216,6 +170,46 @@ const Itinerary: React.FC = () => {
 	})
 
 
+	// Debugging
+	useEffect(() => {
+		setDebugText([
+			{ title: "Today's Date", content: localDate },
+			{ title: "Order Ids", content: JSON.stringify(orderIds, null, 2) },
+			{ title: "Current Time", content: currentLocalTime() },
+			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
+			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
+			{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
+			{ title: "Habits", content: JSON.stringify(habits, null, 2) },
+			{ title: "Inbox Items", content: JSON.stringify(inboxItems, null, 2) },
+			{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
+			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
+			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
+			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
+			{ title: "Events", content: JSON.stringify(events, null, 2) },
+			{ title: "Data", content: JSON.stringify(data, null, 2) }
+		])
+	}, [
+		setDebugText,
+		localDate,
+		todayBadges,
+		uncompletedItems,
+		completedItems,
+		habits,
+		inboxItems,
+		expanded,
+		selectedInboxItemId,
+		selectedHabitId,
+		scheduledNotifications,
+		events,
+		calendarRef,
+		orderIds,
+		data
+	])
+
+
+
+
+
 
 
 	// Update Order
@@ -273,9 +267,6 @@ const Itinerary: React.FC = () => {
 					Completed: confirmedItem.completedToday,
 					Length: formattedLength,
 					StartTime: formatTime(changeInfo.event.start),
-				},
-				onCompleted: () => {
-					refetch()
 				}
 			})
 		} catch (error) {
@@ -378,10 +369,8 @@ const Itinerary: React.FC = () => {
 				open: true,
 				severity: "success"
 			})
-			refetch()
 		} else { // If there is only one line
 			setInputValue(pasteData) // Paste the data into the input field
-			refetch()
 		}
 	}
 
@@ -444,7 +433,6 @@ const Itinerary: React.FC = () => {
 					severity: "success"
 				})
 				updateBadge(todo)
-				refetch()
 			}
 		})
 	}
@@ -668,7 +656,7 @@ const Itinerary: React.FC = () => {
 
 				</Grid>
 
-				
+
 			</Grid>
 		</Card>
 	)

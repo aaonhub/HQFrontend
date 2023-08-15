@@ -13,7 +13,7 @@ interface ListProps {
     list: ChecklistItem[];
     handleCheckItem: (listItem: ChecklistItem) => void;
     handleOrderChange?: (list: ChecklistItem[]) => void;
-    checklistType: "strikeout" | "highlight";  // Add this
+    checklistType: "strikeout" | "highlight"; 
 }
 
 // Define animation
@@ -31,7 +31,7 @@ const GlowPaper = styled(Paper)(({ theme }) => ({
     animation: `${glow} 2s ease-in-out infinite alternate`,
 }));
 
-const CustomList: React.FC<ListProps> = ({ list, handleCheckItem, checklistType }) => {  // include checklistType here
+const CustomList: React.FC<ListProps> = ({ list, handleCheckItem, checklistType }) => {
     const theme = useTheme()
 
     return (

@@ -1,6 +1,9 @@
 import React from 'react'
 import { Dialog } from '@mui/material'
 
+// Queries
+// import { }
+
 
 interface UpdateRitualDialogProps {
     id: string;

@@ -18,10 +18,12 @@ interface ItineraryListProps {
 	setList: any
 	setSelectedInboxItemId: any
 	setSelectedHabitId: any
+	setSelectedRitualId: any
+	setSelectedEntryID: any
 	handleCheckItem: any
 }
 
-const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxItemId, setSelectedHabitId, handleCheckItem, setList }) => {
+const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelectedInboxItemId, setSelectedHabitId, setSelectedRitualId, setSelectedEntryID, handleCheckItem }) => {
 	const [id] = useState(uuidv4());
 
 
@@ -143,6 +145,10 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 										if ("h" === item.id.slice(-1)) {
 											setSelectedHabitId(item.id.slice(0, -1))
 										}
+										if (item.type === "ritual") {
+											setSelectedRitualId(item.ritualID)
+											setSelectedEntryID(item.id.slice(0, -1))
+										}
 									}}
 									sx={{
 										borderRadius: 2,
@@ -199,6 +205,11 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setSelectedInboxIte
 											cursor: 'grab',
 											// backgroundColor: "red",
 											height: "100%",
+											// if ritual then red, if habit then blue, if inbox then grey
+											color: item.type === 'ritual' ? '#ffcccb' :
+												item.type === 'habit' ? '#90EE90' :
+													item.type === 'inbox' ? '#ADD8E6' :
+														''
 										}}
 									/>
 

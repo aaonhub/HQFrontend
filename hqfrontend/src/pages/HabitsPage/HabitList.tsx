@@ -35,15 +35,24 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 
 	const theme = useTheme();
 
-	const [createHabitHistory] = useMutation(CHECK_HABIT);
+	const [createHabitHistory] = useMutation(CHECK_HABIT, {
+		onCompleted: (data) => {
+			console.log(data)
+		},
+		onError: (error) => {
+			console.log(error)
+		}
+	});
+
+
 	const handleHabitCompletion = (habit: Habit) => {
 		createHabitHistory({
 			variables: {
 				habitId: habit.id,
 				currentDate: today,
+				quantity: habit.countToday ? -1 : 1,
 			},
 		});
-		habit.completedToday = true;
 	};
 
 	const handleEdit = (habit: Habit) => {
@@ -54,8 +63,8 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 		if (!habits) return [];
 
 		return [...habits].sort((a, b) => {
-			const aIsCompleted = a.completedToday;
-			const bIsCompleted = b.completedToday;
+			const aIsCompleted = a.countToday;
+			const bIsCompleted = b.countToday;
 
 			return aIsCompleted && !bIsCompleted
 				? 1
@@ -69,7 +78,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 		<>
 			<List>
 				{sortedHabits().map((item) => {
-					const isCompleted = item.completedToday;
+					const isCompleted = item.countToday;
 
 					return (
 						<ListItem key={item.id} disablePadding>
@@ -100,7 +109,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 
 									<Checkbox
 										edge="end"
-										checked={isCompleted}
+										checked={isCompleted !== 0}
 										onChange={() => handleHabitCompletion(item)}
 										onClick={(e) => e.stopPropagation()}
 										color="primary"

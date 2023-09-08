@@ -30,16 +30,14 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		"",
 		true,
 		"DAILY",
-		new Date(),
-		0,
 		[],
 		[],
-		0,
-		new Date(),
+		[],
+		"",
 		new Date(),
 		"",
-		false,
 		"0",
+		0
 	));
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
@@ -53,16 +51,14 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 					data.getHabit.title,
 					data.getHabit.active,
 					data.getHabit.schedule.frequency,
-					data.getHabit.streak,
-					data.getHabit.history,
-					data.getHabit.reminders,
-					data.getHabit.reminderTime,
-					data.getHabit.createdAt,
-					data.getHabit.updatedAt,
-					data.getHabit.userId,
+					data.getHabit.schedule.daysOfTheWeek,
+					data.getHabit.schedule.daysOfTheMonth,
+					data.getHabit.schedule.daysOfTheYear,
+					data.getHabit.schedule.startDate,
+					data.getHabit.schedule.endDate,
 					data.getHabit.schedule.timeOfDay,
-					data.getHabit.completedToday,
 					data.getHabit.length,
+					data.getHabit.completedToday
 				)
 			)
 			console.log(data.getHabit)
@@ -163,6 +159,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 							label="Age"
 							onChange={handleFrequencyChange}
 						>
+							<MenuItem value={"NONE"}>None</MenuItem>
 							<MenuItem value={"DAILY"}>Daily</MenuItem>
 							{/* <MenuItem value={"WEEKLY"}>Weekly</MenuItem>
 							<MenuItem value={"MONTHLY"}>Monthly</MenuItem> */}

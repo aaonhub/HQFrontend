@@ -27,7 +27,7 @@ const RitualPage = () => {
 			<Grid container spacing={2}>
 
 				<Grid item xs={8}>
-					<Typography variant="h1">Ritual Page</Typography>
+					<Typography variant="h3">Rituals</Typography>
 				</Grid>
 
 				<Grid item xs={4}>

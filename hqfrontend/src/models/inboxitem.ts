@@ -10,7 +10,7 @@ interface InboxItem {
 	project?: Project | null;
 	dueDateTime: string | null;
 	startTime: string | null;
-	startDate: Date | null;
+	startDate: string | null;
 	timeCompleted: Date | null;
 	length?: string | null;
 }
@@ -48,7 +48,7 @@ export default InboxItem;
 
 // Queries
 export const ITINERARY_QUERY = gql`
-	query($Today: Date!) {
+	query($Today: Date!, $YearMonth: String!) {
 		toDoItemsByStartDate(Today: $Today) {
 			id
 			title
@@ -68,9 +68,7 @@ export const ITINERARY_QUERY = gql`
 			id
 			title
 			active
-			lastCompleted
-			order
-			completedToday
+			countToday
 			length
 			schedule{
 				id
@@ -79,6 +77,25 @@ export const ITINERARY_QUERY = gql`
 				startDate
 				endDate
 			}
+		}
+		rituals{
+			id
+			title
+			schedule{
+				id
+				startDate
+				endDate
+				timeOfDay
+				daysOfTheWeek
+				daysOfTheMonth
+				daysOfTheYear
+				frequency
+			}
+		}
+		ritualHistory(yearMonth: $YearMonth){
+			id
+			yearMonth
+			data
 		}
 		settings{
 			id

@@ -7,10 +7,15 @@ import DialogTitle from '@mui/material/DialogTitle'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { useMutation } from '@apollo/client'
-import { CREATE_RITUAL } from '../../models/ritual'
-import SearchBar from './SearchBar'
+import { Box, Grid, MenuItem, Select, Typography } from '@mui/material'
 
-import { Box, Grid, Typography } from '@mui/material'
+// Components
+import SearchBar from './SearchBar'
+import { getCurrentLocalDate } from '../../components/DateFunctions'
+
+// Queries and Mutations
+import { CREATE_RITUAL } from '../../models/ritual'
+
 
 interface RitualDialogProps {
 	open: boolean;
@@ -20,16 +25,16 @@ interface RitualDialogProps {
 export interface RitualItemType {
 	id: string;
 	title: string;
-	completed: boolean;
 }
 
 const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 	const [title, setTitle] = useState<string>('')
 	const [habits, setHabits] = useState<RitualItemType[]>([])
 	const [ritualItems, setRitualItems] = useState<RitualItemType[]>([])
-
 	const [habitToAdd, setHabitToAdd] = useState<RitualItemType>()
 	const [newRitualItemTitle, setNewRitualItemTitle] = useState<string>()
+	const [frequency, setFrequency] = useState<string>('NONE');
+
 
 
 	// Create Ritual
@@ -43,6 +48,8 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 				title: title,
 				ritualItems: JSON.stringify(ritualItems),
 				habits: habits.map((habit) => habit.id),
+				frequency: frequency,
+				start_date: getCurrentLocalDate(),
 			},
 		});
 	};
@@ -53,7 +60,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 	useEffect(() => {
 		if (habitToAdd) {
 			setHabits([...habits, habitToAdd])
-			setRitualItems(() => [...ritualItems, { id: 'h' + habitToAdd.id, title: habitToAdd.title, completed: false },])
+			setRitualItems(() => [...ritualItems, { id: 'h' + habitToAdd.id, title: habitToAdd.title },])
 			setHabitToAdd(undefined)
 		}
 	}, [habitToAdd, habits, ritualItems])
@@ -63,21 +70,22 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 	const findLowestAvailableNumber = () => {
 		let availableNumber = 1;
-		const existingIds = ritualItems.map((ritualItem) => parseInt(ritualItem.id));
+		const existingIds = ritualItems.map((ritualItem) => parseInt(ritualItem.id.replace('i', '').replace('h', '')));
 
 		while (existingIds.includes(availableNumber)) {
 			availableNumber++;
 		}
 
-		return availableNumber.toString();
+		return 'i' + availableNumber.toString();
 	};
 
 
 
 
 
+
 	return (
-		<Dialog open={open} onClose={onClose}>
+		<Dialog open={open} onClose={onClose} maxWidth={false}>
 
 			{/* Title */}
 			<DialogTitle sx={{ pb: 0 }}>
@@ -86,20 +94,31 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 
 
 
-			<DialogContent sx={{ display: 'flex' }}>
+			<DialogContent sx={{ display: 'flex', overflowY: 'visible' }}>
 
 				<Grid container spacing={2}>
-					<Grid item xs={12} md={12}>
+					<Grid item xs={6} md={6}>
 						<TextField
 							autoFocus
 							margin="dense"
 							label="Ritual Title"
 							type="text"
-							fullWidth
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
 						/>
 					</Grid>
+					<Grid item xs={6} md={6}>
+						<Typography sx={{ marginBottom: 1 }}>Frequency:</Typography>
+						<Select
+							value={frequency}
+							onChange={(e) => setFrequency(e.target.value as string)}
+							fullWidth
+						>
+							<MenuItem value="NONE">None</MenuItem>
+							<MenuItem value="DAILY">Daily</MenuItem>
+						</Select>
+					</Grid>
+
 
 
 					<Grid item xs={12} md={12}>
@@ -137,7 +156,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 											if (e.key === 'Enter') {
 												if (!newRitualItemTitle) return;
 												const newId = findLowestAvailableNumber();
-												const newRitualItem = { id: newId, title: newRitualItemTitle, completed: false };
+												const newRitualItem = { id: newId, title: newRitualItemTitle };
 
 												setRitualItems((prevItems) => {
 													const updatedItems = [...prevItems, newRitualItem];
@@ -154,6 +173,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 							{/* Search Bar */}
 							<Grid item xs={12} md={6}>
 								<Box sx={{ marginLeft: 2, width: 300 }}>
+									<Typography sx={{ marginBottom: 1 }}>Habits:</Typography>
 									<SearchBar habits={habits} setHabitToAdd={setHabitToAdd} />
 								</Box>
 							</Grid>

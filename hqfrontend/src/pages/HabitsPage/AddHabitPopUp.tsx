@@ -1,21 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import {
-	Button,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	TextField,
-	MenuItem,
-	Select,
-	FormControl,
-	InputLabel,
-	Snackbar,
-	Fab,
-	Box,
-} from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Select, FormControl, InputLabel, Snackbar, Fab, Box } from '@mui/material';
 import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { getCurrentLocalDate } from '../../components/DateFunctions';

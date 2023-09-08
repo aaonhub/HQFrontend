@@ -21,12 +21,14 @@ import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
 import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
-import HabitInboxRosetta from '../HabitInboxRosetta'
+import { updateRitualHistoryWithRepeatRituals } from '../../../models/ritual'
+import { RitualHistoryManager } from '../../../models/ritual'
 
 // Models
 import Habit from "../../../models/habit"
 import InboxItem from "../../../models/inboxitem"
-import SimpleItem from "../../../models/simpleitem"
+import Ritual from "../../../models/ritual"
+import SimpleItem, { habitsToSimpleItems, inboxItemsToSimpleItems, ritualsToSimpleItems } from "../../../models/simpleitem"
 
 // Queries 
 import { ITINERARY_QUERY } from '../../../models/inboxitem'
@@ -37,36 +39,42 @@ import { ADD_TODO_TO_TODAY } from '../../../models/inboxitem'
 import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
 import { CHECK_HABIT } from '../../../models/habit'
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
+import RitualDialog from '../../../components/RitualDialog'
 
 
 
 const Itinerary: React.FC = () => {
-	const { setSnackbar, todayBadges, setTodayBadges, setDebugText } = useGlobalContext()
+	const { setSnackbar, todayBadges, setTodayBadges, setDebugText } = useGlobalContext()!
 
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
 	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([])
-	const [habits, setHabits] = useState<Habit[]>([])
-	const [inboxItems, setInboxItems] = useState<InboxItem[]>([])
+	const [simpleItems, setSimpleItems] = useState<any[]>([])
 	const [expanded, setExpanded] = useState(false)
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
 	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
+	const [selectedRitualId, setSelectedRitualId] = useState<string | null>(null)
+	const [selectedEntryID, setSelectedEntryID] = useState<any>(null)
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [orderIds, setOrderIds] = useState<string[]>([])
+	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
 
 
 	// Calendar State
-	const [events, setEvents] = useState<EventInput[]>([])
+	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const calendarRef = useRef(null)
 
 	const localDate = getCurrentLocalDate()
 
 
+
+
 	// Query
 	const { loading, error, data, refetch } = useQuery(ITINERARY_QUERY, {
-		// fetchPolicy: 'network-only',
+		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
+			YearMonth: localDate.slice(0, 7),
 		},
 		onCompleted: (data) => {
 
@@ -85,7 +93,6 @@ const Itinerary: React.FC = () => {
 					length: toDoItems.length,
 				});
 			});
-			setInboxItems(inboxItems);
 
 
 			// Set habit items
@@ -95,19 +102,54 @@ const Itinerary: React.FC = () => {
 					habit.title,
 					habit.active,
 					habit.frequency,
-					habit.lastCompleted,
-					habit.order,
 					habit.daysOfTheWeek,
 					habit.daysOfTheMonth,
 					habit.dayOfTheYear,
 					habit.startDate,
 					habit.endDate,
 					habit.schedule.timeOfDay,
-					habit.completedToday,
 					habit.length,
+					habit.completedToday,
 				)
 			})
-			setHabits(habits)
+
+
+
+			// Set rituals
+			const rituals = data.rituals.map((ritual: any) => {
+				return new Ritual({
+					ritualID: ritual.id,
+					title: ritual.title,
+					habits: ritual.habits,
+					ritual_items: ritual.ritual_items,
+					schedule: ritual.schedule
+				});
+			})
+
+			// Filter out rituals that are not daily
+			const filteredRituals = rituals.filter((ritual: any) => {
+				return ritual.schedule.frequency === "DAILY";
+			});
+
+
+			// 3. Initialize and populate RitualHistoryManager
+			const updatedRitualHistory = ritualHistory
+			data.ritualHistory && data.ritualHistory.data &&
+				updatedRitualHistory.fromJson(data.ritualHistory.data)
+
+
+			// 4. Update state
+			setRitualHistory(updatedRitualHistory);
+
+			// 5. Update ritual history with repeat rituals
+			// Make sure that updateRitualHistoryWithRepeatRituals returns updated rituals
+			const updatedRituals = updateRitualHistoryWithRepeatRituals(filteredRituals, ritualHistory, localDate);
+
+
+			// 6. Convert to simple items
+			const simpleRitualItems = ritualsToSimpleItems(updatedRituals, data.rituals)
+
+
 
 
 
@@ -121,33 +163,41 @@ const Itinerary: React.FC = () => {
 
 
 			// Combine the inbox items and habits into one array
-			const combinedArray = HabitInboxRosetta({ habits: habits, inboxItems: inboxItems })
+			const simpleHabitItems = habitsToSimpleItems(habits)
+			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)
 
-			const simpleItemArrayFiltered = combinedArray.filter((simpleItem) => {
+			const combinedArray = [...simpleInboxItems, ...simpleHabitItems, ...simpleRitualItems]
+			setSimpleItems(combinedArray)
+
+
+
+			const simpleItemArrayFiltered = combinedArray.filter((simpleItem: any) => {
 				return !simpleItem.completedToday
 			})
 
-			if (orderIds.length > 0) {
-				if (orderDate === getCurrentLocalDate()) {
-					const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds)
-					setUncompletedItems(sortedArray as SimpleItem[])
-				} else {
-					// Sort uncompletedItems by startTime
-					simpleItemArrayFiltered.sort((a, b) => {
-						const aTime = a.startTime || ''
-						const bTime = b.startTime || ''
-						if (aTime < bTime) return -1
-						if (aTime > bTime) return 1
-						return 0
-					})
-					setUncompletedItems(simpleItemArrayFiltered)
-				}
+			if (orderDate === getCurrentLocalDate() && orderIds.length > 0) {
+				const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds);
+				setUncompletedItems(sortedArray as SimpleItem[]);
+			} else {
+				// If the order date is not today, update the order with today's date and the IDs of the uncompleted items
+				const newOrderIds = simpleItemArrayFiltered.map(item => item.id);
+				setOrderIds(newOrderIds);
+
+				// Sort uncompletedItems by startTime
+				simpleItemArrayFiltered.sort((a: any, b: any) => {
+					const aTime = a.startTime || '';
+					const bTime = b.startTime || '';
+					if (aTime < bTime) return -1;
+					if (aTime > bTime) return 1;
+					return 0;
+				});
+				setUncompletedItems(simpleItemArrayFiltered);
 			}
 
 
 
 
-			const simpleItemArrayCompleted = combinedArray.filter((simpleItem) => {
+			const simpleItemArrayCompleted = combinedArray.filter((simpleItem: any) => {
 				return simpleItem.completedToday
 			})
 			setCompletedItems(simpleItemArrayCompleted)
@@ -170,8 +220,75 @@ const Itinerary: React.FC = () => {
 	})
 
 
-	// Debugging
+
+	// Debug Panel
+	// interface Dependencies {
+	// 	localDate: any;
+	// 	todayBadges: any;
+	// 	uncompletedItems: any;
+	// 	completedItems: any;
+	// 	expanded: any;
+	// 	selectedInboxItemId: any;
+	// 	selectedHabitId: any;
+	// 	scheduledNotifications: any;
+	// 	events: any;
+	// 	calendarRef: any;
+	// 	orderIds: any;
+	// 	data: any;
+	// 	simpleItems: any;
+	// 	ritualHistory: any;
+	// }
+	// const prevDeps = useRef<Dependencies>({
+	// 	localDate: undefined,
+	// 	todayBadges: undefined,
+	// 	uncompletedItems: undefined,
+	// 	completedItems: undefined,
+	// 	expanded: undefined,
+	// 	selectedInboxItemId: undefined,
+	// 	selectedHabitId: undefined,
+	// 	scheduledNotifications: undefined,
+	// 	events: undefined,
+	// 	calendarRef: undefined,
+	// 	orderIds: undefined,
+	// 	data: undefined,
+	// 	simpleItems: undefined,
+	// 	ritualHistory: undefined,
+	// });
 	useEffect(() => {
+		// const changedDeps: string[] = [];
+
+		// const currentDeps: Dependencies = {
+		// 	localDate,
+		// 	todayBadges,
+		// 	uncompletedItems,
+		// 	completedItems,
+		// 	expanded,
+		// 	selectedInboxItemId,
+		// 	selectedHabitId,
+		// 	scheduledNotifications,
+		// 	events,
+		// 	calendarRef,
+		// 	orderIds,
+		// 	data,
+		// 	simpleItems,
+		// 	ritualHistory,
+		// };
+
+		// Object.entries(currentDeps).forEach(([key, value]) => {
+		// 	if (key !== 'calendarRef') {
+		// 		if (JSON.stringify(prevDeps.current[key as keyof Dependencies]) !== JSON.stringify(value)) {
+		// 			changedDeps.push(key);
+		// 			prevDeps.current[key as keyof Dependencies] = value;
+		// 		}
+		// 	}
+		// });
+
+
+		// if (changedDeps.length > 0) {
+		// 	console.log(`Changed dependencies: ${changedDeps.join(", ")}`);
+		// }
+
+
 		setDebugText([
 			{ title: "Today's Date", content: localDate },
 			{ title: "Order Ids", content: JSON.stringify(orderIds, null, 2) },
@@ -179,14 +296,14 @@ const Itinerary: React.FC = () => {
 			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
 			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
 			{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
-			{ title: "Habits", content: JSON.stringify(habits, null, 2) },
-			{ title: "Inbox Items", content: JSON.stringify(inboxItems, null, 2) },
 			{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
 			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
 			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
 			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
 			{ title: "Events", content: JSON.stringify(events, null, 2) },
-			{ title: "Data", content: JSON.stringify(data, null, 2) }
+			{ title: "Data", content: JSON.stringify(data, null, 2) },
+			{ title: "SimpleItems", content: JSON.stringify(simpleItems, null, 2) },
+			{ title: "Ritual History", content: JSON.stringify(ritualHistory, null, 2) },
 		])
 	}, [
 		setDebugText,
@@ -194,8 +311,6 @@ const Itinerary: React.FC = () => {
 		todayBadges,
 		uncompletedItems,
 		completedItems,
-		habits,
-		inboxItems,
 		expanded,
 		selectedInboxItemId,
 		selectedHabitId,
@@ -203,7 +318,9 @@ const Itinerary: React.FC = () => {
 		events,
 		calendarRef,
 		orderIds,
-		data
+		data,
+		simpleItems,
+		ritualHistory,
 	])
 
 
@@ -476,11 +593,13 @@ const Itinerary: React.FC = () => {
 	// Dialog Close Handlers
 	const handleCloseInbox = () => {
 		setSelectedInboxItemId(null)
-		refetch()
 	}
 	const handleCloseHabit: any = () => {
 		setSelectedHabitId(null)
-		refetch()
+	}
+	const handleCloseRitual: any = () => {
+		setSelectedRitualId(null)
+		setSelectedEntryID(null)
 	}
 
 
@@ -608,6 +727,8 @@ const Itinerary: React.FC = () => {
 									setList={setUncompletedItems}
 									setSelectedInboxItemId={setSelectedInboxItemId}
 									setSelectedHabitId={setSelectedHabitId}
+									setSelectedRitualId={setSelectedRitualId}
+									setSelectedEntryID={setSelectedEntryID}
 									handleCheckItem={handleCheckItem}
 								/>
 							) : (
@@ -639,6 +760,8 @@ const Itinerary: React.FC = () => {
 									setList={setCompletedItems}
 									setSelectedInboxItemId={setSelectedInboxItemId}
 									setSelectedHabitId={setSelectedHabitId}
+									setSelectedRitualId={setSelectedRitualId}
+									setSelectedEntryID={setSelectedEntryID}
 									handleCheckItem={handleCheckItem}
 								/>
 							) : (
@@ -653,6 +776,16 @@ const Itinerary: React.FC = () => {
 
 					{selectedInboxItemId && <EditInboxItemDialog handleClose={handleCloseInbox} inboxItemId={selectedInboxItemId} />}
 					{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
+					{selectedRitualId &&
+						<RitualDialog
+							open={true}
+							onClose={handleCloseRitual}
+							ritualId={selectedRitualId}
+							entryID={selectedEntryID}
+							entryDate={getCurrentLocalDate()}
+							ritualHistory={ritualHistory}
+							setRitualHistory={setRitualHistory}
+						/>}
 
 				</Grid>
 

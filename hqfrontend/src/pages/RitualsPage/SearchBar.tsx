@@ -67,7 +67,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 
 	return (
 		<div>
-			<TextField
+			{/* <TextField
 				id="search-bar"
 				className="text"
 				value={searchQuery}
@@ -78,7 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ habits, setHabitToAdd }) => {
 			/>
 			<IconButton aria-label="search">
 				<SearchIcon style={{ fill: "blue" }} />
-			</IconButton>
+			</IconButton> */}
 
 
 			{/* Checklist */}

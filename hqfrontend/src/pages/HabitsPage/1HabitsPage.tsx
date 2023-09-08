@@ -5,7 +5,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { useQuery } from '@apollo/client';
 
 // Queries and Mutations
-import { GET_HABITS_DUE_TODAY } from '../../models/habit';
+import { GET_ALL_HABITS } from '../../models/habit';
 
 // Components
 import HabitList from './HabitList';
@@ -26,26 +26,25 @@ const HabitsPage = () => {
 	const [open, setOpen] = useState(false)
 
 	// Habits Query
-	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
+	const { loading, error, refetch } = useQuery(GET_ALL_HABITS, {
 		variables: { today: today, },
 		fetchPolicy: "network-only", // Add this line
 		onCompleted: (data) => {
-			const habits = data.habitsDueToday.map((habit: any) => {
+			console.log(data)
+			const habits = data.myHabits.map((habit: any) => {
 				return new Habit(
 					habit.id,
 					habit.title,
 					habit.active,
 					habit.schedule.frequency,
-					habit.lastCompleted,
-					habit.order,
 					habit.schedule.daysOfTheWeek,
 					habit.schedule.daysOfTheMonth,
 					habit.schedule.dayOfTheYear,
 					habit.schedule.startDate,
 					habit.schedule.endDate,
 					habit.schedule.timeOfDay,
-					habit.completedToday,
 					habit.length,
+					habit.countToday
 				);
 			});
 			setHabits(habits);

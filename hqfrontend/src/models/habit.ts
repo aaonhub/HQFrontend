@@ -8,31 +8,27 @@ class Habit {
 		public title: string,
 		public active: boolean,
 		public frequency: Frequency | '',
-		public lastCompleted: Date,
-		public order: number,
 		public daysOfTheWeek: Array<string>,
 		public daysOfTheMonth: Array<number>,
-		public dayOfTheYear: number,
-		public startDate: Date,
+		public dayOfTheYear: Array<number>,
+		public startDate: string,
 		public endDate: Date | null,
 		public timeOfDay: string,
-		public completedToday: boolean,
 		public length: string,
+		public countToday: number
 	) {
 		this.id = id;
 		this.title = title;
 		this.active = active;
 		this.frequency = frequency || '';
-		this.lastCompleted = lastCompleted;
-		this.order = order || 0;
 		this.daysOfTheWeek = daysOfTheWeek || [];
 		this.daysOfTheMonth = daysOfTheMonth || [];
 		this.dayOfTheYear = dayOfTheYear || 0;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.timeOfDay = timeOfDay || '';
-		this.completedToday = completedToday;
 		this.length = length;
+		this.countToday = countToday;
 	}
 }
 
@@ -46,20 +42,17 @@ export const GET_HABIT = gql`
 			id
 			title
 			active
-			lastCompleted
-			order
 			length
+			countToday
 			schedule{
 				id
 				startDate
 				endDate
 				timeOfDay
+				daysOfTheWeek
 				daysOfTheMonth
 				daysOfTheYear
 				frequency
-				daysOfTheWeek{
-					name
-				}
 			}
 		}
 	}
@@ -71,10 +64,9 @@ export const GET_HABITS_DUE_TODAY = gql`
 			id
 			title
 			active
-			lastCompleted
-			order
-			completedToday
+			countToday
 			length
+			countToday
 			schedule{
 				id
 				timeOfDay
@@ -91,6 +83,17 @@ export const GET_ALL_HABITS = gql`
 		myHabits {
 			id
 			title
+			active
+			countToday
+			length
+			countToday
+			schedule{
+				id
+				timeOfDay
+				frequency
+				startDate
+				endDate
+			}
 		}
 	}
 `
@@ -129,14 +132,18 @@ export const UPDATE_HABIT = gql`
 `
 
 export const CHECK_HABIT = gql`
-	mutation createHabitHistoryAndUpdateLastCompleted($habitId: ID!, $currentDate: Date!) {
-		createHabitHistoryAndUpdateLastCompleted( habitId: $habitId, currentDate: $currentDate) {
-			habitHistory {
+	mutation updateHabitHistory($habitId: ID!, $currentDate: Date!, $quantity: Int!) {
+		updateHabitHistory(habitId: $habitId, currentDate: $currentDate, quantity: $quantity) {
+			habit{
 				id
+				title
+				countToday
 			}
 		}
 	}
 `
+
+
 // Update Later
 export const DELETE_HABIT_HISTORY = gql`
 	mutation DeleteHabitHistoryAndUpdateLastCompleted($id: ID!, $habitId: ID!, $lastCompleted: Date!) {

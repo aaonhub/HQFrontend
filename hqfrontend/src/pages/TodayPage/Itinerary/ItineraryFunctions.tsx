@@ -66,7 +66,7 @@ export function habitToEvent(item: Habit): EventInput | null {
         start: `${date}T${startTime}`,
         end: `${date}T${computeEndTime(startTime, length)}`,
         extendedProps: {
-            completed: item.completedToday,
+            completed: item.countToday,
             length: length,
         },
     }

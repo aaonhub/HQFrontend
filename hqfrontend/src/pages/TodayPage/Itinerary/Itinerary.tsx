@@ -49,6 +49,9 @@ const Itinerary: React.FC = () => {
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
 	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([])
+	const [simpleHabitItems, setSimpleHabitItems] = useState<any[]>([])
+	const [simpleInboxItems, setSimpleInboxItems] = useState<any[]>([])
+	const [simpleRitualItems, setSimpleRitualItems] = useState<any[]>([])
 	const [simpleItems, setSimpleItems] = useState<any[]>([])
 	const [expanded, setExpanded] = useState(false)
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
@@ -164,10 +167,10 @@ const Itinerary: React.FC = () => {
 
 			// Combine the inbox items and habits into one array
 			const simpleHabitItems = habitsToSimpleItems(habits)
-			console.log(habits)
+			setSimpleHabitItems(simpleHabitItems)
 			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)
-			console.log(inboxItems)
-			console.log(simpleRitualItems)
+			setSimpleInboxItems(simpleInboxItems)
+			setSimpleRitualItems(simpleRitualItems)
 
 			const combinedArray = [...simpleInboxItems, ...simpleHabitItems, ...simpleRitualItems]
 			setSimpleItems(combinedArray)
@@ -307,6 +310,9 @@ const Itinerary: React.FC = () => {
 			{ title: "Data", content: JSON.stringify(data, null, 2) },
 			{ title: "SimpleItems", content: JSON.stringify(simpleItems, null, 2) },
 			{ title: "Ritual History", content: JSON.stringify(ritualHistory, null, 2) },
+			{ title: "Simple Habit Items", content: JSON.stringify(simpleHabitItems, null, 2) },
+			{ title: "Simple Inbox Items", content: JSON.stringify(simpleInboxItems, null, 2) },
+			{ title: "Simple Ritual Items", content: JSON.stringify(simpleRitualItems, null, 2) },
 		])
 	}, [
 		setDebugText,
@@ -324,6 +330,9 @@ const Itinerary: React.FC = () => {
 		data,
 		simpleItems,
 		ritualHistory,
+		simpleHabitItems,
+		simpleInboxItems,
+		simpleRitualItems,
 	])
 
 

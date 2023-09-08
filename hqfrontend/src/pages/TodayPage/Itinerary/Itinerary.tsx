@@ -164,7 +164,10 @@ const Itinerary: React.FC = () => {
 
 			// Combine the inbox items and habits into one array
 			const simpleHabitItems = habitsToSimpleItems(habits)
+			console.log(habits)
 			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)
+			console.log(inboxItems)
+			console.log(simpleRitualItems)
 
 			const combinedArray = [...simpleInboxItems, ...simpleHabitItems, ...simpleRitualItems]
 			setSimpleItems(combinedArray)

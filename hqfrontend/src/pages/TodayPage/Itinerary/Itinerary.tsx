@@ -528,11 +528,14 @@ const Itinerary: React.FC = () => {
 	// Check Habit
 	const [checkHabit] = useMutation(CHECK_HABIT)
 	const handleCheckHabit = async (habit: any) => {
+		const newQuantity = habit.completedToday ? -1 : 1;
+
 		await checkHabit({
 			variables: {
 				// get rid of the h at the end of the id
 				habitId: habit.id.slice(0, -1),
 				currentDate: localDate,
+				quantity: Math.max(0, newQuantity),  // ensure quantity doesn't go below zero
 			},
 			onCompleted: () => {
 				setSnackbar({
@@ -546,6 +549,10 @@ const Itinerary: React.FC = () => {
 		})
 
 	}
+
+
+
+
 	// Check To Do
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
 	const handleCheckToDo = async (todo: any) => {

@@ -1,33 +1,23 @@
 import { gql } from '@apollo/client';
-
-export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'RITUALONLY'
+import Schedule from './schedule';
 
 class Habit {
+	id: string;
+	title: string;
+	active: boolean;
+	length: string;
+	schedule: Schedule;
+	countToday: number;
+
 	constructor(
-		public id: string,
-		public title: string,
-		public active: boolean,
-		public frequency: Frequency | '',
-		public daysOfTheWeek: Array<string>,
-		public daysOfTheMonth: Array<number>,
-		public dayOfTheYear: Array<number>,
-		public startDate: string,
-		public endDate: Date | null,
-		public timeOfDay: string,
-		public length: string,
-		public countToday: number
+		{ id, title, active, length, schedule, countToday }:
+			{ id: string, title: string, active: boolean, length: string, schedule: Schedule, countToday: number }
 	) {
 		this.id = id;
 		this.title = title;
 		this.active = active;
-		this.frequency = frequency || '';
-		this.daysOfTheWeek = daysOfTheWeek || [];
-		this.daysOfTheMonth = daysOfTheMonth || [];
-		this.dayOfTheYear = dayOfTheYear || 0;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.timeOfDay = timeOfDay || '';
 		this.length = length;
+		this.schedule = schedule;
 		this.countToday = countToday;
 	}
 }
@@ -46,13 +36,13 @@ export const GET_HABIT = gql`
 			countToday
 			schedule{
 				id
-				startDate
-				endDate
-				timeOfDay
+				frequency
 				daysOfTheWeek
 				daysOfTheMonth
 				daysOfTheYear
-				frequency
+				startDate
+				endDate
+				timeOfDay
 			}
 		}
 	}
@@ -64,15 +54,17 @@ export const GET_HABITS_DUE_TODAY = gql`
 			id
 			title
 			active
-			countToday
 			length
 			countToday
 			schedule{
 				id
-				timeOfDay
 				frequency
+				daysOfTheWeek
+				daysOfTheMonth
+				daysOfTheYear
 				startDate
 				endDate
+				timeOfDay
 			}
 		}
 	}

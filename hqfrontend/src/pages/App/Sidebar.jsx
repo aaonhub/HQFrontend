@@ -32,10 +32,11 @@ export default function Sidebar() {
 	const sidebarItems = [
 		[
 			{ id: '0', title: 'Today', link: '/', notifications: TodayBadge() },
+			{ id: '3', title: 'Projects', link: '/projects', notifications: false },
 			{ id: '1', title: 'Log', link: '/log', notifications: LogBadge() },
 			// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
+			{ id: '12', title: 'Plan', link: '/plan', notifications: false },
 			{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
-			{ id: '3', title: 'Projects', link: '/projects', notifications: false },
 		],
 		[
 			{ id: '4', title: 'Habits', link: '/habits', notifications: false },
@@ -43,7 +44,6 @@ export default function Sidebar() {
 			{ id: '6', title: 'Reviews', link: '/dailyreview', notifications: DailyReviewBadge() },
 			{ id: '8', title: 'Accountability', link: '/accountability', notifications: false },
 			{ id: '11', title: 'To Dos', link: '/todos', notifications: false },
-			{ id: '12', title: 'Plan', link: '/plan', notifications: false }
 		],
 		[
 			{ id: '9', title: 'Settings', link: '/settings', notifications: false },

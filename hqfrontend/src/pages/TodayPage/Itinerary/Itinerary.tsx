@@ -40,6 +40,7 @@ import { UPDATE_OR_CREATE_ITINERARY_ORDER } from '../../../models/settings';
 import { CHECK_HABIT } from '../../../models/habit'
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
 import RitualDialog from '../../../components/RitualDialog'
+import Schedule from '../../../models/schedule'
 
 
 
@@ -49,9 +50,6 @@ const Itinerary: React.FC = () => {
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
 	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([])
-	const [simpleHabitItems, setSimpleHabitItems] = useState<any[]>([])
-	const [simpleInboxItems, setSimpleInboxItems] = useState<any[]>([])
-	const [simpleRitualItems, setSimpleRitualItems] = useState<any[]>([])
 	const [simpleItems, setSimpleItems] = useState<any[]>([])
 	const [expanded, setExpanded] = useState(false)
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
@@ -61,9 +59,6 @@ const Itinerary: React.FC = () => {
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [orderIds, setOrderIds] = useState<string[]>([])
 	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
-
-
-	// Calendar State
 	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const calendarRef = useRef(null)
 
@@ -100,22 +95,26 @@ const Itinerary: React.FC = () => {
 
 			// Set habit items
 			const habits = data.habitsDueToday.map((habit: any) => {
-				return new Habit(
-					habit.id,
-					habit.title,
-					habit.active,
-					habit.frequency,
-					habit.daysOfTheWeek,
-					habit.daysOfTheMonth,
-					habit.dayOfTheYear,
-					habit.startDate,
-					habit.endDate,
-					habit.schedule.timeOfDay,
-					habit.length,
-					habit.completedToday,
-				)
-			})
 
+				const schedule = new Schedule({
+					frequency: habit.schedule.frequency,
+					daysOfTheWeek: habit.schedule.daysOfTheWeek,
+					daysOfTheMonth: habit.schedule.daysOfTheMonth,
+					dayOfTheYear: habit.schedule.daysOfTheYear,
+					startDate: habit.schedule.startDate,
+					endDate: habit.schedule.endDate,
+					timeOfDay: habit.schedule.timeOfDay,
+				})
+
+				return new Habit({
+					id: habit.id,
+					title: habit.title,
+					active: habit.active,
+					length: habit.length,
+					schedule: schedule,
+					countToday: habit.countToday,
+				});
+			})
 
 
 			// Set rituals
@@ -167,10 +166,7 @@ const Itinerary: React.FC = () => {
 
 			// Combine the inbox items and habits into one array
 			const simpleHabitItems = habitsToSimpleItems(habits)
-			setSimpleHabitItems(simpleHabitItems)
 			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)
-			setSimpleInboxItems(simpleInboxItems)
-			setSimpleRitualItems(simpleRitualItems)
 
 			const combinedArray = [...simpleInboxItems, ...simpleHabitItems, ...simpleRitualItems]
 			setSimpleItems(combinedArray)
@@ -310,9 +306,6 @@ const Itinerary: React.FC = () => {
 			{ title: "Data", content: JSON.stringify(data, null, 2) },
 			{ title: "SimpleItems", content: JSON.stringify(simpleItems, null, 2) },
 			{ title: "Ritual History", content: JSON.stringify(ritualHistory, null, 2) },
-			{ title: "Simple Habit Items", content: JSON.stringify(simpleHabitItems, null, 2) },
-			{ title: "Simple Inbox Items", content: JSON.stringify(simpleInboxItems, null, 2) },
-			{ title: "Simple Ritual Items", content: JSON.stringify(simpleRitualItems, null, 2) },
 		])
 	}, [
 		setDebugText,
@@ -330,9 +323,6 @@ const Itinerary: React.FC = () => {
 		data,
 		simpleItems,
 		ritualHistory,
-		simpleHabitItems,
-		simpleInboxItems,
-		simpleRitualItems,
 	])
 
 
@@ -443,14 +433,11 @@ const Itinerary: React.FC = () => {
 
 		// Error Handling
 		if (!inputValue.trim()) {
-			setSnackbar({
-				message: "Please enter a title",
-				open: true,
-				severity: "error"
-			})
+			setSnackbar({ message: "Please enter a title", open: true, severity: "error" })
 			return
 		}
 
+		// Add inbox item mutation
 		addTodoToToday({
 			variables: {
 				title: inputValue,
@@ -459,11 +446,7 @@ const Itinerary: React.FC = () => {
 			},
 			onCompleted: () => {
 				setInputValue('')
-				setSnackbar({
-					message: "To Do Item Added",
-					open: true,
-					severity: "success"
-				})
+				setSnackbar({ message: "To Do Item Added", open: true, severity: "success" })
 				refetch()
 			}
 		})
@@ -499,24 +482,14 @@ const Itinerary: React.FC = () => {
 				severity: "success"
 			})
 		} else { // If there is only one line
-			setInputValue(pasteData) // Paste the data into the input field
+			setInputValue(inputValue + pasteData) // Paste the data into the input field
 		}
 	}
 
 
+
+
 	// Check Item
-	const [updateDailyCompletionPercentage] = useMutation(UPDATE_DAILY_COMPLETION_PERCENTAGE)
-	const handleUpdateDailyCompletionPercentage = async () => {
-		const totalTasks = uncompletedItems.length + completedItems.length
-		const completedTasks = completedItems.length + 1
-		await updateDailyCompletionPercentage({
-			variables: {
-				Date: getCurrentLocalDate(),
-				TotalTasks: totalTasks,
-				CompletedTasks: completedTasks,
-			},
-		})
-	}
 	const handleCheckItem = (item: SimpleItem) => {
 		handleUpdateDailyCompletionPercentage()
 		if (item.type === 'habit') {
@@ -550,9 +523,6 @@ const Itinerary: React.FC = () => {
 
 	}
 
-
-
-
 	// Check To Do
 	const [checkToDo] = useMutation(CHECK_UNCHECK_TODO)
 	const handleCheckToDo = async (todo: any) => {
@@ -574,6 +544,19 @@ const Itinerary: React.FC = () => {
 	}
 
 
+	// Update Daily Completion Percentage
+	const [updateDailyCompletionPercentage] = useMutation(UPDATE_DAILY_COMPLETION_PERCENTAGE)
+	const handleUpdateDailyCompletionPercentage = async () => {
+		const totalTasks = uncompletedItems.length + completedItems.length
+		const completedTasks = completedItems.length + 1
+		await updateDailyCompletionPercentage({
+			variables: {
+				Date: getCurrentLocalDate(),
+				TotalTasks: totalTasks,
+				CompletedTasks: completedTasks,
+			},
+		})
+	}
 
 	// Update Badge
 	const updateBadge = (item: any) => {

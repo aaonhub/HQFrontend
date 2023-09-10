@@ -4,7 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
+import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 import { useMutation, useQuery } from '@apollo/client';
 
 // Queries and Mutations
@@ -13,8 +13,8 @@ import { UPDATE_HABIT } from '../models/habit';
 import { DELETE_HABIT } from '../models/habit';
 
 // Models
-import Habit, { Frequency } from '../models/habit';
-import { useGlobalContext } from '../pages/App/GlobalContextProvider';
+import Habit from '../models/habit';
+import Schedule, { Frequency } from '../models/schedule';
 
 
 interface EditHabitDialogProps {
@@ -25,43 +25,54 @@ interface EditHabitDialogProps {
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) => {
 	const { setSnackbar } = useGlobalContext();
 
-	const [newHabit, setNewHabit] = useState<Habit>(new Habit(
-		"",
-		"",
-		true,
-		"DAILY",
-		[],
-		[],
-		[],
-		"",
-		new Date(),
-		"",
-		"0",
-		0
-	));
+	const emptySchedule = new Schedule({
+		frequency: 'DAILY',
+		daysOfTheWeek: [],
+		daysOfTheMonth: [],
+		dayOfTheYear: [],
+		startDate: '',
+		endDate: null,
+		timeOfDay: '',
+	});
+	const tempHabit = new Habit({
+		id: '',
+		title: '',
+		active: false,
+		length: '',
+		schedule: emptySchedule,
+		countToday: 0,
+	});
+
+	const [newHabit, setNewHabit] = useState<Habit>(tempHabit);
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
 	useQuery(GET_HABIT, {
 		variables: { habitId: habitId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			setNewHabit(
-				new Habit(
-					data.getHabit.id,
-					data.getHabit.title,
-					data.getHabit.active,
-					data.getHabit.schedule.frequency,
-					data.getHabit.schedule.daysOfTheWeek,
-					data.getHabit.schedule.daysOfTheMonth,
-					data.getHabit.schedule.daysOfTheYear,
-					data.getHabit.schedule.startDate,
-					data.getHabit.schedule.endDate,
-					data.getHabit.schedule.timeOfDay,
-					data.getHabit.length,
-					data.getHabit.completedToday
-				)
-			)
-			console.log(data.getHabit)
+
+			// Create Schedule
+			const schedule = new Schedule({
+				frequency: data.getHabit.schedule.frequency,
+				daysOfTheWeek: data.getHabit.schedule.daysOfTheWeek,
+				daysOfTheMonth: data.getHabit.schedule.daysOfTheMonth,
+				dayOfTheYear: data.getHabit.schedule.daysOfTheYear,
+				startDate: data.getHabit.schedule.startDate,
+				endDate: data.getHabit.schedule.endDate,
+				timeOfDay: data.getHabit.schedule.timeOfDay,
+			})
+
+			// Create Habit
+			const newHabit = new Habit({
+				id: data.getHabit.id,
+				title: data.getHabit.title,
+				active: data.getHabit.active,
+				length: data.getHabit.length,
+				schedule: schedule,
+				countToday: data.getHabit.countToday,
+			})
+
+			setNewHabit(newHabit)
 		}
 	});
 
@@ -97,11 +108,11 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 	};
 
 	const handleFrequencyChange = (e: SelectChangeEvent) => {
-		setNewHabit({ ...newHabit, frequency: e.target.value as Frequency });
+		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, frequency: e.target.value as Frequency } });
 	};
 
 	const handleTimeOfDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewHabit({ ...newHabit, timeOfDay: e.target.value });
+		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, timeOfDay: e.target.value } });
 	};
 
 	const [updateHabit] = useMutation(UPDATE_HABIT, {
@@ -117,8 +128,8 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 				id: habitId,
 				Title: newHabit.title,
 				Active: newHabit.active,
-				Frequency: newHabit.frequency,
-				TimeOfDay: newHabit.timeOfDay,
+				Frequency: newHabit.schedule.frequency,
+				TimeOfDay: newHabit.schedule.timeOfDay,
 			}
 		});
 	};
@@ -155,7 +166,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 						<Select
 							labelId="demo-simple-select-label"
 							id="demo-simple-select"
-							value={newHabit.frequency ? newHabit.frequency : "DAILY"}
+							value={newHabit.schedule.frequency ? newHabit.schedule.frequency : "DAILY"}
 							label="Age"
 							onChange={handleFrequencyChange}
 						>
@@ -171,7 +182,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 						id="time"
 						label="Time of Day"
 						type="time"
-						value={newHabit.timeOfDay}
+						value={newHabit.schedule.timeOfDay}
 						onChange={handleTimeOfDayChange}
 						InputLabelProps={{
 							shrink: true,

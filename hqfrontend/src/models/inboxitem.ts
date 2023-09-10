@@ -16,29 +16,20 @@ interface InboxItem {
 }
 
 class InboxItem {
-	constructor({
-		id,
-		title,
-		description,
-		completed,
-		project,
-		dueDateTime,
-		startTime,
-		startDate,
-		timeCompleted,
-		length,
-
-	}: InboxItem) {
+	constructor(
+		{ id, title, description, completed, project, dueDateTime, startTime, startDate, timeCompleted, length }:
+			{ id: string, title: string, description?: string, completed: boolean, project?: Project | null, dueDateTime: string | null, startTime: string | null, startDate: string | null, timeCompleted: Date | null, length?: string | null }
+	) {
 		this.id = id;
 		this.title = title || "";
 		this.description = description || "";
 		this.completed = completed || false;
 		this.project = project || null;
-		this.dueDateTime = dueDateTime;
-		this.startTime = startTime;
-		this.startDate = startDate;
-		this.timeCompleted = timeCompleted;
-		this.length = length;
+		this.dueDateTime = dueDateTime || null;
+		this.startTime = startTime || null;
+		this.startDate = startDate || null;
+		this.timeCompleted = timeCompleted || null;
+		this.length = length || null;
 	}
 }
 
@@ -142,7 +133,7 @@ export const GET_INBOX_TODOS = gql`
 		}
 	}
 `;
-// Backend Tested
+
 export const GET_INBOX_TODO = gql`
 	query getToDoItem($id: ID!) {
 		toDoItem(id: $id) {
@@ -315,7 +306,7 @@ export const CHECK_UNCHECK_TODO = gql`
 		}
 	}
 `;
-// Update Later
+
 export const ADD_TODO_TO_PROJECT = gql`
 	mutation updateProject($id: ID!, $to_do_items: [ID!]) {
 		updateProject(id: $id, to_do_items: $to_do_items) {

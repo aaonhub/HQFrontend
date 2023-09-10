@@ -50,10 +50,10 @@ export function toDoItemToEvent(item: InboxItem): EventInput | null {
     }
 }
 
-export function habitToEvent(item: Habit): EventInput | null {
+export function habitToEvent(habit: Habit): EventInput | null {
     
-    const startTime = item.timeOfDay
-    const length = item.length ? item.length : '01:00'
+    const startTime = habit.schedule.timeOfDay
+    const length = habit.length ? habit.length : '01:00'
     const date = getCurrentLocalDate()
 
     if (!startTime || !length) {
@@ -61,18 +61,18 @@ export function habitToEvent(item: Habit): EventInput | null {
     }
 
     return {
-        id: item.id + 'h',
-        title: item.title,
+        id: habit.id + 'h',
+        title: habit.title,
         start: `${date}T${startTime}`,
         end: `${date}T${computeEndTime(startTime, length)}`,
         extendedProps: {
-            completed: item.countToday,
+            completed: habit.countToday,
             length: length,
         },
     }
 }
 
-export function getHourBeforeCurrentTime() {
+export function getHourBeforeCurrentTime(): string {
     const date = new Date();
     let hour = date.getHours();
     let minute = date.getMinutes();

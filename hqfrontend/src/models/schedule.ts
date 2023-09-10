@@ -1,20 +1,28 @@
+export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'RITUALONLY'
 
+class Schedule {
+	frequency: Frequency | '';
+	daysOfTheWeek: Array<string>;
+	daysOfTheMonth: Array<number>;
+	dayOfTheYear: Array<number>;
+	startDate: string;
+	endDate: Date | null;
+	timeOfDay: string;
+	// length: string;
 
-export class Schedule {
-    constructor(
-        public id: string,
-        public title: string,
-        public start_date: string,
-        public end_date: string,
-        public time_of_day: string,
-        public days_of_week: string,
-        public days_of_the_month: string,
-        public days_of_the_year: string,
-        public frequency: string
-    ) { }
+	constructor(
+		{ frequency, daysOfTheWeek, daysOfTheMonth, dayOfTheYear, startDate, endDate, timeOfDay }:
+			{ frequency: Frequency | '', daysOfTheWeek: Array<string>, daysOfTheMonth: Array<number>, dayOfTheYear: Array<number>, startDate: string, endDate: Date | null, timeOfDay: string }
+	) {
+		this.frequency = frequency;
+		this.daysOfTheWeek = daysOfTheWeek;
+		this.daysOfTheMonth = daysOfTheMonth;
+		this.dayOfTheYear = dayOfTheYear;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.timeOfDay = timeOfDay;
+		// this.length = length;
+	}
 }
 
 export default Schedule
-
-
-// Queries

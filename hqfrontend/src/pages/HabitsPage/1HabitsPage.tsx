@@ -14,8 +14,11 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 // Models
 import Habit from '../../models/habit';
+import Schedule from '../../models/schedule';
 
-const HabitsPage = () => {
+
+const HabitsPage: React.FC = () => {
+
 	// Tab Title
 	useEffect(() => {
 		document.title = "Habits - HQ";
@@ -28,24 +31,32 @@ const HabitsPage = () => {
 	// Habits Query
 	const { loading, error, refetch } = useQuery(GET_ALL_HABITS, {
 		variables: { today: today, },
-		fetchPolicy: "network-only", // Add this line
+		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			console.log(data)
 			const habits = data.myHabits.map((habit: any) => {
-				return new Habit(
-					habit.id,
-					habit.title,
-					habit.active,
-					habit.schedule.frequency,
-					habit.schedule.daysOfTheWeek,
-					habit.schedule.daysOfTheMonth,
-					habit.schedule.dayOfTheYear,
-					habit.schedule.startDate,
-					habit.schedule.endDate,
-					habit.schedule.timeOfDay,
-					habit.length,
-					habit.countToday
-				);
+
+				// Create Schedule
+				const schedule = new Schedule({
+					frequency: habit.schedule.frequency,
+					daysOfTheWeek: habit.schedule.daysOfTheWeek,
+					daysOfTheMonth: habit.schedule.daysOfTheMonth,
+					dayOfTheYear: habit.schedule.daysOfTheYear,
+					startDate: habit.schedule.startDate,
+					endDate: habit.schedule.endDate,
+					timeOfDay: habit.schedule.timeOfDay,
+				})
+
+				// Create Habit
+				return new Habit({
+					id: habit.id,
+					title: habit.title,
+					active: habit.active,
+					length: habit.length,
+					schedule: schedule,
+					countToday: habit.countToday,
+				});
+
+
 			});
 			setHabits(habits);
 		},

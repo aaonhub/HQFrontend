@@ -41,8 +41,8 @@ export function habitsToSimpleItems(habits: Habit[]): SimpleItem[] {
 				completedToday: habit.countToday > 0,
 				title: habit.title ?? '',
 				type: 'habit',
-				startTime: habit.timeOfDay ?? "",
-				startDate: habit.startDate ?? "",
+				startTime: habit.schedule.timeOfDay ?? "",
+				startDate: habit.schedule.startDate ?? "",
 			});
 		});
 	}

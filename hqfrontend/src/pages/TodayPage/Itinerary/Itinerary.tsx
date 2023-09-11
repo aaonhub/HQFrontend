@@ -398,7 +398,7 @@ const Itinerary: React.FC = () => {
 
 
 
-
+	// Calendar Stuff
 	const [updateInboxItem] = useMutation(UPDATE_TODO)
 	const eventReceive = (info: any) => {
 		console.log("Event Received")

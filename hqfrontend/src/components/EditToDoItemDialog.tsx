@@ -61,7 +61,6 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 	// InboxItem Query
 	const { loading, error } = useQuery(GET_INBOX_TODO, {
 		variables: { id: inboxItemId },
-		fetchPolicy: "network-only",
 		onCompleted: (data) => {
 			const project = data.toDoItem.project ? new Project(
 				data.toDoItem.project.id,

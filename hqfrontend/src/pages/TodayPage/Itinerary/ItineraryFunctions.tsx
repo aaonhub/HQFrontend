@@ -47,6 +47,7 @@ export function toDoItemToEvent(item: InboxItem): EventInput | null {
             startDate: item.startDate,
             length: length,
         },
+        classNames: ['green-event'] 
     }
 }
 
@@ -69,6 +70,7 @@ export function habitToEvent(habit: Habit): EventInput | null {
             completed: habit.countToday,
             length: length,
         },
+        classNames: ['green-event'] 
     }
 }
 

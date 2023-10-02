@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
-import { useMutation, gql, useQuery } from '@apollo/client'
-import { Link, useNavigate } from 'react-router-dom'
-import styles from './LoginPage.module.css'
-import Alert from '@mui/material/Alert'
-import AlertTitle from '@mui/material/AlertTitle'
-import Stack from '@mui/material/Stack'
+import React, { useState } from 'react';
+import { useMutation, gql, useQuery } from '@apollo/client';
+import { Link, useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 
-import { MY_PROFILE } from '../../models/social'
-
-// Globals
-import { useGlobalContext } from '../App/GlobalContextProvider'
+import { MY_PROFILE } from '../../models/social';
+import { useGlobalContext } from '../App/GlobalContextProvider';
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
@@ -23,64 +24,64 @@ const LoginPage = () => {
 	const { setLoggedIn, setGlobalProfile } = useGlobalContext();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-	const navigate = useNavigate(); // Access the navigate function from react-router-dom
-	const [showAlert, setShowAlert] = useState(false); // State to control the visibility of the alert
+	const navigate = useNavigate();
+	const [showAlert, setShowAlert] = useState(false);
 
 	const { refetch } = useQuery(MY_PROFILE, {
 		onCompleted: (data) => {
-			console.log(data);
 			setGlobalProfile(data.myProfile);
-		}
+		},
 	});
 
 	const [login] = useMutation(LOGIN_MUTATION, {
 		onCompleted: (data) => {
-			console.log(data);
 			setLoggedIn(true);
 			refetch();
 			localStorage.setItem('loggedIn', 'true');
-			navigate('/'); // Redirect to root URL after successful login
+			navigate('/');
 		},
 	});
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			await login({ variables: { username: username, password } });
+			await login({ variables: { username, password } });
 		} catch (error) {
-			console.error('Login error:', error);
-			setShowAlert(true); // Show the alert when login fails
+			setShowAlert(true);
 		}
 	};
 
 	return (
-		<div className={styles.login}>
-			<h1>Login</h1>
+		<Paper elevation={3} style={{ padding: '2rem', maxWidth: '400px', margin: 'auto' }}>
+			<Typography variant="h4" gutterBottom>
+				Login
+			</Typography>
+
 			<form onSubmit={handleSubmit}>
-				<input
-					type="text"
-					name="username"
-					placeholder="Username"
+				<TextField
+					fullWidth
+					margin="normal"
+					label="Username"
+					variant="outlined"
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}
 				/>
-				<input
+				<TextField
+					fullWidth
+					margin="normal"
+					label="Password"
 					type="password"
-					name="password"
-					placeholder="Password"
+					variant="outlined"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 				/>
-				<button
-					type="submit"
-					className={`${styles.btn} ${styles.btnPrimary} ${styles.btnBlock} ${styles.btnLarge}`}
-				>
+				<Button variant="contained" color="primary" type="submit">
 					Let me in.
-				</button>
+				</Button>
 			</form>
 
-			{showAlert && ( // Render the alert component conditionally
-				<Stack sx={{ width: '100%', marginBottom: '1rem' }} spacing={2}>
+			{showAlert && (
+				<Stack sx={{ width: '100%', marginTop: '1rem' }} spacing={2}>
 					<Alert severity="error">
 						<AlertTitle>Login Failed</AlertTitle>
 						Please check your credentials and try again.
@@ -88,14 +89,13 @@ const LoginPage = () => {
 				</Stack>
 			)}
 
-			{/* Add a Link to the registration page */}
-			<p>
+			<Typography variant="body2" style={{ marginTop: '1rem' }}>
 				Don't have an account?{' '}
-				<Link to="/register" className={styles.registerLink}>
+				<Link to="/register">
 					Register here
 				</Link>
-			</p>
-		</div>
+			</Typography>
+		</Paper>
 	);
 };
 

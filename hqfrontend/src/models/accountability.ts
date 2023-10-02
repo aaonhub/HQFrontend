@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 
-export type AccountabilityType = 'Basic' | 'Habit Tracking'
+export type AccountabilityType = 'Basic' | 'Habit Tracking' | 'Basic Shared'
 
 
 class Accountability {
@@ -109,6 +109,7 @@ export const GET_ACCOUNTABILITY_DATA = gql`
 			date
 			totalTasks
 			completedTasks
+			tasksList
 			profile {
 				id
 				codename
@@ -168,13 +169,14 @@ export const CREATE_ACCOUNTABILITY = gql`
 `;
 
 export const UPDATE_DAILY_COMPLETION_PERCENTAGE = gql`
-	mutation UpdateDailyCompletionPercentage($Date: Date!, $TotalTasks: Int!, $CompletedTasks: Int!) {
-		createOrUpdateDailyCompletionPercentage(date: $Date, completedTasks: $CompletedTasks, totalTasks: $TotalTasks) {
+	mutation UpdateDailyCompletionPercentage($Date: Date!, $TotalTasks: Int!, $CompletedTasks: Int!, $TasksList: String!){
+		createOrUpdateDailyCompletionPercentage(date: $Date, completedTasks: $CompletedTasks, totalTasks: $TotalTasks, tasksList: $TasksList) {
 			dailyCompletionPercentage {
 				id
 				date
 				completedTasks
 				totalTasks
+				tasksList
 			}
 		}
 	}

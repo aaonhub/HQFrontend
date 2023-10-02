@@ -41,8 +41,12 @@ import { CHECK_HABIT } from '../../../models/habit'
 import { UPDATE_DAILY_COMPLETION_PERCENTAGE } from '../../../models/accountability'
 import RitualDialog from '../../../components/RitualDialog'
 import Schedule from '../../../models/schedule'
+import AccountabilityToDoListDisplay from './AccountabilityToDoListDisplay'
 
-
+type ItemType = {
+	title: string;
+	checked: boolean;
+};
 
 const Itinerary: React.FC = () => {
 	const { setSnackbar, todayBadges, setTodayBadges, setDebugText } = useGlobalContext()!
@@ -354,7 +358,6 @@ const Itinerary: React.FC = () => {
 
 
 
-
 	// Calendar Logic
 	const handleEventChange = debounce((changeInfo) => {
 
@@ -491,7 +494,6 @@ const Itinerary: React.FC = () => {
 
 	// Check Item
 	const handleCheckItem = (item: SimpleItem) => {
-		handleUpdateDailyCompletionPercentage()
 		if (item.type === 'habit') {
 			handleCheckHabit(item)
 		} else {
@@ -546,17 +548,52 @@ const Itinerary: React.FC = () => {
 
 	// Update Daily Completion Percentage
 	const [updateDailyCompletionPercentage] = useMutation(UPDATE_DAILY_COMPLETION_PERCENTAGE)
-	const handleUpdateDailyCompletionPercentage = async () => {
+	// Use Effect for item changes
+	useEffect(() => {
+
+		// Create list
+		const createList = (): ItemType[] => {
+			const finalList: ItemType[] = [];
+
+			// Add completed items
+			for (const item of completedItems) {
+				finalList.push({
+					title: item.title,
+					checked: true,
+				});
+			}
+
+			// Add uncompleted items
+			for (const item of uncompletedItems) {
+				finalList.push({
+					title: item.title,
+					checked: false,
+				});
+			}
+
+			return finalList;
+		};
+
+		const list = createList();
+		const jsonString = JSON.stringify(list);
+
 		const totalTasks = uncompletedItems.length + completedItems.length
 		const completedTasks = completedItems.length + 1
-		await updateDailyCompletionPercentage({
+		updateDailyCompletionPercentage({
 			variables: {
 				Date: getCurrentLocalDate(),
 				TotalTasks: totalTasks,
 				CompletedTasks: completedTasks,
+				TasksList: jsonString,
 			},
 		})
-	}
+
+
+	}, [completedItems])
+
+
+
+
 
 	// Update Badge
 	const updateBadge = (item: any) => {
@@ -646,154 +683,162 @@ const Itinerary: React.FC = () => {
 	if (error) return <p>Error :(</p>
 
 	return (
-
-		<Card
-			sx={{
-				borderRadius: 2,
-				boxShadow: 2,
-				marginRight: 2,
-				padding: 1,
-			}}
-		>
-			<Grid
-				container
-				spacing={2}
-				style={{ height: '80vh', overflow: 'auto' }}
+		<>
+			<Card
+				sx={{
+					borderRadius: 2,
+					boxShadow: 2,
+					marginRight: 2,
+					padding: 1,
+				}}
 			>
+				<Grid
+					container
+					spacing={2}
+					style={{ height: '80vh', overflow: 'auto' }}
+				>
 
 
-				{/* Calendar */}
-				<Grid item xs={12} md={6} order={{ xs: 2, md: 1 }} style={{ height: '100%', overflowY: 'auto' }}>
+					{/* Calendar */}
+					<Grid item xs={12} md={6} order={{ xs: 2, md: 1 }} style={{ height: '100%', overflowY: 'auto' }}>
 
-					<FullCalendar
-						ref={calendarRef}
-						plugins={[timeGridPlugin, interactionPlugin, bootstrap5Plugin]}
-						themeSystem='standard'
-						initialView="timeGridDay"
-						weekends={true}
-						headerToolbar={false}
-						nowIndicator={true}
-						scrollTime={getHourBeforeCurrentTime()}
-						height="100%"
-						contentHeight="100%"
-						droppable={true}
-						eventReceive={eventReceive}
-						events={events}
-						eventChange={handleEventChange}
-						editable={true}
-						slotMaxTime="27:00:00"
-					/>
+						<FullCalendar
+							ref={calendarRef}
+							plugins={[timeGridPlugin, interactionPlugin, bootstrap5Plugin]}
+							themeSystem='standard'
+							initialView="timeGridDay"
+							weekends={true}
+							headerToolbar={false}
+							nowIndicator={true}
+							scrollTime={getHourBeforeCurrentTime()}
+							height="100%"
+							contentHeight="100%"
+							droppable={true}
+							eventReceive={eventReceive}
+							events={events}
+							eventChange={handleEventChange}
+							editable={true}
+							slotMaxTime="27:00:00"
+						/>
 
-				</Grid>
+					</Grid>
 
 
-				{/* Itinerary */}
-				<Grid item xs={12} md={6} order={{ xs: 1, md: 2 }} style={{ height: '100%', overflowY: 'auto' }}>
-					<CardContent>
-						<Typography variant="h5" gutterBottom>
-							Itinerary
-						</Typography>
+					{/* Itinerary */}
+					<Grid item xs={12} md={6} order={{ xs: 1, md: 2 }} style={{ height: '100%', overflowY: 'auto' }}>
+						<CardContent>
+							<Typography variant="h5" gutterBottom>
+								Itinerary
+							</Typography>
 
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								marginBottom: 2,
-							}}
-						>
-
-							{/* To Do Input */}
-							<Input
-								placeholder="Add item"
-								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
-								onPaste={handlePaste}
-								fullWidth
-								inputProps={{ style: { paddingLeft: "5px" } }}
-								onKeyDown={(e) => {
-									if (e.key === 'Enter') {
-										handleAddItem()
-									}
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									marginBottom: 2,
 								}}
-							/>
-							<IconButton onClick={handleAddItem}>
-								<AddIcon />
-							</IconButton>
-						</Box>
+							>
 
-						{/* Itinerary List */}
-						<Box>
-							{uncompletedItems.length > 0 ? (
-								<ItineraryList
-									list={uncompletedItems}
-									setList={setUncompletedItems}
-									setSelectedInboxItemId={setSelectedInboxItemId}
-									setSelectedHabitId={setSelectedHabitId}
-									setSelectedRitualId={setSelectedRitualId}
-									setSelectedEntryID={setSelectedEntryID}
-									handleCheckItem={handleCheckItem}
+								{/* To Do Input */}
+								<Input
+									placeholder="Add item"
+									value={inputValue}
+									onChange={(e) => setInputValue(e.target.value)}
+									onPaste={handlePaste}
+									fullWidth
+									inputProps={{ style: { paddingLeft: "5px" } }}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter') {
+											handleAddItem()
+										}
+									}}
 								/>
-							) : (
-								completedItems.length > 0 ? (
-									<Typography variant="h6" align="center" color="textSecondary">
-										All done. Good job!
-									</Typography>
+								<IconButton onClick={handleAddItem}>
+									<AddIcon />
+								</IconButton>
+							</Box>
+
+							{/* Itinerary List */}
+							<Box>
+								{uncompletedItems.length > 0 ? (
+									<ItineraryList
+										list={uncompletedItems}
+										setList={setUncompletedItems}
+										setSelectedInboxItemId={setSelectedInboxItemId}
+										setSelectedHabitId={setSelectedHabitId}
+										setSelectedRitualId={setSelectedRitualId}
+										setSelectedEntryID={setSelectedEntryID}
+										handleCheckItem={handleCheckItem}
+									/>
+								) : (
+									completedItems.length > 0 ? (
+										<Typography variant="h6" align="center" color="textSecondary">
+											All done. Good job!
+										</Typography>
+									) : (
+										<Typography variant="h6" align="center" color="textSecondary">
+											No items
+										</Typography>
+									)
+								)}
+
+							</Box>
+						</CardContent>
+
+
+						{/* Completed Items */}
+						<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
+							<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+								<Typography variant="h6">Completed Items</Typography>
+							</AccordionSummary>
+
+							<AccordionDetails>
+								{completedItems.length > 0 ? (
+									<ItineraryList
+										list={completedItems}
+										setList={setCompletedItems}
+										setSelectedInboxItemId={setSelectedInboxItemId}
+										setSelectedHabitId={setSelectedHabitId}
+										setSelectedRitualId={setSelectedRitualId}
+										setSelectedEntryID={setSelectedEntryID}
+										handleCheckItem={handleCheckItem}
+									/>
 								) : (
 									<Typography variant="h6" align="center" color="textSecondary">
-										No items
+										No completed items
 									</Typography>
-								)
-							)}
+								)}
+							</AccordionDetails>
 
-						</Box>
-					</CardContent>
-
-
-					{/* Completed Items */}
-					<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
-						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-							<Typography variant="h6">Completed Items</Typography>
-						</AccordionSummary>
-
-						<AccordionDetails>
-							{completedItems.length > 0 ? (
-								<ItineraryList
-									list={completedItems}
-									setList={setCompletedItems}
-									setSelectedInboxItemId={setSelectedInboxItemId}
-									setSelectedHabitId={setSelectedHabitId}
-									setSelectedRitualId={setSelectedRitualId}
-									setSelectedEntryID={setSelectedEntryID}
-									handleCheckItem={handleCheckItem}
-								/>
-							) : (
-								<Typography variant="h6" align="center" color="textSecondary">
-									No completed items
-								</Typography>
-							)}
-						</AccordionDetails>
-
-					</Accordion>
+						</Accordion>
 
 
-					{selectedInboxItemId && <EditInboxItemDialog handleClose={handleCloseInbox} inboxItemId={selectedInboxItemId} />}
-					{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
-					{selectedRitualId &&
-						<RitualDialog
-							open={true}
-							onClose={handleCloseRitual}
-							ritualId={selectedRitualId}
-							entryID={selectedEntryID}
-							entryDate={getCurrentLocalDate()}
-							ritualHistory={ritualHistory}
-							setRitualHistory={setRitualHistory}
-						/>}
+						{selectedInboxItemId && <EditInboxItemDialog handleClose={handleCloseInbox} inboxItemId={selectedInboxItemId} />}
+						{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
+						{selectedRitualId &&
+							<RitualDialog
+								open={true}
+								onClose={handleCloseRitual}
+								ritualId={selectedRitualId}
+								entryID={selectedEntryID}
+								entryDate={getCurrentLocalDate()}
+								ritualHistory={ritualHistory}
+								setRitualHistory={setRitualHistory}
+							/>}
+
+					</Grid>
+
+
 
 				</Grid>
+			</Card>
 
+			{/* Spacer */}
+			<Box sx={{ height: 30 }} />
 
-			</Grid>
-		</Card>
+			{/* Accounability Display */}
+			<AccountabilityToDoListDisplay />
+		</>
 	)
 
 

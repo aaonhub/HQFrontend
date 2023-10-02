@@ -1,6 +1,6 @@
 import styles from './AccountabilityPage.module.css';
 import { useQuery, useMutation } from '@apollo/client';
-import { Box, Button, Typography, Tooltip, Grid } from '@mui/material';
+import { Box, Button, Typography, Tooltip, Grid, Checkbox, Card, CardContent } from '@mui/material';
 import { useGlobalContext } from '../App/GlobalContextProvider';
 
 // Queries and Mutations
@@ -8,6 +8,7 @@ import { GET_ACCOUNTABILITY, GET_ACCOUNTABILITY_DATA } from '../../models/accoun
 import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
 import { useState } from 'react';
 import UpdateAccountabilityDialog from './UpdateAccountabilityDialog';
+import { getCurrentLocalDate } from '../../components/DateFunctions';
 
 
 // User color assignment - add more colors as required
@@ -79,15 +80,6 @@ const Spacer = () => (
 
 
 
-
-
-
-
-
-
-
-
-
 const AccountabilityDisplay = ({ id }: { id: string }) => {
 	const { globalProfile } = useGlobalContext();
 	const [showUpdateAccountabilityDialog, setShowUpdateAccountabilityDialog] = useState(false);
@@ -99,9 +91,12 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		onError: (error) => {
 			console.log(error.message);
 		},
+		onCompleted: (data) => {
+			console.log(data);
+		}
 	});
 
-	// GET_ACCOUNTABILITY
+	// Squad Query
 	const { data: accountabilityData } = useQuery(GET_ACCOUNTABILITY, {
 		variables: { id: id },
 		onError: (error) => {
@@ -109,6 +104,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		},
 	});
 
+	// ACCEPT_ACCOUNTABILITY_INVITE
 	const [acceptAccountabilityInvite] = useMutation(ACCEPT_ACCOUNTABILITY_INVITE, {
 		variables: {
 			id: id,
@@ -117,6 +113,11 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 			window.location.reload()
 		}
 	})
+
+	const today = getCurrentLocalDate()
+	const todayTasksArray = data?.monthlyCompletionPercentages.filter((record: { date: any; }) => record.date === today) || [];
+
+
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return (
@@ -168,6 +169,8 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 
 	return (
 		<Box padding="20px">
+
+			{/* Title */}
 			<Typography
 				variant="h4"
 				gutterBottom
@@ -175,8 +178,9 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 					textAlign: "center",
 					paddingTop: "20px",
 				}}
-			>Accountability Page</Typography>
+			>{accountabilityData?.getAccountability.name}</Typography>
 
+			{/* Organizer */}
 			<Grid container spacing={3}>
 				<Grid item xs={6} sm={6}>
 					<Typography
@@ -190,7 +194,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 				</Grid>
 
 
-				{/* Open Update Accountability Dialog */}
+				{/* Edit Button */}
 				<Grid item xs={6} sm={6}>
 					{
 						globalProfile?.codename === accountabilityData?.getAccountability.organizer.codename ?
@@ -210,6 +214,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 			</Grid>
 
 
+			{/* Legend */}
 			<div className={styles.legend}>
 				{Object.keys(codenamesById).map((id) => (
 					<div key={id} className={styles.legendItem}>
@@ -219,6 +224,8 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 				))}
 			</div>
 
+
+			{/* Calendar */}
 			{rows.map((row, rowIndex) => (
 				<div key={rowIndex} style={{ display: "flex" }}>
 					{row.map((date, dateIndex) => (
@@ -236,6 +243,50 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 			))}
 
 
+			{/* To Do Lists */}
+			{/* If type basic shared */}
+			{accountabilityData?.getAccountability.type === "Basic Shared" && todayTasksArray.length > 0 && (
+				<div>
+					<Typography variant="h6" gutterBottom style={{ textAlign: "center", paddingTop: "20px" }}>
+						Today's Tasks
+					</Typography>
+
+					<Grid container spacing={3}>
+						{todayTasksArray.map((todayTasks: any) => {
+							const parsedTasks = JSON.parse(todayTasks.tasksList);
+							const sortedTasks = parsedTasks.sort((a: any, b: any) => (a.checked === b.checked ? 0 : a.checked ? 1 : -1));
+
+							return (
+								<Grid item xs={12} sm={6} key={todayTasks.profile.id}>
+									<Card>
+										<CardContent>
+											<Typography variant="subtitle1" style={{ paddingTop: "10px", fontWeight: "bold" }}>
+												{todayTasks.profile.codename}
+											</Typography>
+											<ul>
+												{sortedTasks.map((task: any, index: number) => (
+													<li key={index}>
+														<Checkbox
+															checked={task.checked}
+															inputProps={{ 'aria-label': 'controlled-checkbox' }}
+															style={{ marginRight: "8px" }}
+															disabled
+														/>
+														{task.title}
+													</li>
+												))}
+											</ul>
+										</CardContent>
+									</Card>
+								</Grid>
+							);
+						})}
+					</Grid>
+
+				</div>
+			)}
+
+			{/* Update Accountability Dialog */}
 			{showUpdateAccountabilityDialog && (
 				<UpdateAccountabilityDialog
 					onClose={() => setShowUpdateAccountabilityDialog(false)}

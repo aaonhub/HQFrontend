@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Card, CardContent, Checkbox, Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { useGlobalContext } from '../../App/GlobalContextProvider';
 
 // Queries
 import { GET_ACCOUNTABILITIES, GET_ACCOUNTABILITY_DATA } from '../../../models/accountability';
@@ -12,6 +13,8 @@ interface AccountabilityToDoListDisplayProps {
 
 
 const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) => {
+    const { globalProfile } = useGlobalContext();
+
     const [selectedSquad, setSelectedSquad] = useState<string>('9');
 
     // Get all accountabilities
@@ -20,6 +23,8 @@ const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) 
             console.log(error.message)
         },
     })
+
+    console.log(globalProfile.codename)
 
     // Accountability data query
     const { data: accountabilityData } = useQuery(GET_ACCOUNTABILITY_DATA, {
@@ -38,7 +43,11 @@ const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) 
 
     const today = getCurrentLocalDate()
     const todayTasksArray = accountabilityData?.monthlyCompletionPercentages.filter((record: { date: any; }) => record.date === today) || [];
-
+    const sortedTodayTasksArray = todayTasksArray.sort((a: any, b: any) => {
+        if (a.profile.codename === globalProfile.codename) return -1;
+        if (b.profile.codename === globalProfile.codename) return 1;
+        return 0;
+    });
 
 
 
@@ -87,7 +96,7 @@ const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) 
                             </Typography>
 
                             <Grid container spacing={3}>
-                                {todayTasksArray.map((todayTasks: any) => {
+                                {sortedTodayTasksArray.map((todayTasks: any) => {
                                     const parsedTasks = JSON.parse(todayTasks.tasksList);
                                     const sortedTasks = parsedTasks.sort((a: any, b: any) => (a.checked === b.checked ? 0 : a.checked ? 1 : -1));
 

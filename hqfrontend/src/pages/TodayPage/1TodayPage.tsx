@@ -1,6 +1,5 @@
 import { Button, Container, Grid, TextField, Typography } from "@mui/material";
-import Itinerary from "./Itinerary/Itinerary";
-// import LogList from "./LogList";
+import Itinerary from "./Components/Itinerary";
 import { getCustomLocalDate } from "../../components/DateFunctions";
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../App/GlobalContextProvider";
@@ -69,6 +68,8 @@ const TodayPage = () => {
 		<>
 			<Container maxWidth="xl">
 				<Grid container>
+
+
 					{/* Day Display */}
 					<Grid item xs={12}>
 						<Typography variant="h4" sx={{ paddingBottom: 2 }}>
@@ -110,7 +111,6 @@ const TodayPage = () => {
 							Save
 						</Button>
 
-						{/* <LogList /> */}
 					</Grid>
 				</Grid>
 			</Container>

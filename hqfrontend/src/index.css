@@ -51,6 +51,23 @@ body::before {
 }
 
 
+/* Scrollbar */
+.fc-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.fc-scroller {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:root {
+  --fc-today-bg-color: #3B3B3B;
+}
+
+
+
+
 
 
 @import 'tailwindcss/base';

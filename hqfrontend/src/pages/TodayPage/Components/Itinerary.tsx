@@ -3,7 +3,6 @@ import { Typography, Card, CardContent, Input, IconButton, Box, Grid, debounce }
 import AddIcon from '@mui/icons-material/Add'
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import './Itinerary.css'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import { useMutation, useQuery } from '@apollo/client'
 
@@ -19,7 +18,7 @@ import { useGlobalContext } from '../../App/GlobalContextProvider'
 import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
-import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from './ItineraryFunctions'
+import { formatTime, getHourBeforeCurrentTime, habitToEvent, toDoItemToEvent } from '../Functions/ItineraryFunctions'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
 import { updateRitualHistoryWithRepeatRituals } from '../../../models/ritual'
 import { RitualHistoryManager } from '../../../models/ritual'

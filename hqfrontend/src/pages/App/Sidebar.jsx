@@ -7,6 +7,7 @@ import { useQuery } from '@apollo/client';
 import { useGlobalContext } from './GlobalContextProvider';
 import { DailyReviewBadge, LogBadge, TodayBadge } from './Badges';
 import { Badge } from '@mui/material';
+import logo from '../../utils/logo.svg'
 
 // Queries and Mutations
 import { GET_HIDDEN_SIDEBAR_ITEMS } from "../../models/settings"
@@ -82,7 +83,7 @@ export default function Sidebar() {
 			{/* React Logo */}
 			<div className="flex-shrink-0 overflow-hidden p-2">
 				<div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-top">
-					<IconButton icon="res-react-dash-logo" className="w-10 h-10" />
+					<img src={logo} alt="My Logo" className="w-10 h-10" />
 					<div className="block sm:hidden xl:block ml-2 font-bold text-xl text-white">
 						HQ
 					</div>

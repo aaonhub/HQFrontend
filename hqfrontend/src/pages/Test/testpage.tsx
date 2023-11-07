@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Box, Button, Container, Divider,  } from '@mui/material';
+import { Box, Button, Container, Divider, } from '@mui/material';
 
 import ReactDNDTest from './TestFiles/ReactDNDTest';
 import SortableList from './TestFiles/SortableList';
 import DraggableTest from './TestFiles/DraggableTest';
+import BingoBoard from './TestFiles/BingoBoard';
 
 
 const Test = () => {
@@ -15,6 +16,7 @@ const Test = () => {
 				<Button onClick={() => setCurrentView('reactdnd')}>React DND Test</Button>
 				<Button onClick={() => setCurrentView('dragtest')}>Draggable Test</Button>
 				<Button onClick={() => setCurrentView('sortable')}>Sortable Test</Button>
+				<Button onClick={() => setCurrentView('bingo')}>Bingo Test</Button>
 			</Box>
 
 			<Divider
@@ -28,6 +30,7 @@ const Test = () => {
 				{currentView === 'reactdnd' && <ReactDNDTest />}
 				{currentView === 'sortable' && <SortableList />}
 				{currentView === 'dragtest' && <DraggableTest />}
+				{currentView === 'bingo' && <BingoBoard />}
 			</Box>
 
 		</Container>

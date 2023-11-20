@@ -9,28 +9,54 @@ export const lightTheme = createTheme({
 		secondary: {
 			main: "#dc004e",
 		},
+		error: {
+			main: "#f44336",
+		},
+		warning: {
+			main: "#ff9800",
+		},
+		info: {
+			main: "#2196f3",
+		},
+		success: {
+			main: "#4caf50",
+		},
 	},
 });
+
 
 export const darkTheme = createTheme({
 	palette: {
 		mode: "dark",
 		primary: {
-			main: "#c4c4c4", // Light Grey
+			main: "#c4c4c4",
 		},
 		secondary: {
-			main: "#e0e0e0", // Light Grey
+			main: "#e0e0e0",
 		},
 		background: {
-			paper: "#1f1f1f", // Dark Grey
-			default: "#0a0a0a", // Almost Black
+			paper: "#1f1f1f",
+			default: "#0a0a0a",
 		},
 		text: {
-			primary: "#f5f5f5", // Off-White
-			secondary: "#c4c4c4", // Light Grey
+			primary: "#f5f5f5",
+			secondary: "#c4c4c4",
+		},
+		error: {
+			main: "#d32f2f",
+		},
+		warning: {
+			main: "#ff9800",
+		},
+		info: {
+			main: "#2196f3",
+		},
+		success: {
+			main: "#4caf50",
 		},
 	},
 });
+
 
 export const pinkTheme = createTheme({
 	palette: {
@@ -48,6 +74,51 @@ export const pinkTheme = createTheme({
 		text: {
 			primary: "#880e4f",
 			secondary: "#ad1457",
+		},
+		error: {
+			main: "#f44336",
+		},
+		warning: {
+			main: "#ff9800",
+		},
+		info: {
+			main: "#2196f3",
+		},
+		success: {
+			main: "#4caf50",
+		},
+	},
+});
+
+
+export const christmasTheme = createTheme({
+	palette: {
+		mode: "dark",
+		primary: {
+			main: "#c4c4c4",
+		},
+		secondary: {
+			main: "#e0e0e0",
+		},
+		background: {
+			paper: "#1f1f1f",
+			default: "#0a0a0a",
+		},
+		text: {
+			primary: "#f5f5f5",
+			secondary: "#c4c4c4",
+		},
+		error: {
+			main: "#d32f2f",
+		},
+		warning: {
+			main: "#ff9800",
+		},
+		info: {
+			main: "#2196f3",
+		},
+		success: {
+			main: "#4caf50",
 		},
 	},
 });

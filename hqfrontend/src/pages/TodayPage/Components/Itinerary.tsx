@@ -3,8 +3,9 @@ import { Typography, Card, CardContent, Input, IconButton, Box, Grid, debounce }
 import AddIcon from '@mui/icons-material/Add'
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import { useMutation, useQuery } from '@apollo/client'
+import { useTheme } from '@mui/material'
 
 // Full Calendar
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -67,7 +68,23 @@ const Itinerary: React.FC = () => {
 
 	const localDate = getCurrentLocalDate()
 
+	const theme = useTheme();
 
+
+	// Change background color of calendar
+	useEffect(() => {
+		const todayElements = document.querySelectorAll('.fc .fc-day-today');
+
+		todayElements.forEach(el => {
+			(el as HTMLElement).style.backgroundColor = theme.palette.background.default;
+		});
+
+		return () => {
+			todayElements.forEach(el => {
+				(el as HTMLElement).style.backgroundColor = '';
+			});
+		};
+	}, [theme]);
 
 
 	// Query

@@ -13,42 +13,8 @@ code {
 }
 
 
-/* .green-event {
-  background-color: #378006;
-  border-color: #257e04;
-} */
-
-.blue-event {
-  background-color: #006fa1;
-  border-color: #005c7a;
-}
-
-.green-event {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-color: rgba(90, 118, 99, 0.5);
-}
 
 
-body {
-  background-image: url(./utils/IMG_2715.jpg);
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  /* Fixed position */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  /* Black overlay with 30% opacity */
-  z-index: -1;
-}
 
 
 /* Scrollbar */
@@ -62,7 +28,7 @@ body::before {
 }
 
 :root {
-  --fc-today-bg-color: #3B3B3B;
+  --fc-today-bg-color: rgba(59, 59, 59, 0);
 }
 
 

@@ -38,6 +38,7 @@ export default function Sidebar() {
 			// { id: '2', title: 'Inbox', link: '/inbox', notifications: 6 },
 			{ id: '12', title: 'Plan', link: '/plan', notifications: false },
 			{ id: '2', title: 'Inbox', link: '/inbox', notifications: false },
+			{ id: '7', title: 'Maintenance', link: '/maintenance', notifications: false },
 		],
 		[
 			{ id: '4', title: 'Habits', link: '/habits', notifications: false },
@@ -283,6 +284,14 @@ function SidebarIcons({ id }) {
 			</svg>
 		),
 		6: (
+			<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+				<g stroke="#000000">
+					<path d="M3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8h-4" />
+					<path d="M3 4h14v14a2 2 0 0 0 2 2v0M13 8H7m6 4H9" />
+				</g>
+			</svg>
+		),
+		7: (
 			<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 				<g stroke="#000000">
 					<path d="M3 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8h-4" />

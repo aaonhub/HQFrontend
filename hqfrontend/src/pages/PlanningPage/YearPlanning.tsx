@@ -11,9 +11,9 @@ import { GET_DAY_TITLES_BY_YEAR } from '../../models/daytitles'
 import { CREATE_DAY_TITLES } from '../../models/daytitles'
 import { UPDATE_DAY_TITLES } from '../../models/daytitles'
 import PlanSelectDropdown from './PlanSelectDropdown'
+import MonthInputs from './MonthIput'
 
 
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 interface YearPlanningProps {
 	setCurrentView: React.Dispatch<React.SetStateAction<string>>
@@ -227,11 +227,16 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 
 	const years = Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i)  // generates years from 1900 to current year
 
+	const currentDate = new Date();
+	const currentDay = currentDate.getDate();
+	const currentMonth = currentDate.getMonth() + 1;
+
+
 
 	if (loading) return <p>Loading...</p>
 	if (error) return <p>Error :(</p>
 
-	
+
 	return (
 		<Grid container spacing={3}>
 
@@ -298,64 +303,17 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 		`}
 					</style>
 					{yearData && yearData.months.map((month, monthIndex) => (
-						<div style={{ margin: '0.5rem' }} key={month.month}>
-							<h2 style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', paddingBottom: '.5em' }}>
-								{monthNames[month.month - 1]}
-							</h2>
-							{month.titles.map((day, dayIndex) => {
-								// Get the current day
-								const currentDate = new Date();
-								const currentDay = currentDate.getDate();
-								const currentMonth = currentDate.getMonth() + 1; // JavaScript's getMonth() method starts at 0 for January
-
-								// Determine whether it's a weekend
-								const date = new Date(year, month.month - 1, day.day); // month in JavaScript Date is 0-indexed
-								const isWeekend = date.getDay() === 0 || date.getDay() === 6; // getDay() returns 0 for Sunday and 6 for Saturday
-
-								return (
-									<Box
-										key={`${month.month}-${day.day}`}
-										id={`day-${year}-${month.month}-${day.day}`}  // Unique id for each day
-										sx={{ display: 'flex', alignItems: 'center', gap: '0', maxHeight: '23px' }}
-									>
-
-										<label style={{ width: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-											{day.day}:
-										</label>
-
-										<input
-											value={day.title}
-											onChange={event => handleTitleChange(monthIndex, dayIndex, event.target.value)}
-											onBlur={handleUpdateDayTitles}
-											onKeyPress={(event) => {
-												if (event.key === 'Enter') {
-													handleUpdateDayTitles();
-													event.preventDefault();  // Prevents form submission
-												}
-											}}
-											style={{
-												width: '200px',
-												maxHeight: '21px',
-												overflow: 'auto',
-												backgroundColor:
-													day.day === currentDay && month.month === currentMonth ? 'rgba(0, 255, 0, 0.3)' :  // Current day
-														isWeekend ? 'black' :  // Weekend
-															'none'  // Other days
-											}}
-										/>
-									</Box>
-								)
-							})}
-						</div>
+						<MonthInputs
+							key={month.month}
+							month={month}
+							monthIndex={monthIndex}
+							handleTitleChange={handleTitleChange}
+							handleUpdateDayTitles={handleUpdateDayTitles}
+							currentDay={currentDay}
+							currentMonth={currentMonth} year={0}						/>
 					))}
 				</div>
 			</Grid>
-
-			<Grid item xs={12}>
-
-			</Grid>
-
-
 
 		</Grid>
 	)

@@ -140,10 +140,14 @@ const SettingsPage = () => {
 						<MenuItem value="light">Light</MenuItem>
 						<MenuItem value="dark">Dark</MenuItem>
 						<MenuItem value="pink">Pink</MenuItem>
+						<MenuItem value="christmas">Blue</MenuItem>
 					</Select>
 				</FormControl>
 			</Box>
 
+			<Divider />
+
+			{/* Sidebar Settings */}
 			<Box mb={2}>
 				<Box mt={2}>
 					<Typography variant="h5">Sidebar</Typography>

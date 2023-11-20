@@ -36,9 +36,12 @@ import DailyReviewPage from '../DailyReviewPage/1DailyReviewPage'
 import ProfilePage from '../ProfilePage/ProfilePage'
 import AccountabilityPage from '../AccountabilityPage/1AccountabilityPage'
 import ToDosPage from '../ToDosPage/ToDosPage';
+import PlanningPage from '../PlanningPage/PlanningPage'
+import MaintenancePage from '../MaintenancePage/MaintenancePage'
+
+
 import { useAuth } from './auth';
 import CommandLine from './CommandLine';
-import PlanningPage from '../PlanningPage/PlanningPage'
 import DebugPanel from './DebugPanel'
 
 
@@ -168,6 +171,9 @@ function ContentRoutes(): JSX.Element {
 			</RequireAuth>} />
 			<Route path="/plan" element={<RequireAuth>
 				<PlanningPage />
+			</RequireAuth>} />
+			<Route path="/maintenance" element={<RequireAuth>
+				<MaintenancePage />
 			</RequireAuth>} />
 
 

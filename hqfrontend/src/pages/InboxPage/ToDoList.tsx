@@ -126,13 +126,13 @@ const ToDoList: React.FC = () => {
 
 	return (
 		<>
-			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "left" }}>
 				<Box
 					component="form"
 					noValidate
 					autoComplete="off"
 					onSubmit={handleSubmit}
-					sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+					sx={{ width: "100%", display: "flex", justifyContent: "left" }}
 				>
 					<TextField
 						id="outlined-basic"

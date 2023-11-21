@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Checkbox, List, ListItem, ListItemText, Typography } from '@mui/material'
+import { Checkbox, List, ListItem, ListItemText, Typography, useTheme } from '@mui/material'
 import { Draggable } from '@fullcalendar/interaction'
 import { v4 as uuidv4 } from 'uuid';
 import { addLengthToTime, currentLocalTime, getCurrentLocalDate, getCurrentLocalDateUnadjusted } from '../../../components/DateFunctions';
@@ -23,9 +23,11 @@ interface ItineraryListProps {
 	handleCheckItem: any
 }
 
+
 const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelectedInboxItemId, setSelectedHabitId, setSelectedRitualId, setSelectedEntryID, handleCheckItem }) => {
 	const [id] = useState(uuidv4());
 
+	const theme = useTheme();
 
 
 	// Calendar Stuff
@@ -156,7 +158,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 										marginBottom: 1,
 										cursor: 'pointer',
 										'&:hover': {
-											backgroundColor: 'black',
+											backgroundColor: theme.palette.action.hover,
 										},
 									}}
 								>

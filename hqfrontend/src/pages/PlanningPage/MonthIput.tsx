@@ -11,15 +11,7 @@ interface MonthInputsProps {
     year: number;
 }
 
-const MonthInputs: React.FC<MonthInputsProps> = ({
-    month,
-    monthIndex,
-    handleTitleChange,
-    handleUpdateDayTitles,
-    currentDay,
-    currentMonth,
-    year
-}) => {
+const MonthInputs: React.FC<MonthInputsProps> = ({ month, monthIndex, handleTitleChange, handleUpdateDayTitles, currentDay, currentMonth, year }) => {
     const theme = useTheme();
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -29,13 +21,18 @@ const MonthInputs: React.FC<MonthInputsProps> = ({
                 {monthNames[month.month - 1]}
             </h2>
             {month.titles.map((day: any, dayIndex: number) => {
-                const isWeekend = new Date(year, month.month - 1, day.day).getDay() === 0 ||
-                    new Date(year, month.month - 1, day.day).getDay() === 6;
+                const dayOfWeek = new Date(year, month.month - 1, day.day).getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
                 const backgroundColor = day.day === currentDay && month.month === currentMonth
-                    ? theme.palette.primary.main
-                    : isWeekend
-                        ? theme.palette.secondary.main
-                        : theme.palette.background.default;
+                    ?
+                    theme.palette.primary.main
+                    :
+                    isWeekend
+                        ?
+                        theme.palette.secondary.main
+                        :
+                        theme.palette.background.default;
 
                 return (
                     <div key={`${month.month}-${day.day}`} id={`day-${year}-${month.month}-${day.day}`}

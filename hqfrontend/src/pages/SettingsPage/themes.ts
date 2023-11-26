@@ -29,33 +29,34 @@ export const darkTheme = createTheme({
 	palette: {
 		mode: "dark",
 		primary: {
-			main: "#c4c4c4",
+			main: "#1c1c1c", // Slightly darker shade for primary
 		},
 		secondary: {
-			main: "#e0e0e0",
+			main: "#424242", // Darker shade for secondary
 		},
 		background: {
-			paper: "#1f1f1f",
-			default: "#0a0a0a",
+			paper: "#121212", // Deeper shade for paper backgrounds
+			default: "#000000", // True black for default background
 		},
 		text: {
-			primary: "#f5f5f5",
-			secondary: "#c4c4c4",
+			primary: "#eaeaea", // Slightly dimmed white for primary text
+			secondary: "#a3a3a3", // Darker shade for secondary text
 		},
 		error: {
-			main: "#d32f2f",
+			main: "#b71c1c", // Darker shade for error
 		},
 		warning: {
-			main: "#ff9800",
+			main: "#f57c00", // Slightly deeper shade for warning
 		},
 		info: {
-			main: "#2196f3",
+			main: "#1976d2", // Darker shade for info
 		},
 		success: {
-			main: "#4caf50",
+			main: "#388e3c", // Darker shade for success
 		},
 	},
 });
+
 
 
 export const pinkTheme = createTheme({
@@ -95,30 +96,30 @@ export const christmasTheme = createTheme({
 	palette: {
 		mode: "dark",
 		primary: {
-			main: "#c4c4c4",
+			main: "#0d5c2d", // Christmas green
 		},
 		secondary: {
-			main: "#e0e0e0",
+			main: "#b22222", // Christmas red
 		},
 		background: {
-			paper: "#1f1f1f",
-			default: "#0a0a0a",
+			paper: "#1c1c1c", // Dark background for paper elements
+			default: "#121212", // Darker background for default
 		},
 		text: {
-			primary: "#f5f5f5",
-			secondary: "#c4c4c4",
+			primary: "#f5f5f5", // Bright text for contrast
+			secondary: "#c4c4c4", // Slightly dimmed for secondary text
 		},
 		error: {
-			main: "#d32f2f",
+			main: "#ff6f60", // A lighter red for error messages
 		},
 		warning: {
-			main: "#ff9800",
+			main: "#ffeb3b", // Gold color for warnings
 		},
 		info: {
-			main: "#2196f3",
+			main: "#2196f3", // Blue for info
 		},
 		success: {
-			main: "#4caf50",
+			main: "#2e7d32", // Deeper green for success
 		},
 	},
 });

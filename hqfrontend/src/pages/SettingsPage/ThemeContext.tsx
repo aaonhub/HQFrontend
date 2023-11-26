@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material';
 
 // import themes
-import { lightTheme, darkTheme, pinkTheme } from './themes';
+import { lightTheme, darkTheme, pinkTheme, christmasTheme } from './themes';
 
 
 
@@ -28,6 +28,8 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 				return darkTheme;
 			case 'pink':
 				return pinkTheme;
+			case 'christmas':
+				return christmasTheme;
 			default:
 				return lightTheme;
 		}

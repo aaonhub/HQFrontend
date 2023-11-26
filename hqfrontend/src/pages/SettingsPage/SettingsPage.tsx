@@ -140,7 +140,7 @@ const SettingsPage = () => {
 						<MenuItem value="light">Light</MenuItem>
 						<MenuItem value="dark">Dark</MenuItem>
 						<MenuItem value="pink">Pink</MenuItem>
-						<MenuItem value="christmas">Blue</MenuItem>
+						<MenuItem value="christmas">Christmas</MenuItem>
 					</Select>
 				</FormControl>
 			</Box>

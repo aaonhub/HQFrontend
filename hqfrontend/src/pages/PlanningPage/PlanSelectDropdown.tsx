@@ -1,5 +1,5 @@
 
-import { Button, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Menu, MenuItem, Typography, useTheme } from '@mui/material'
 import React, { useState } from 'react'
 
 
@@ -9,6 +9,7 @@ interface PlanSelectDropdownProps {
 
 
 const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
+    const theme = useTheme()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,7 +35,7 @@ const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
                 onClick={handleClick}
                 sx={{ textTransform: 'none' }}
             >
-                <Typography variant="h5" component="h1">
+                <Typography variant="h5" component="h1" sx={{ flexGrow: 1, color: theme.palette.text.primary }}>
                     Year Planning
                 </Typography>
             </Button>
@@ -44,7 +45,7 @@ const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
                 MenuListProps={{
-                    sx: { color: 'white' },
+                    sx: { color: theme.palette.text.primary }
                 }}
             >
                 <MenuItem onClick={() => handleMenuItemClick('day')}>Day Planning</MenuItem>

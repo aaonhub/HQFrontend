@@ -5,6 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useQuery, useMutation } from '@apollo/client'
 import YearDayTitles from '../../models/daytitles'
 import { useGlobalContext } from '../App/GlobalContextProvider'
+import { useDraggable } from 'react-use-draggable-scroll';
 
 // Queries and Mutations
 import { GET_DAY_TITLES_BY_YEAR } from '../../models/daytitles'
@@ -43,6 +44,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 	const [yearData, setYearData] = useState<YearDayTitles | null>(null);
 	const [initialYearData, setInitialYearData] = useState<YearDayTitles | null>(null);
 
+
 	const debouncedYear = useDebounce(year, 500);
 
 
@@ -56,53 +58,15 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 
 
 
-	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		// Initialize the x position
-		let startX = 0;
-		// Initialize the scroll left position
-		let startScrollLeft = 0;
-		// Initialize a flag to check if we are dragging
-		let isDragging = false;
+	// Drag Scroll Stuff
+	const ref =
+		useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
+	const { events } = useDraggable(ref, {
+		isMounted: false,
+		applyRubberBandEffect: true,
+	});
 
-		// Get the scroll container element
-		const scrollContainerElement = scrollContainerRef.current;
-
-		if (scrollContainerElement) {
-			// Add the mousedown event listener
-			scrollContainerElement.addEventListener('mousedown', (e: any) => {
-				isDragging = true;
-				// Record the initial x position when mouse is down
-				startX = e.pageX - scrollContainerElement.offsetLeft;
-				// Record the initial scroll left position when mouse is down
-				startScrollLeft = scrollContainerElement.scrollLeft;
-			});
-
-			// Add the mouseleave event listener
-			scrollContainerElement.addEventListener('mouseleave', () => {
-				isDragging = false;
-			});
-
-			// Add the mouseup event listener
-			scrollContainerElement.addEventListener('mouseup', () => {
-				isDragging = false;
-			});
-
-			// Add the mousemove event listener
-			scrollContainerElement.addEventListener('mousemove', (e: any) => {
-				if (!isDragging) return;
-				// Prevent the default behavior
-				e.preventDefault();
-				// Calculate the new x position when mouse is moving
-				const x = e.pageX - scrollContainerElement.offsetLeft;
-				// Calculate the walk distance (how far we have moved)
-				const walk = (x - startX) * 1; // The multiplier can be adjusted for the speed of the scroll
-				// Set the scroll left position
-				scrollContainerElement.scrollLeft = startScrollLeft - walk;
-			});
-		}
-	}, [yearData]);
 
 
 
@@ -189,12 +153,6 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 			}
 		});
 
-		// Start observing the scroll container with the configured parameters
-		const scrollContainerElement = scrollContainerRef.current;
-		if (scrollContainerElement) {
-			observer.observe(scrollContainerElement, { childList: true, subtree: true });
-		}
-
 		// Clean up
 		return () => observer.disconnect();
 	}, [data]);
@@ -251,7 +209,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 
 					{/* Year Select */}
 					<Box display="flex">
-						<Button onClick={decrementYear}>
+						<Button color="secondary" onClick={decrementYear}>
 							<ArrowBackIcon />
 						</Button>
 						{showSelect ?
@@ -267,7 +225,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 								{year}
 							</Typography>
 						}
-						<Button onClick={incrementYear}>
+						<Button color="secondary" onClick={incrementYear}>
 							<ArrowForwardIcon />
 						</Button>
 					</Box>
@@ -284,7 +242,8 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 			{/* Year Planning */}
 			<Grid item xs={12}>
 				<div
-					ref={scrollContainerRef}
+					ref={ref}
+					{...events}
 					style={{
 						overflowX: 'auto',
 						display: 'flex',
@@ -294,14 +253,6 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 						scrollbarWidth: 'none', // For Firefox
 					}}
 				>
-					{/* Hide scrollbar for Chrome, Safari and Opera */}
-					<style>
-						{`
-			::-webkit-scrollbar {
-				display: none;
-			}
-		`}
-					</style>
 					{yearData && yearData.months.map((month, monthIndex) => (
 						<MonthInputs
 							key={month.month}
@@ -310,7 +261,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 							handleTitleChange={handleTitleChange}
 							handleUpdateDayTitles={handleUpdateDayTitles}
 							currentDay={currentDay}
-							currentMonth={currentMonth} year={0}						/>
+							currentMonth={currentMonth} year={0} />
 					))}
 				</div>
 			</Grid>

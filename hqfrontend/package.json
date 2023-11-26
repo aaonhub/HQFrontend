@@ -46,6 +46,7 @@
     "react-router-dom": "^6.8.2",
     "react-scripts": "5.0.1",
     "react-sortablejs": "^6.1.4",
+    "react-use-draggable-scroll": "^0.4.7",
     "smooth-scrollbar": "^8.8.4",
     "sortablejs": "^1.15.0",
     "styled-components": "^5.3.6",

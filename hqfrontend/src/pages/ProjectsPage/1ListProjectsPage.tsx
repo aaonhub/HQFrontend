@@ -7,7 +7,7 @@ import { useGlobalContext } from '../App/GlobalContextProvider'
 // Queries and Mutations
 import { GET_PROJECTS } from '../../models/project'
 import { CREATE_PROJECT } from '../../models/project'
-import { UPDATE_OR_CREATE_PROJECT_ORDER } from '../../models/settings'
+import { UPDATE_SETTINGS } from '../../models/settings'
 
 // Models
 import Project from '../../models/project'
@@ -55,7 +55,7 @@ const ProjectsPage = () => {
 	}, [projects, data])
 
 
-	const [updateOrCreateProjectOrder] = useMutation(UPDATE_OR_CREATE_PROJECT_ORDER, {
+	const [updateOrCreateProjectOrder] = useMutation(UPDATE_SETTINGS, {
 		onError: (error) => console.log(error),
 		refetchQueries: [{ query: GET_PROJECTS }],
 	})

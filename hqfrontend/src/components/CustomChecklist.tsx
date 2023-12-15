@@ -11,7 +11,7 @@ export interface ChecklistItem {
 
 interface ListProps {
     list: ChecklistItem[];
-    handleCheckItem: (listItem: ChecklistItem) => void;
+    handleCheckItem: (listItem: any) => void;
     handleOrderChange?: (list: ChecklistItem[]) => void;
     checklistType: "strikeout" | "highlight"; 
 }

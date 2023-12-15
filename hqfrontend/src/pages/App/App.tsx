@@ -8,6 +8,9 @@ import './App.css'
 // Globals
 import { useGlobalContext } from '../App/GlobalContextProvider';
 
+// Queries
+import { GET_SETTINGS } from '../../models/settings';
+
 // Icons
 // import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 // import InboxIcon from '@mui/icons-material/MoveToInbox'
@@ -39,10 +42,13 @@ import ToDosPage from '../ToDosPage/ToDosPage';
 import PlanningPage from '../PlanningPage/PlanningPage'
 import MaintenancePage from '../MaintenancePage/MaintenancePage'
 
-
 import { useAuth } from './auth';
 import CommandLine from './CommandLine';
 import DebugPanel from './DebugPanel'
+import { useQuery } from '@apollo/client'
+
+// Models
+import SettingsObject from '../../models/settings'
 
 
 
@@ -60,9 +66,33 @@ function RequireAuth({ children }: any) {
 
 
 function App(): JSX.Element {
-	const { setLoggedIn, setGlobalProfile, debugPanelVisible } = useGlobalContext();
+	const { setLoggedIn, setGlobalProfile, debugPanelVisible, settings, setSettings } = useGlobalContext();
 
 	useAuth(setLoggedIn, setGlobalProfile);
+
+	// Settings
+	useQuery(GET_SETTINGS, {
+		onCompleted: (data) => {
+			new SettingsObject({
+				habitOrder: data.settings.habitOrder,
+				hiddenSidebarItems: JSON.parse(data.settings.hiddenSidebarItems),
+				id: data.settings.id,
+				itineraryOrder: data.settings.itineraryOrder,
+				owner: data.settings.owner,
+				projectOrder: data.settings.projectOrder,
+				masterListOrder: JSON.parse(data.settings.masterListOrder),
+				stickyNote: data.settings.stickyNote,
+				theme: data.settings.theme,
+				__typename: data.settings.__typename
+			})
+
+			setSettings(data.settings)
+		},
+		onError: (error) => {
+			console.log(error);
+		}
+	});
+
 
 
 	// Command Line Stuff

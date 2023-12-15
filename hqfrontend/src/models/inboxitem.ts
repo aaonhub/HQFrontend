@@ -13,12 +13,16 @@ interface InboxItem {
 	startDate: string | null;
 	timeCompleted: Date | null;
 	length?: string | null;
+	masterList?: boolean;
 }
 
 class InboxItem {
 	constructor(
-		{ id, title, description, completed, project, dueDateTime, startTime, startDate, timeCompleted, length }:
-			{ id: string, title: string, description?: string, completed: boolean, project?: Project | null, dueDateTime: string | null, startTime: string | null, startDate: string | null, timeCompleted: Date | null, length?: string | null }
+		{ id, title, description, completed, project, dueDateTime, startTime, startDate, timeCompleted, length, masterList }:
+			{ id: string, title: string, description?: string, completed: boolean, 
+				project?: Project | null, dueDateTime: string | null, startTime: string | null, 
+				startDate: string | null, timeCompleted: Date | null, length?: string | null, masterList?: boolean
+			}
 	) {
 		this.id = id;
 		this.title = title || "";
@@ -30,6 +34,7 @@ class InboxItem {
 		this.startDate = startDate || null;
 		this.timeCompleted = timeCompleted || null;
 		this.length = length || null;
+		this.masterList = masterList || false;
 	}
 }
 
@@ -95,6 +100,19 @@ export const ITINERARY_QUERY = gql`
 	}  
 `;
 
+export const MASTER_LIST_QUERY = gql`
+	query MasterList {
+		masterListItems{
+			id
+			title
+			completed
+		}
+		settings{
+			id
+			masterListOrder
+		}
+	}
+`;
 
 export const GET_TO_DO_LIST_ITEMS_BY_START_DATE = gql`
 	query($Today: Date!) {
@@ -150,6 +168,7 @@ export const GET_INBOX_TODO = gql`
 			startTime
 			timeCompleted
 			length
+			masterList
 		}
 	}
 `;
@@ -241,8 +260,9 @@ export const UPDATE_TODO = gql`
 		$StartDate: Date,
 		$StartTime: Time,
 		$DueDateTime: DateTime,
-		$Subtasks: JSONString
-		$Length: String
+		$Subtasks: JSONString,
+		$Length: String,
+		$MasterList: Boolean
 	) {
 		updateToDoItem(
 			completed: $Completed, 
@@ -255,6 +275,7 @@ export const UPDATE_TODO = gql`
 			startTime: $StartTime,
 			subTasks: $Subtasks
 			length: $Length
+			masterList: $MasterList
 		) {
 			toDoItem {
 				id
@@ -270,6 +291,7 @@ export const UPDATE_TODO = gql`
 				startTime
 				timeCompleted
 				length
+				masterList
 			}
 		}
 	}
@@ -290,18 +312,7 @@ export const CHECK_UNCHECK_TODO = gql`
 		checkUncheckToDoItem(id: $id, completed: $Completed ) {
 			toDoItem {
 				id
-				title
 				completed
-				project {
-					id
-					codename
-				}
-				dueDateTime
-				description
-				startDate
-				startTime
-				timeCompleted
-				length
 			}
 		}
 	}

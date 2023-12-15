@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import {
 	Box, Card, CardContent,
 	IconButton, Fab, Typography,
-	TextField, CardActions
+	TextField, CardActions, Grid
 } from '@mui/material';
 import Masonry from '@mui/lab/Masonry';
 
@@ -125,79 +125,71 @@ const ToDoList: React.FC = () => {
 	if (error) return <p>Error :(</p>
 
 	return (
-		<>
-			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "left" }}>
-				<Box
-					component="form"
-					noValidate
-					autoComplete="off"
-					onSubmit={handleSubmit}
-					sx={{ width: "100%", display: "flex", justifyContent: "left" }}
-				>
-					<TextField
-						id="outlined-basic"
-						label="Add To Do"
-						variant="outlined"
-						value={newTodo}
-						onChange={handleInputChange}
-						type="search"
-						sx={{ margin: 1, width: "80%" }}
-					/>
-					<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
-						<AddIcon />
-					</Fab>
-				</Box>
-
-
-				{/* Inbox Items */}
-				<Masonry
-					columns={4}
-					spacing={4}
-					sx={{ padding: 2 }}
-				>
-					{toDoItems.map((item) => (
-						<Card
-							onClick={() => setSelectedInboxItemId(item.id)}
-							sx={{ position: 'relative', maxHeight: 200, maxWidth: 200, border: 1, borderColor: 'black' }}
-							key={item.id}
-						>
-							<CardContent sx={{
-								overflow: 'hidden',
-								maxHeight: 150,
-								paddingBottom: '40px',
-								marginBottom: '64px',
-								'&::-webkit-scrollbar': {
-									display: 'none'
-								},
-								'&': {
-									scrollbarWidth: 'none',
-									scrollbarColor: 'transparent transparent',
-								}
-							}}>
-								<Typography component="div" sx={{ wordWrap: 'break-word' }}>
-									{item.title}
-								</Typography>
-								<Typography variant="body2" color="text.secondary">
-									{item.description}
-								</Typography>
-							</CardContent>
-							<CardActions sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
-								<IconButton onClick={(event) => handleComplete(event, item)}>
-									{item.completed ? <CheckIcon /> : <CloseIcon />}
-								</IconButton>
-								<IconButton onClick={(event) => handleDelete(event, item.id)}>
-									<DeleteIcon />
-								</IconButton>
-							</CardActions>
-						</Card>
-					))}
-				</Masonry>
-
-
+		<Grid container>
+			<Box
+				component="form"
+				noValidate
+				autoComplete="off"
+				onSubmit={handleSubmit}
+				sx={{ width: "100%", display: "flex", justifyContent: "left" }}
+			>
+				<TextField
+					id="outlined-basic"
+					label="Add To Do"
+					variant="outlined"
+					value={newTodo}
+					onChange={handleInputChange}
+					type="search"
+					sx={{ margin: 1, width: "80%" }}
+				/>
+				<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
+					<AddIcon />
+				</Fab>
 			</Box>
 
+
+			{/* Inbox Items */}
+			<Masonry columns={4} spacing={4} sx={{ padding: 2 }}>
+				{toDoItems.map((item) => (
+					<Card
+						className="card"
+						onClick={() => setSelectedInboxItemId(item.id)}
+						sx={{ position: 'relative', maxHeight: 300, maxWidth: 200, border: 1, borderColor: 'black' }}
+						key={item.id}
+					>
+						<CardContent sx={{
+							overflow: 'hidden',
+							maxHeight: 250,
+							paddingBottom: '40px',
+							marginBottom: '64px'
+						}}>
+							<Typography component="div" sx={{ wordWrap: 'break-word' }}>
+								{item.title}
+							</Typography>
+
+							<Typography variant="body2" color="text.secondary">
+								{item.description}
+							</Typography>
+						</CardContent>
+
+						<CardActions className="card-actions" sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+
+							<IconButton onClick={(event) => handleComplete(event, item)}>
+								{item.completed ? <CheckIcon /> : <CloseIcon />}
+							</IconButton>
+
+							<IconButton onClick={(event) => handleDelete(event, item.id)}>
+								<DeleteIcon />
+							</IconButton>
+
+						</CardActions>
+
+					</Card>
+				))}
+			</Masonry>
+
 			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleClose} inboxItemId={selectedInboxItemId} />}
-		</>
+		</Grid>
 	);
 }
 

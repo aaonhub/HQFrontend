@@ -1,14 +1,63 @@
 import { gql } from '@apollo/client';
 
-class Settings {
+export interface ISettingsType {
+	habitOrder: string;
+	hiddenSidebarItems: string[];
+	id: string;
+	itineraryOrder: string;
+	owner: {
+		__typename: string;
+		id: string;
+		username: string;
+		email: string;
+	};
+	projectOrder: string;
+	masterListOrder: string[];
+	stickyNote: string;
+	theme: string;
+	__typename: string;
+}
+
+
+class SettingsObject implements ISettingsType {
+	habitOrder: string;
+	hiddenSidebarItems: string[];
+	id: string;
+	itineraryOrder: string;
+	owner: {
+		__typename: string;
+		id: string;
+		username: string;
+		email: string;
+	};
+	masterListOrder: string[];
+	projectOrder: string;
+	stickyNote: string;
+	theme: string;
+	__typename: string;
+
 	constructor(
-		public theme: string
+		{ habitOrder, hiddenSidebarItems, id, itineraryOrder, owner, projectOrder, masterListOrder, stickyNote, theme, __typename }:
+			{
+				habitOrder: string, hiddenSidebarItems: string[], id: string, itineraryOrder: string,
+				owner: { __typename: string, id: string, username: string, email: string },
+				projectOrder: string, masterListOrder: string[], stickyNote: string, theme: string, __typename: string
+			}
 	) {
-		this.theme = theme
+		this.habitOrder = habitOrder;
+		this.hiddenSidebarItems = hiddenSidebarItems;
+		this.id = id;
+		this.itineraryOrder = itineraryOrder;
+		this.owner = owner;
+		this.projectOrder = projectOrder;
+		this.masterListOrder = masterListOrder;
+		this.stickyNote = stickyNote;
+		this.theme = theme;
+		this.__typename = __typename;
 	}
 }
 
-export default Settings
+export default SettingsObject;
 
 
 // Queries
@@ -21,83 +70,61 @@ export const GET_ITINERARY_ORDER = gql`
 	}
 `
 
-export const GET_STICKY_NOTE = gql`
-	query{
-		stickyNote
-	}
-`
-
-export const GET_HIDDEN_SIDEBAR_ITEMS = gql`
+export const GET_SETTINGS = gql`
 	query {
-		hiddenSidebarItems
+		settings{
+			id
+			owner {
+				id
+				username
+				email
+			}
+			theme
+			habitOrder
+			stickyNote
+			hiddenSidebarItems
+			itineraryOrder
+			projectOrder
+			masterListOrder
+		}
 	}
 `
 
 
 // Mutations
-// Update Later
-export const UPDATE_SETTING = gql`
-	mutation UpdateSetting($userId: ID!, $theme: ENUM_SETTING_THEME) {
-		updateSetting(id: $userId, data: { theme: $theme}) {
-			data {
+export const UPDATE_SETTINGS = gql`
+	mutation UpdateSetting(
+		$theme: String, 
+		$stickyNote: String,
+		$hiddenSidebarItems: String,
+		$itineraryOrder: String,
+		$masterListOrder: String,
+		$projectOrder: String
+	){
+		updateSettings(
+			theme: $theme, 
+			stickyNote: $stickyNote,
+			hiddenSidebarItems: $hiddenSidebarItems,
+			itineraryOrder: $itineraryOrder,
+			masterListOrder: $masterListOrder,
+			projectOrder: $projectOrder
+		){
+			settings{
 				id
-				attributes {
-					theme
+				owner{
+					id
+					username
+					email
 				}
-			}
-		}
-	}
-`
-// Update Later
-export const CREATE_SETTING = gql`
-	mutation CreateSetting($userId: ID!, $theme: ENUM_SETTING_THEME) {
-		createSetting(data: { user: $userId, theme: $theme }) {
-			data {
-				id
-				attributes {
-					theme
-				}
-			}
-		}
-	}
-`
-
-export const UPDATE_STICKY_NOTE = gql`
-	mutation($stickyNote: String!){
-		updateStickyNoteContent(stickyNote: $stickyNote){
-			settings {
+				theme
+				habitOrder
 				stickyNote
-			}
-		}
-	}
-`
-
-export const UPDATE_HIDDEN_SIDEBAR_ITEMS = gql`
-	mutation($HiddenSidebarItems: [String]!){
-		updateHiddenSidebarItems(hiddenSidebarItems: $HiddenSidebarItems){
-			settings{
 				hiddenSidebarItems
-			}
-		}
-	}
-`
-
-export const UPDATE_OR_CREATE_PROJECT_ORDER = gql`
-	mutation($projectOrder: String!){
-		updateOrCreateProjectOrder(projectOrder: $projectOrder){
-			settings{
-				id
-			}
-		}
-	}
-`
-
-export const UPDATE_OR_CREATE_ITINERARY_ORDER = gql`
-	mutation($itineraryOrder: String!){
-		updateOrCreateItineraryOrder(itineraryOrder: $itineraryOrder){
-			settings{
 				itineraryOrder
+				masterListOrder
+				projectOrder
 			}
 		}
 	}
 `
+

@@ -24,11 +24,12 @@ import { useGlobalContext } from "../pages/App/GlobalContextProvider"
 import InboxItem from "../models/inboxitem"
 import Project from "../models/project"
 
-// Queries and Mutations
-import { UPDATE_TODO } from "../models/inboxitem"
+// Queries
 import { GET_INBOX_TODO } from "../models/inboxitem"
-import { DELETE_TODO } from "../models/inboxitem"
 import { GET_PROJECTS } from "../models/project"
+// Mutations
+import { UPDATE_TODO } from "../models/inboxitem"
+import { DELETE_TODO } from "../models/inboxitem"
 
 
 interface ProjectToDoItemProps {
@@ -51,6 +52,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 		startTime: null,
 		timeCompleted: null,
 		length: null,
+		masterList: false,
 	}))
 	const [projects, setProjects] = useState<Project[]>([])
 	const [showCustomInput, setShowCustomInput] = useState(false);
@@ -77,6 +79,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					startDate: data.toDoItem.startDate,
 					startTime: data.toDoItem.startTime,
 					timeCompleted: data.toDoItem.timeCompleted,
+					masterList: data.toDoItem.masterList,
 				})
 			)
 
@@ -123,7 +126,11 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 
 
 	// InboxItem Update
-	const [updateInboxItem] = useMutation(UPDATE_TODO)
+	const [updateInboxItem] = useMutation(UPDATE_TODO, {
+		onError: (error) => {
+			console.log(error)
+		}
+	})
 	const handleSave = () => {
 
 		const dueDateTime = newInboxItem.dueDateTime ? new Date(newInboxItem.dueDateTime) : null
@@ -155,8 +162,10 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					ProjectId: newInboxItem.project ? newInboxItem.project.id : null,
 					Completed: newInboxItem.completed,
 					Length: length,
+					MasterList: newInboxItem.masterList,
 				},
-				onCompleted: () => {
+				onCompleted: (data) => {
+					console.log(data)
 					setSnackbar({
 						open: true,
 						message: "Inbox Item Updated",
@@ -245,6 +254,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 			fullWidth
 		>
 			<DialogTitle>Edit To Do Item</DialogTitle>
+
 			<DialogContent>
 				<Box
 					component="form"
@@ -264,7 +274,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 									name="title"
 									label="Title"
 									variant="outlined"
-									value={newInboxItem.title}
+									value={newInboxItem.title ? newInboxItem.title : ''}
 									onChange={handleInputChange}
 									sx={{ width: "60ch" }}
 								/>
@@ -276,7 +286,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 									name="description"
 									label="Description"
 									variant="outlined"
-									value={newInboxItem.description}
+									value={newInboxItem.description ? newInboxItem.description : ''}
 									onChange={handleInputChange}
 									multiline
 									minRows={12}
@@ -323,26 +333,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 									value={newInboxItem.startDate ? newInboxItem.startDate : ''}
 									onChange={handleInputChange}
 								/>
-							</Box>
 
-							{/* Due Date */}
-							<Box m={2}>
-								<TextField
-									name="dueDateTime"
-									label="Due Date"
-									type="datetime-local"
-									variant="outlined"
-									InputLabelProps={{
-										shrink: true,
-									}}
-									sx={{ marginRight: "2ch" }}
-									value={newInboxItem.dueDateTime}
-									onChange={handleInputChange}
-								/>
-							</Box>
-
-							{/* Start Date */}
-							<Box m={2}>
 								<TextField
 									name="startTime"
 									label="Start Time"
@@ -357,9 +348,26 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 								/>
 							</Box>
 
+							{/* Due Date */}
+							<Box m={2}>
+								<TextField
+									name="dueDateTime"
+									label="Due Date"
+									type="datetime-local"
+									variant="outlined"
+									InputLabelProps={{
+										shrink: true,
+									}}
+									sx={{ marginRight: "2ch" }}
+									value={newInboxItem.dueDateTime ? newInboxItem.dueDateTime : ''}
+									onChange={handleInputChange}
+								/>
+							</Box>
+
 
 							{/* Project */}
 							<Box m={2}>
+								<InputLabel id="project-label">Project</InputLabel>
 								<Select
 									name="project"
 									value={newInboxItem.project ? newInboxItem.project.id : ''}
@@ -396,12 +404,30 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 								</Select>
 								{showCustomInput && (
 									<TextField
-										value={customLength}
+										value={customLength || ''}
 										onChange={(e) => {
 											setCustomLength(e.target.value);
 										}}
 									/>
 								)}
+							</Box>
+
+							{/* Master List */}
+							<Box m={2}>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={newInboxItem.masterList}
+											onChange={(event) => {
+												const { checked } = event.target
+												setNewInboxItem((prev) => {
+													return { ...prev, masterList: checked }
+												})
+											}}
+										/>
+									}
+									label="Master List"
+								/>
 							</Box>
 
 						</Grid>
@@ -411,6 +437,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 
 				</Box>
 			</DialogContent>
+
 			<DialogActions>
 				<Button onClick={() => handleDelete()} color="error">
 					Delete
@@ -422,6 +449,7 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 					Save
 				</Button>
 			</DialogActions>
+
 		</Dialog>
 	)
 })

@@ -12,10 +12,10 @@ interface AccountabilityToDoListDisplayProps {
 }
 
 
-const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) => {
+const AccountabilityToDoListDisplay = (props: AccountabilityToDoListDisplayProps) => {
     const { globalProfile } = useGlobalContext();
 
-    const [selectedSquad, setSelectedSquad] = useState<string>('9');
+    const [selectedSquad, setSelectedSquad] = useState<string>('None');
 
     // Get all accountabilities
     const { data, loading, error } = useQuery(GET_ACCOUNTABILITIES, {
@@ -23,8 +23,6 @@ const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) 
             console.log(error.message)
         },
     })
-
-    console.log(globalProfile.codename)
 
     // Accountability data query
     const { data: accountabilityData } = useQuery(GET_ACCOUNTABILITY_DATA, {
@@ -55,14 +53,7 @@ const AccountabilityToDoListDisplay = ({ }: AccountabilityToDoListDisplayProps) 
     if (error) return <p>Error :(</p>
 
     return (
-        <Card
-            sx={{
-                borderRadius: 2,
-                boxShadow: 2,
-                marginRight: 2,
-                padding: 1,
-            }}
-        >
+        <Card sx={{ borderRadius: 2, boxShadow: 2, margin: 1, padding: 1, }}>
             <Grid item xs={12} md={12} order={{ xs: 3, md: 3 }} style={{ height: '100%', overflowY: 'auto' }}>
                 <Card>
                     <CardContent>

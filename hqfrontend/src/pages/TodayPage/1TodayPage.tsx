@@ -1,63 +1,16 @@
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
-import Itinerary from "./Components/Itinerary";
+import { Container, Grid, Typography } from "@mui/material";
+import ItineraryCard from "./Components/ItineraryCard";
 import { getCustomLocalDate } from "../../components/DateFunctions";
-import { useEffect, useState } from "react";
-import { useGlobalContext } from "../App/GlobalContextProvider";
+import { useEffect } from "react";
 
-// Queries and Mutations
-import { GET_STICKY_NOTE } from "../../models/settings";
-import { UPDATE_STICKY_NOTE } from "../../models/settings";
-import { useMutation, useQuery } from "@apollo/client";
+import CalendarCard from "./Components/CalendarCard";
+import AccountabilityToDoListDisplay from "./Components/AccountabilityToDoListDisplay";
+import StickyNote from "./Components/StickyNote";
+import MasterListCard from "./Components/MasterListCard";
 
 
 
 const TodayPage = () => {
-	const { setSnackbar } = useGlobalContext();
-	const [stickyNote, setStickyNote] = useState<string>("");
-
-
-	// Sticky Note Query
-	useQuery(GET_STICKY_NOTE, {
-		onCompleted: (data) => {
-			setStickyNote(
-				data.stickyNote
-			);
-		},
-	});
-
-	const [updateStickyNote] = useMutation(UPDATE_STICKY_NOTE);
-	const handleStickyNoteSave = () => {
-		updateStickyNote({
-			variables: {
-				stickyNote: stickyNote,
-			},
-			onCompleted: () => {
-				console.log("Sticky Note Saved");
-				setSnackbar({
-					message: "Sticky Note Saved",
-					open: true,
-					severity: "success",
-				});
-			},
-			refetchQueries: [
-				{
-					query: GET_STICKY_NOTE,
-				},
-			],
-			onError: (error) => {
-				console.log(error);
-			}
-		});
-	};
-
-
-	const handleStickyNoteChange = (e: any) => {
-		setStickyNote(e.target.value);
-	};
-
-
-
-
 
 	// Tab Title
 	useEffect(() => {
@@ -65,58 +18,38 @@ const TodayPage = () => {
 	}, []);
 
 	return (
-		<>
-			<Container maxWidth="xl">
-				<Grid container>
+		<Container maxWidth="xl">
+			<Grid container>
 
-
-					{/* Day Display */}
-					<Grid item xs={12}>
-						<Typography variant="h4" sx={{ paddingBottom: 2 }}>
-							{getCustomLocalDate()}
-						</Typography>
-					</Grid>
-
-					{/* Left Side */}
-					<Grid item xs={10}>
-						<Itinerary />
-					</Grid>
-
-					{/* Right side */}
-					<Grid item xs={2}
-						sx={{
-							height: "70vh"
-						}}
-					>
-						<TextField
-							id="sticky-note"
-							label="Sticky Note"
-							multiline
-							variant="outlined"
-							minRows={20}
-							maxRows={30}
-							fullWidth
-							value={stickyNote}
-							onChange={(e) => handleStickyNoteChange(e)}
-							sx={{
-								paddingBottom: 2,
-							}}
-						/>
-
-						<Button
-							variant="contained"
-							fullWidth
-							onClick={() => handleStickyNoteSave()}
-						>
-							Save
-						</Button>
-
-					</Grid>
+				<Grid item xs={12}>
+					<Typography variant="h4" sx={{ paddingBottom: 2 }}>
+						{getCustomLocalDate()}
+					</Typography>
 				</Grid>
-			</Container>
+
+				<Grid item xs={4}>
+					<CalendarCard />
+				</Grid>
+
+				<Grid item xs={4}>
+					<ItineraryCard />
+				</Grid>
+
+				<Grid item xs={4}>
+					<MasterListCard />
+				</Grid>
+
+				<Grid item xs={6}>
+					<AccountabilityToDoListDisplay />
+				</Grid>
+
+				<Grid item xs={6}>
+					<StickyNote />
+				</Grid>
 
 
-		</>
+			</Grid>
+		</Container>
 	);
 };
 

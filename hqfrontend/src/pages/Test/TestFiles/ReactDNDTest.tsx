@@ -1,154 +1,50 @@
 import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import { List, ListItem, ListItemButton, ListItemText, Paper } from "@mui/material";
 
-const tasks = [
-	{ id: "1", content: "First task" },
-	{ id: "2", content: "Second task" },
-	{ id: "3", content: "Third task" },
-	{ id: "4", content: "Fourth task" },
-	{ id: "5", content: "Fifth task" }
-];
+const initialItems = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
 
-const taskStatus = {
-	requested: {
-		name: "Requested",
-		items: tasks
-	},
-	toDo: {
-		name: "To do",
-		items: []
-	},
-	inProgress: {
-		name: "In Progress",
-		items: []
-	},
-	done: {
-		name: "Done",
-		items: []
-	}
-};
+function SimpleDraggableList() {
+	const [items, setItems] = useState(initialItems);
 
-const onDragEnd = (result: any, columns: any, setColumns: any) => {
-	if (!result.destination) return;
-	const { source, destination } = result;
+	const onDragEnd = (result: any) => {
+		if (!result.destination) return;
 
-	if (source.droppableId !== destination.droppableId) {
-		const sourceColumn = columns[source.droppableId];
-		const destColumn = columns[destination.droppableId];
-		const sourceItems = [...sourceColumn.items];
-		const destItems = [...destColumn.items];
-		const [removed] = sourceItems.splice(source.index, 1);
-		destItems.splice(destination.index, 0, removed);
-		setColumns({
-			...columns,
-			[source.droppableId]: {
-				...sourceColumn,
-				items: sourceItems
-			},
-			[destination.droppableId]: {
-				...destColumn,
-				items: destItems
-			}
-		});
-	} else {
-		const column = columns[source.droppableId];
-		const copiedItems = [...column.items];
-		const [removed] = copiedItems.splice(source.index, 1);
-		copiedItems.splice(destination.index, 0, removed);
-		setColumns({
-			...columns,
-			[source.droppableId]: {
-				...column,
-				items: copiedItems
-			}
-		});
-	}
-};
+		const newArr = Array.from(items);
+		const [reorderedItem] = newArr.splice(result.source.index, 1);
+		newArr.splice(result.destination.index, 0, reorderedItem);
 
-function ReactDNDTest() {
-	const [columns, setColumns] = useState(taskStatus);
-
+		setItems(newArr);
+	};
 
 	return (
-		<div>
-			<div
-				style={{ display: "flex", justifyContent: "center", height: "100%" }}
-			>
-				<DragDropContext
-					onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
-				>
-					{Object.entries(columns).map(([columnId, column], index) => {
-						return (
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									alignItems: "center"
-								}}
-								key={columnId}
-							>
-								<h2>{column.name}</h2>
-								<div style={{ margin: 8 }}>
-									<Droppable droppableId={columnId} key={columnId}>
-										{(provided, snapshot) => {
-											return (
-												<div
-													{...provided.droppableProps}
-													ref={provided.innerRef}
-													style={{
-														background: snapshot.isDraggingOver
-															? "lightblue"
-															: "lightgrey",
-														padding: 4,
-														width: 250,
-														minHeight: 500
-													}}
-												>
-													{column.items.map((item, index) => {
-														return (
-															<Draggable
-																key={item.id}
-																draggableId={item.id}
-																index={index}
-															>
-																{(provided, snapshot) => {
-																	return (
-
-																		<div
-																			ref={provided.innerRef}
-																			{...provided.draggableProps}
-																			{...provided.dragHandleProps}
-																			style={{
-																				userSelect: "none",
-																				padding: 16,
-																				margin: "0 0 8px 0",
-																				minHeight: "50px",
-																				backgroundColor: snapshot.isDragging ? "#263B4A" : "#456C86",
-																				color: "white",
-																				...provided.draggableProps.style
-																			}}
-																		>
-																			{item.content}
-																		</div>
-																	);
-																}}
-
-															</Draggable>
-														);
-													})}
-													{provided.placeholder}
-												</div>
-											);
-										}}
-									</Droppable>
-								</div>
-							</div>
-						);
-					})}
-				</DragDropContext>
-			</div>
-		</div>
+		<Paper>
+			<DragDropContext onDragEnd={onDragEnd}>
+				<Droppable droppableId="droppable">
+					{(provided) => (
+						<List {...provided.droppableProps} ref={provided.innerRef}>
+							{items.map((item, index) => (
+								<Draggable key={item} draggableId={item} index={index}>
+									{(provided) => (
+										<ListItem
+											ref={provided.innerRef}
+											{...provided.draggableProps}
+											{...provided.dragHandleProps}
+										>
+											<ListItemButton>
+												<ListItemText primary={item} />
+											</ListItemButton>
+										</ListItem>
+									)}
+								</Draggable>
+							))}
+							{provided.placeholder}
+						</List>
+					)}
+				</Droppable>
+			</DragDropContext>
+		</Paper>
 	);
 }
 
-export default ReactDNDTest;
+export default SimpleDraggableList;

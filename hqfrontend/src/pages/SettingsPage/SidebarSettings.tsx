@@ -9,20 +9,15 @@ import { useGlobalContext } from '../App/GlobalContextProvider';
 import { useMutation } from '@apollo/client';
 
 // Queries and Mutations
-import { UPDATE_HIDDEN_SIDEBAR_ITEMS } from '../../models/settings';
+import { UPDATE_SETTINGS } from '../../models/settings';
 
-
-interface GlobalContext {
-    hiddenItems: string[];
-    setHiddenItems: React.Dispatch<React.SetStateAction<string[]>>;
-}
 
 interface TitleMapping {
     [key: string]: string;
 }
 
 const SidebarSettings: FC = () => {
-    const { hiddenItems, setHiddenItems } = useGlobalContext() as GlobalContext;
+    const { settings, setSettings } = useGlobalContext();
     const ids = [
         "0",
         "1",
@@ -49,16 +44,15 @@ const SidebarSettings: FC = () => {
         "12": "Plan",
     };
 
-    const [updateHiddenSidebarItems] = useMutation(UPDATE_HIDDEN_SIDEBAR_ITEMS);
+    const [updateHiddenSidebarItems] = useMutation(UPDATE_SETTINGS);
 
 
     const toggleItemVisibility = (id: string) => {
-        setHiddenItems(prevItems => {
-            if (prevItems.includes(id)) {
-                return prevItems.filter(itemId => itemId !== id);
-            } else {
-                return [...prevItems, id];
-            }
+        setSettings({
+            ...settings,
+            hiddenSidebarItems: settings.hiddenSidebarItems.includes(id)
+                ? settings.hiddenSidebarItems.filter((item: any) => item !== id)
+                : [...settings.hiddenSidebarItems, id],
         });
     };
 
@@ -66,11 +60,16 @@ const SidebarSettings: FC = () => {
     useEffect(() => {
         updateHiddenSidebarItems({
             variables: {
-                HiddenSidebarItems: hiddenItems
+                hiddenSidebarItems: JSON.stringify(settings.hiddenSidebarItems)
+            },
+            onCompleted: (data) => {
+                localStorage.setItem("settings", JSON.stringify(data.updateSettings));
+            },
+            onError: (error) => {
+                console.log(error);
             }
         });
-        localStorage.setItem('hiddenSidebarItems', JSON.stringify(hiddenItems));
-    }, [hiddenItems, updateHiddenSidebarItems]);
+    }, [settings, updateHiddenSidebarItems]);
 
 
 
@@ -79,7 +78,7 @@ const SidebarSettings: FC = () => {
             {ids.map((id) => (
                 <ListItem key={id}>
                     <IconButton edge="start" onClick={() => toggleItemVisibility(id)}>
-                        {hiddenItems.includes(id) ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {settings.hiddenSidebarItems.includes(id) ? <VisibilityOffIcon /> : <VisibilityIcon />}
                     </IconButton>
                     <ListItemText primary={titles[id]} /> {/* Moved after IconButton */}
                 </ListItem>

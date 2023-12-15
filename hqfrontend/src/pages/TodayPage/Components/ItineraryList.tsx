@@ -76,10 +76,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 	}
 
 	return (
-		<List
-			sx={{ padding: 0 }}
-			id={id}
-		>
+		<List id={id}>
 			<ReactSortable
 				list={list}
 				setList={setList}
@@ -205,13 +202,7 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 											marginRight: 2,
 											marginLeft: 1,
 											cursor: 'grab',
-											// backgroundColor: "red",
-											height: "100%",
-											// if ritual then red, if habit then blue, if inbox then grey
-											color: item.type === 'ritual' ? '#ffcccb' :
-												item.type === 'habit' ? '#90EE90' :
-													item.type === 'inbox' ? '#ADD8E6' :
-														''
+											height: "100%"
 										}}
 									/>
 

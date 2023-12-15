@@ -1,21 +1,12 @@
-import {
-	useContext,
-	// useContext, 
-	useEffect, useState
-} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ThemeContext } from './ThemeContext';
-import {
-	FormControl, InputLabel, MenuItem, Select, 
-	TextField, Box, Typography, Button, Divider
-} from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField, Box, Typography, Button, Divider } from '@mui/material';
 import { useMutation, gql } from '@apollo/client';
-
-// Globals
+import SidebarSettings from './SidebarSettings';
 import { useGlobalContext } from '../App/GlobalContextProvider';
 
 // Queries and Mutations
 import { CHANGE_CODENAME } from '../../models/social';
-import SidebarSettings from './SidebarSettings';
 
 
 const DELETE_REFRESH_TOEKN_MUTATION = gql`

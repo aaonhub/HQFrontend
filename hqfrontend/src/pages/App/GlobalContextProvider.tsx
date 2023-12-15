@@ -1,9 +1,30 @@
 import React, { createContext, useContext, useState } from "react";
+import SettingsObject from "../../models/settings";
+
 
 interface DebugTextItem {
-    title: string;
-    content: any;
+	title: string;
+	content: any;
 }
+
+const defaultSettings: SettingsObject = {
+	habitOrder: "[]",
+	hiddenSidebarItems: [],
+	id: "2",
+	itineraryOrder: "",
+	owner: {
+		__typename: '',
+		id: '',
+		username: '',
+		email: ''
+	},
+	projectOrder: "[]",
+	masterListOrder: [],
+	stickyNote: "",
+
+	theme: "LIGHT",
+	__typename: "SettingsType"
+};
 
 interface IGlobalContext {
 	// Globals
@@ -23,8 +44,10 @@ interface IGlobalContext {
 	}) => void;
 	debugPanelVisible: boolean;
 	setDebugPanelVisible: (value: boolean) => void;
-    debugText: DebugTextItem[];
-    setDebugText: (value: DebugTextItem[]) => void;
+	debugText: DebugTextItem[];
+	setDebugText: (value: DebugTextItem[]) => void;
+	settings: any;
+	setSettings: (value: any) => void;
 
 	// Sidebar
 	todayBadges: [number | boolean, number | boolean];
@@ -33,18 +56,6 @@ interface IGlobalContext {
 	setDailyReviewBadges: (value: [number | boolean, number | boolean]) => void;
 	logBadges: [number | boolean, number | boolean];
 	setLogBadges: (value: [number | boolean, number | boolean]) => void;
-	hiddenItems: any;
-	setHiddenItems: (value: any) => void;
-
-	// Projects
-	projectOrder: {
-		pinned: string[];
-		unpinned: string[];
-	};
-	setProjectOrder: (value: {
-		pinned: string[];
-		unpinned: string[];
-	}) => void;
 
 }
 
@@ -68,18 +79,16 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 	})
 	const [debugPanelVisible, setDebugPanelVisible] = useState(false);
 	const [debugText, setDebugText] = useState<DebugTextItem[]>([]);
+	const [settings, setSettings] = useState<SettingsObject>(() => {
+		const savedSettings = localStorage.getItem('settings');
+		return savedSettings ? JSON.parse(savedSettings) : defaultSettings;
+	});
 
 	// Notifications
 	const [dailyReviewBadges, setDailyReviewBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 	const [todayBadges, setTodayBadges] = useState<[number | boolean, number | boolean]>([false, false]);
 	const [logBadges, setLogBadges] = useState<[number | boolean, number | boolean]>([false, false]);
-	const [hiddenItems, setHiddenItems] = useState(localStorage.getItem('hiddenSidebarItems') ? JSON.parse(localStorage.getItem('hiddenSidebarItems') || '') : []);
 
-	// Projects
-	const [projectOrder, setProjectOrder] = useState({
-		pinned: [] as string[],
-		unpinned: [] as string[],
-	});
 
 
 	return (
@@ -95,6 +104,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			setDebugPanelVisible,
 			debugText,
 			setDebugText,
+			settings,
+			setSettings,
 
 			// Sidebar
 			todayBadges,
@@ -102,13 +113,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 			dailyReviewBadges,
 			setDailyReviewBadges,
 			logBadges,
-			setLogBadges,
-			hiddenItems,
-			setHiddenItems,
-
-			// Projects
-			projectOrder,
-			setProjectOrder,
+			setLogBadges
 
 		}
 		}>

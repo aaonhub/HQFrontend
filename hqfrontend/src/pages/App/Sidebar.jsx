@@ -3,31 +3,17 @@ import clsx from "clsx"
 import './Sidebar.css'
 import { Link } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
-import { useQuery } from '@apollo/client';
 import { useGlobalContext } from './GlobalContextProvider';
 import { DailyReviewBadge, LogBadge, TodayBadge } from './Badges';
 import { Badge } from '@mui/material';
 import logo from '../../utils/logo.svg'
 
-// Queries and Mutations
-import { GET_HIDDEN_SIDEBAR_ITEMS } from "../../models/settings"
-
-
-
-
 
 // Sidebar
 export default function Sidebar() {
-	const { globalProfile } = useGlobalContext();
-	const { hiddenItems, setHiddenItems } = useGlobalContext();
+	const { globalProfile, settings } = useGlobalContext();
 	const location = useLocation();
 	const [selected, setSelected] = useState('0');
-
-	useQuery(GET_HIDDEN_SIDEBAR_ITEMS, {
-		onCompleted: (data) => {
-			setHiddenItems(data.hiddenSidebarItems);
-		},
-	});
 
 
 	const sidebarItems = [
@@ -77,10 +63,6 @@ export default function Sidebar() {
 			)}
 		>
 
-
-
-
-
 			{/* React Logo */}
 			<div className="flex-shrink-0 overflow-hidden p-2">
 				<div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-top">
@@ -97,21 +79,12 @@ export default function Sidebar() {
 			</div>
 
 
-
-
-
-
-
 			<div className="flex-grow overflow-x-hidden overflow-y-auto flex flex-col">
 
 
-
-
-
-
 				{/* Sidebar Items */}
-				{sidebarItems[0].map((i) => (
-					!hiddenItems.includes(i.id) && (
+				{settings && settings.hiddenSidebarItems && sidebarItems[0].map((i) => (
+					!settings.hiddenSidebarItems.includes(i.id) && (
 						<MenuItem
 							key={i.id}
 							item={i}
@@ -125,8 +98,8 @@ export default function Sidebar() {
 					OTHER
 				</div>
 
-				{sidebarItems[1].map((i) => (
-					!hiddenItems.includes(i.id) && (
+				{settings && settings.hiddenSidebarItems && sidebarItems[1].map((i) => (
+					!settings.hiddenSidebarItems.includes(i.id) && (
 						<MenuItem
 							key={i.id}
 							item={i}
@@ -135,6 +108,7 @@ export default function Sidebar() {
 						/>
 					)
 				))}
+
 
 
 
@@ -159,10 +133,6 @@ export default function Sidebar() {
 
 
 
-
-
-
-
 			{/* Profile Display */}
 			<div className="flex-shrink-0 overflow-hidden p-2">
 				<div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-bottom">
@@ -180,11 +150,6 @@ export default function Sidebar() {
 					/> */}
 				</div>
 			</div>
-
-
-
-
-
 
 
 

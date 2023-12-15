@@ -5,17 +5,23 @@ interface ObjectWithId {
 }
 
 export function sortObjectsByIds(objects: ObjectWithId[], ids: string[]): ObjectWithId[] {
+	// First, ensure that both objects and ids are valid arrays.
+	if (!Array.isArray(objects) || !Array.isArray(ids)) {
+		return [];
+	}
+
 	const objectsMap: { [key: string]: ObjectWithId } = {};
 	objects.forEach(object => {
 		objectsMap[object.id] = object;
 	});
 
-	// Sort ids that exist in objects
-	const sortedExistingIds = ids.filter(id => objectsMap.hasOwnProperty(id)).map(id => objectsMap[id]);
+	// Create an array of objects based on the order of ids.
+	const sortedObjects = ids
+		.map(id => objectsMap[id]) // Transform ids to objects.
+		.filter(object => object !== undefined); // Remove undefined entries (for ids not found in objects).
 
-	// Get objects that don't exist in ids
-	const notExistingObjects = objects.filter(object => !ids.includes(object.id));
+	// Optionally, you can include objects not in ids at the end.
+	const notIncludedObjects = objects.filter(object => !ids.includes(object.id));
 
-	// Return new array: notExistingObjects at the front + sortedExistingIds
-	return [...notExistingObjects, ...sortedExistingIds];
+	return [...sortedObjects, ...notIncludedObjects];
 }

@@ -29,6 +29,7 @@ const MasterList = () => {
 
     // Query
     const { loading, error } = useQuery(MASTER_LIST_QUERY, {
+        fetchPolicy: "network-only",
         onCompleted: (data) => {
             const masterListItems = data.masterListItems;
             const masterListOrder = JSON.parse(data.settings.masterListOrder);

@@ -7,7 +7,7 @@ interface ObjectWithId {
 export function sortObjectsByIds(objects: ObjectWithId[], ids: string[]): ObjectWithId[] {
 	// First, ensure that both objects and ids are valid arrays.
 	if (!Array.isArray(objects) || !Array.isArray(ids)) {
-		return [];
+		return objects
 	}
 
 	const objectsMap: { [key: string]: ObjectWithId } = {};

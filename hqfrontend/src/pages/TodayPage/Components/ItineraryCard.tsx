@@ -584,39 +584,43 @@ const ItineraryCard: React.FC = () => {
 							All done. Good job!
 						</Typography>
 					) : (
-						<Typography variant="h6" align="center" color="textSecondary">
-							No items
-						</Typography>
+						<Box sx={{ alignItems: 'center', margin: 2 }}>
+							<Typography variant="h6" align="center" color="textSecondary">
+								No items
+							</Typography>
+						</Box>
 					)
 				)}
 
 
 
 				{/* Completed Items */}
-				<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
-					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-						<Typography variant="h6">Completed Items</Typography>
-					</AccordionSummary>
+				{completedItems.length > 0 &&
+					<Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
+						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+							<Typography variant="h6">Completed Items</Typography>
+						</AccordionSummary>
 
-					<AccordionDetails>
-						{completedItems.length > 0 ? (
-							<ItineraryList
-								list={completedItems}
-								setList={setCompletedItems}
-								setSelectedInboxItemId={setSelectedInboxItemId}
-								setSelectedHabitId={setSelectedHabitId}
-								setSelectedRitualId={setSelectedRitualId}
-								setSelectedEntryID={setSelectedEntryID}
-								handleCheckItem={handleCheckItem}
-							/>
-						) : (
-							<Typography variant="h6" align="center" color="textSecondary">
-								No completed items
-							</Typography>
-						)}
-					</AccordionDetails>
+						<AccordionDetails>
+							{completedItems.length > 0 ? (
+								<ItineraryList
+									list={completedItems}
+									setList={setCompletedItems}
+									setSelectedInboxItemId={setSelectedInboxItemId}
+									setSelectedHabitId={setSelectedHabitId}
+									setSelectedRitualId={setSelectedRitualId}
+									setSelectedEntryID={setSelectedEntryID}
+									handleCheckItem={handleCheckItem}
+								/>
+							) : (
+								<Typography variant="h6" align="center" color="textSecondary">
+									No completed items
+								</Typography>
+							)}
+						</AccordionDetails>
 
-				</Accordion>
+					</Accordion>
+				}
 
 			</CardContent>
 

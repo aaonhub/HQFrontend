@@ -250,6 +250,29 @@ export const ADD_TODO_TO_TODAY = gql`
 	}
 `;
 
+export const ADD_TODO_TO_MASTER_LIST = gql`
+	mutation createToDoItem($title: String!, $masterList: Boolean!) {
+		createToDoItem( title: $title, masterList: $masterList ) {
+			toDoItem {
+				id
+				title
+				completed
+				project {
+					id
+					codename
+				}
+				dueDateTime
+				description
+				startDate
+				startTime
+				timeCompleted
+				length
+				masterList
+			}
+		}
+	}
+`;
+
 export const UPDATE_TODO = gql`
 	mutation(
 		$ID: ID!,

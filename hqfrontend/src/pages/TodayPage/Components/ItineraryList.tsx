@@ -150,8 +150,6 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 										}
 									}}
 									sx={{
-										borderRadius: 2,
-										border: itemColor,
 										marginBottom: 1,
 										cursor: 'pointer',
 										'&:hover': {

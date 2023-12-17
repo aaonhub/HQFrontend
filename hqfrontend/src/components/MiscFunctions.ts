@@ -23,5 +23,5 @@ export function sortObjectsByIds(objects: ObjectWithId[], ids: string[]): Object
 	// Optionally, you can include objects not in ids at the end.
 	const notIncludedObjects = objects.filter(object => !ids.includes(object.id));
 
-	return [...sortedObjects, ...notIncludedObjects];
+	return [...notIncludedObjects, ...sortedObjects];
 }

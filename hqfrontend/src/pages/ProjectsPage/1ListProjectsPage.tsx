@@ -18,7 +18,7 @@ import { sortObjectsByIds } from '../../components/MiscFunctions'
 const ProjectsPage = () => {
 	// Tab Title
 	useEffect(() => { document.title = "Projects - HQ"; }, []);
-	
+
 	const { setDebugText } = useGlobalContext()
 	const [newProjectCodename, setNewProjectCodename] = useState('')
 	const [projects, setProjects] = useState<Project[]>([])
@@ -30,7 +30,13 @@ const ProjectsPage = () => {
 		fetchPolicy: 'network-only',
 
 		onCompleted: (data) => {
-			const order = JSON.parse(data.settings.projectOrder);
+			let order = data.settings.projectOrder
+			try {
+				order = JSON.parse(order);
+			} catch (e) {
+				order = [];
+			}
+
 			const projects = data.projects.map((project: any) => {
 				return new Project(
 					project.id,
@@ -39,6 +45,7 @@ const ProjectsPage = () => {
 				)
 			})
 			const sortedProjects = sortObjectsByIds(projects, order) as Project[];
+			console.log(sortedProjects)
 			setProjects(sortedProjects)
 		},
 

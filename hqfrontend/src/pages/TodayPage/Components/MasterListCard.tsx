@@ -69,6 +69,7 @@ const MasterList = () => {
         }
     });
     const handleCheckUncheckTodo = (item: any) => {
+        console.log(item)
         checkUncheckTodo({
             variables: {
                 id: item.id,
@@ -197,7 +198,7 @@ const MasterList = () => {
                                                     title={item.title}
                                                     description={item.description}
                                                     completed={item.completed}
-                                                    handleCheckItem={handleCheckUncheckTodo}
+                                                    handleCheckItem={() => handleCheckUncheckTodo(item)}
                                                     handleClick={handleClick}
                                                 />
                                             </div>

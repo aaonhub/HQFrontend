@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, List, Typography, TextField } from '@mui/material'
-import ProjectListItem from './3ListProjectItem'
+import ProjectListItem from './components/ListProjectItem'
 import { useGlobalContext } from '../App/GlobalContextProvider'
 
 // Queries and Mutations

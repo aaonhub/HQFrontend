@@ -14,10 +14,10 @@ import { useMutation } from "@apollo/client";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 // Queries and Mutations
-import { DELETE_TODO } from "../../models/inboxitem";
+import { DELETE_TODO } from "../../../models/inboxitem";
 
 // Models
-import InboxItem from "../../models/inboxitem";
+import InboxItem from "../../../models/inboxitem";
 
 interface ProjectToDoItemProps {
 	toDoItem: InboxItem;

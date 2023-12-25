@@ -6,7 +6,7 @@ import { ReactSortable, SortableEvent } from "react-sortablejs"
 
 // Components
 import EditInboxItemDialog from '../../components/EditToDoItemDialog'
-import ProjectToDoItem from './3ProjectToDoItem'
+import ProjectToDoItem from './components/ProjectToDoItem'
 
 // Icons
 import IconButton from '@mui/material/IconButton'

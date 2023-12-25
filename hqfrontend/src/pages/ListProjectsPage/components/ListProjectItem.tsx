@@ -8,10 +8,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 // Queries and Mutations
-import { DELETE_PROJECT } from "../../models/project"
+import { DELETE_PROJECT } from "../../../models/project"
 
 // Models
-import Project from "../../models/project"
+import Project from "../../../models/project"
 
 
 interface ProjectListItemProps {

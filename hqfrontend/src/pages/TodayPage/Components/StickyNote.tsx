@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../App/GlobalContextProvider";
 import { useMutation } from "@apollo/client";
 
@@ -10,6 +10,10 @@ import { Button, Card, CardActions, CardContent, TextField } from "@mui/material
 const StickyNote = () => {
     const { setSnackbar, settings } = useGlobalContext();
     const [stickyNote, setStickyNote] = useState<string>(settings.stickyNote);
+
+    useEffect(() => {
+        setStickyNote(settings.stickyNote);
+    }, [settings]);
 
 
     const [updateStickyNote] = useMutation(UPDATE_SETTINGS);

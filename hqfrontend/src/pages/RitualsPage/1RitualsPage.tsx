@@ -51,7 +51,7 @@ const RitualPage = () => {
 
 			{/* Dialog */}
 			{open && <NewRitualDialog open={open} onClose={() => { setOpen(false); refetch() }} />}
-			{openRitualDialog && <RitualDialog open={openRitualDialog} onClose={() => { setOpenRitualDialog(false); refetch() }} ritualId={selectedRitual} />}
+			{selectedRitual && <RitualDialog onClose={() => { setOpenRitualDialog(false); refetch(); setSelectedRitual('') }} ritualId={selectedRitual} />}
 		</Box>
 	)
 }

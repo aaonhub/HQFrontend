@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client';
 import { Card, CardContent, Checkbox, Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useGlobalContext } from '../../App/GlobalContextProvider';
+import { useState } from 'react';
+import { getCurrentLocalDate } from '../../../components/DateFunctions';
 
 // Queries
 import { GET_ACCOUNTABILITIES, GET_ACCOUNTABILITY_DATA } from '../../../models/accountability';
-import { useState } from 'react';
-import { getCurrentLocalDate } from '../../../components/DateFunctions';
 
 
 interface AccountabilityToDoListDisplayProps {
@@ -27,6 +27,7 @@ const AccountabilityToDoListDisplay = (props: AccountabilityToDoListDisplayProps
     // Accountability data query
     const { data: accountabilityData } = useQuery(GET_ACCOUNTABILITY_DATA, {
         variables: { accountability: selectedSquad },
+        skip: selectedSquad === 'None',
         onError: (error) => {
             console.log(error.message);
         },

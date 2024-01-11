@@ -20,7 +20,7 @@ const defaultSettings: SettingsObject = {
 	},
 	projectOrder: "[]",
 	masterListOrder: [],
-	stickyNote: "",
+	stickyNote: " ",
 
 	theme: "LIGHT",
 	__typename: "SettingsType"

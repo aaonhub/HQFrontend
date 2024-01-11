@@ -439,6 +439,12 @@ const ItineraryCard: React.FC = () => {
 				CompletedTasks: completedTasks,
 				TasksList: jsonString,
 			},
+			onCompleted: (data) => {
+				console.log(data);
+			},
+			onError: (error) => {
+				console.log(error);
+			},
 		})
 
 
@@ -629,7 +635,6 @@ const ItineraryCard: React.FC = () => {
 			{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
 			{selectedRitualId &&
 				<RitualDialog
-					open={true}
 					onClose={handleCloseRitual}
 					ritualId={selectedRitualId}
 					entryID={selectedEntryID}

@@ -35,7 +35,6 @@ interface RitualItem {
 }
 
 interface RitualDialogProps {
-	open: boolean
 	onClose: () => void
 	ritualId: string
 	entryDate?: string
@@ -45,7 +44,7 @@ interface RitualDialogProps {
 }
 
 
-const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId, entryDate, entryID, ritualHistory, setRitualHistory }) => {
+const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate, entryID, ritualHistory, setRitualHistory }) => {
 	const { setDebugText } = useGlobalContext()!
 	const [ritualTitle, setRitualTitle] = useState('')
 	const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
@@ -363,7 +362,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ open, onClose, ritualId, en
 
 
 	return (
-		<Dialog open={open} onClose={onClose}>
+		<Dialog open={true} onClose={onClose}>
 
 			{/* Ritual Title */}
 			<DialogTitle>

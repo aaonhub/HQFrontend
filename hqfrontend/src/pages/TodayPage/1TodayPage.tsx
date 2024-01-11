@@ -40,7 +40,7 @@ const TodayPage = () => {
 				</Grid>
 
 				<Grid item xs={6}>
-					{/* <AccountabilityToDoListDisplay /> */}
+					<AccountabilityToDoListDisplay />
 				</Grid>
 
 				<Grid item xs={6}>

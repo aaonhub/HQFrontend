@@ -439,9 +439,6 @@ const ItineraryCard: React.FC = () => {
 				CompletedTasks: completedTasks,
 				TasksList: jsonString,
 			},
-			onCompleted: (data) => {
-				console.log(data);
-			},
 			onError: (error) => {
 				console.log(error);
 			},

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 
 
 interface TemplateDialogProps {
@@ -26,7 +26,9 @@ const TemplateDialog = ({ id, handleClose }: TemplateDialogProps) => {
 
             {/* Dialog Actions */}
             <DialogActions>
-                Hello
+                <Button onClick={() => handleClose()} color="primary">
+                    Cancel
+                </Button>
             </DialogActions>
 
         </Dialog>

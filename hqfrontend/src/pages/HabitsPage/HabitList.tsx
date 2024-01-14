@@ -7,9 +7,13 @@ import {
 	ListItemText,
 	Paper,
 	Checkbox,
+	Typography,
+	IconButton,
 } from "@mui/material"
 import { useMutation } from "@apollo/client"
 import { useTheme } from "@mui/material/styles"
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 // Icons
 import InboxIcon from "@mui/icons-material/Inbox"
@@ -45,16 +49,6 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 	});
 
 
-	const handleHabitCompletion = (habit: Habit) => {
-		createHabitHistory({
-			variables: {
-				habitId: habit.id,
-				currentDate: today,
-				quantity: habit.countToday ? -1 : 1,
-			},
-		});
-	};
-
 	const handleEdit = (habit: Habit) => {
 		setHabit(habit);
 	};
@@ -71,6 +65,28 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 				: !aIsCompleted && bIsCompleted
 					? -1
 					: 0;
+		});
+	};
+
+	const minusHabit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, habit: Habit) => {
+		event.stopPropagation();
+		createHabitHistory({
+			variables: {
+				habitId: habit.id,
+				currentDate: today,
+				quantity: -1,
+			},
+		});
+	};
+
+	const plusHabit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, habit: Habit) => {
+		event.stopPropagation();
+		createHabitHistory({
+			variables: {
+				habitId: habit.id,
+				currentDate: today,
+				quantity: 1,
+			},
 		});
 	};
 
@@ -107,13 +123,26 @@ const HabitList: React.FC<HabitListProps> = ({ habits, today, handleClose }) => 
 										}}
 									/>
 
-									<Checkbox
-										edge="end"
-										checked={isCompleted !== 0}
-										onChange={() => handleHabitCompletion(item)}
-										onClick={(e) => e.stopPropagation()}
-										color="primary"
-									/>
+									{/* Minus Button */}
+									<IconButton
+										onClick={(e) => minusHabit(e, item)}
+										size="small"
+									>
+										<RemoveIcon />
+									</IconButton>
+
+									<Typography>
+										{item.countToday}
+									</Typography>
+
+									{/* Plus Button */}
+									<IconButton
+										onClick={(e) => plusHabit(e, item)}
+										size="small"
+									>
+										<AddIcon />
+									</IconButton>
+
 								</ListItemButton>
 							</Paper>
 						</ListItem>

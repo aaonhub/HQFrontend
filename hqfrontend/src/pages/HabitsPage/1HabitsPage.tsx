@@ -5,7 +5,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { useQuery } from '@apollo/client';
 
 // Queries and Mutations
-import { GET_ALL_HABITS } from '../../models/habit';
+import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 
 // Components
 import HabitList from './HabitList';
@@ -15,6 +15,7 @@ import { getCurrentLocalDate } from '../../components/DateFunctions';
 // Models
 import Habit from '../../models/habit';
 import Schedule from '../../models/schedule';
+import HabitManagerDialog from './HabitManager';
 
 
 const HabitsPage: React.FC = () => {
@@ -23,17 +24,19 @@ const HabitsPage: React.FC = () => {
 	useEffect(() => {
 		document.title = "Habits - HQ";
 	}, []);
-	
+
 	const [habits, setHabits] = useState<Habit[]>([])
 	const [today, setToday] = useState(getCurrentLocalDate())
 	const [open, setOpen] = useState(false)
+	const [habitManagerDialogOpen, setHabitManagerDialogOpen] = useState(false)
 
 	// Habits Query
-	const { loading, error, refetch } = useQuery(GET_ALL_HABITS, {
+	const { loading, error, refetch } = useQuery(GET_HABITS_DUE_TODAY, {
 		variables: { today: today, },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			const habits = data.myHabits.map((habit: any) => {
+			console.log(data)
+			const habits = data.habitsDueToday.map((habit: any) => {
 
 				// Create Schedule
 				const schedule = new Schedule({
@@ -128,6 +131,13 @@ const HabitsPage: React.FC = () => {
 				</Button>
 			</Box>
 
+			{/* Habit Manager Button */}
+			<Box display="flex" justifyContent="center" mb={4}>
+				<Button variant="outlined" onClick={() => setHabitManagerDialogOpen(true)} sx={{ mr: 2 }}>
+					Habit Manager
+				</Button>
+			</Box>
+
 			{/* Add Habit Button */}
 			<Box display="flex" justifyContent="center" mb={4}>
 				<Button variant="outlined" onClick={handleClickOpen}>
@@ -140,6 +150,13 @@ const HabitsPage: React.FC = () => {
 
 			{/* Habit Popup */}
 			<AddHabitPopup open={open} onClose={handleClose} />
+
+			{/* Habit Manager Dialog */}
+			{habitManagerDialogOpen &&
+				<HabitManagerDialog handleClose={() => setHabitManagerDialogOpen(false)} />
+			}
+
+
 		</Container>
 	)
 }

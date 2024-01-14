@@ -45,7 +45,6 @@ export const useAuth = (setLoggedIn: (value: boolean) => void, setGlobalProfile:
 			refreshToken();
 			console.log("Refresh on interval");
 		}, 25 * 60 * 1000);
-		console.log("Refresh");
 	}, [refreshToken]);
 
 };

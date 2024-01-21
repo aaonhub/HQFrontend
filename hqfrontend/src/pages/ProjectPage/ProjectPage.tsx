@@ -154,20 +154,11 @@ const ProjectPage = () => {
 			},
 		],
 	})
-	const [addToDoLog] = useMutation(ADD_LOG, {
-		onError: (error) => console.log(error.networkError),
-	})
 	const handleCheck = (toDoItem: InboxItem) => () => {
 		completeToDoItem({
 			variables: {
 				id: toDoItem.id,
 				Completed: !toDoItem.completed,
-			},
-		})
-		addToDoLog({
-			variables: {
-				logTime: new Date().toISOString(),
-				todoItemId: toDoItem.id,
 			},
 		})
 	}

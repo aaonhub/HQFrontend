@@ -75,11 +75,6 @@ const ProjectToDoItem = (({ toDoItem, handleCheck, setSelectedInboxItem, refetch
 			>
 				<ListItemButton role={undefined} dense>
 
-					{/* Handle Icon */}
-					<ListItemIcon>
-						<span className="drag-handle">&#x2630;</span>
-					</ListItemIcon>
-
 					{/* Checkbox */}
 					<ListItemIcon>
 						<IconButton

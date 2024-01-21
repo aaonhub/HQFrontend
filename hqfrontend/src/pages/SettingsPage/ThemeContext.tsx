@@ -16,7 +16,7 @@ export const ThemeContext = createContext({
 });
 
 const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-	const [currentTheme, setCurrentTheme] = useState('dark');
+	const [currentTheme, setCurrentTheme] = useState('christmas');
 
 	const setTheme = (theme: string) => {
 		setCurrentTheme(theme);

@@ -27,7 +27,6 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/fullcalendar": "^3.8.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.23",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "apollo-link-error": "^1.1.13",
@@ -45,7 +44,6 @@
     "react-draggable": "^4.4.5",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.8.2",
-    "react-scripts": "5.0.1",
     "react-sortablejs": "^6.1.4",
     "react-use-draggable-scroll": "^0.4.7",
     "smooth-scrollbar": "^8.8.4",
@@ -58,10 +56,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "jest",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
@@ -84,11 +82,14 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.19",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/sortablejs": "^1.15.0",
     "@types/uuid": "^9.0.2",
+    "@vitejs/plugin-react": "^4.2.1",
     "dotenv": "^16.0.3",
     "jest": "^27.5.1",
-    "sass": "^1.62.1"
+    "sass": "^1.62.1",
+    "vite": "^5.1.3"
   }
 }

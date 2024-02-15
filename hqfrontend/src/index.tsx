@@ -55,7 +55,7 @@ const customFetch = (uri: RequestInfo, options?: RequestInit): Promise<Response>
 const httpLink = new HttpLink({
 	uri: graphqlURI,
 	credentials: 'include',
-	fetch: customFetch
+	fetch: customFetch as any
 });
 
 

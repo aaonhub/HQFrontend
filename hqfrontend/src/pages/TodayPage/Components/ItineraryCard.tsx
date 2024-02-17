@@ -58,10 +58,6 @@ const ItineraryCard: React.FC = () => {
 	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const localDate = getCurrentLocalDate()
 
-	console.log(localDate)
-
-
-
 
 	// Query
 	const { loading, error, data, refetch } = useQuery(ITINERARY_QUERY, {

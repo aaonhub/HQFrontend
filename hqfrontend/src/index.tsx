@@ -17,9 +17,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 	if (networkError) console.log(`[Network error]: ${JSON.stringify(networkError)}`);
 });
 
-const graphqlURI = process.env.NODE_ENV === 'production'
-	? "https://hqlink.herokuapp.com/graphql/"
-	: "http://localhost:8000/graphql/";
+const graphqlURI = "https://hqlink.herokuapp.com/graphql/"
 
 // const graphqlURI = "https://hqlink.herokuapp.com/graphql/"
 

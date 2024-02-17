@@ -70,10 +70,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
 	<ApolloProvider client={client}>
-		{/* <React.StrictMode> */}
+		<React.StrictMode>
 			<GlobalContextProvider>
 				<App />
 			</GlobalContextProvider>
-		{/* </React.StrictMode> */}
+		</React.StrictMode>
 	</ApolloProvider >
 );

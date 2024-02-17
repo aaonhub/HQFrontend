@@ -133,6 +133,7 @@ function App(): JSX.Element {
 						width: '240px', // Specify a fixed width for the sidebar
 						transition: 'width 0.2s',
 						flexShrink: 0, // Prevents the sidebar from shrinking
+						height: '100vh', // Make the sidebar full height
 					}}>
 						<Sidebar />
 					</Box>

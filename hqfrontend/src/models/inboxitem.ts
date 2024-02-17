@@ -19,8 +19,9 @@ interface InboxItem {
 class InboxItem {
 	constructor(
 		{ id, title, description, completed, project, dueDateTime, startTime, startDate, timeCompleted, length, masterList }:
-			{ id: string, title: string, description?: string, completed: boolean, 
-				project?: Project | null, dueDateTime: string | null, startTime: string | null, 
+			{
+				id: string, title: string, description?: string, completed: boolean,
+				project?: Project | null, dueDateTime: string | null, startTime: string | null,
 				startDate: string | null, timeCompleted: Date | null, length?: string | null, masterList?: boolean
 			}
 	) {
@@ -66,27 +67,10 @@ export const ITINERARY_QUERY = gql`
 			active
 			countToday
 			length
-			schedule{
-				id
-				timeOfDay
-				frequency
-				startDate
-				endDate
-			}
 		}
 		rituals{
 			id
 			title
-			schedule{
-				id
-				startDate
-				endDate
-				timeOfDay
-				daysOfTheWeek
-				daysOfTheMonth
-				daysOfTheYear
-				frequency
-			}
 		}
 		ritualHistory(yearMonth: $YearMonth){
 			id

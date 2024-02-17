@@ -13,7 +13,7 @@ const HabitManagerDialog = ({ handleClose }: HabitManagerDialogProps) => {
 
     const { data, loading, error, refetch } = useQuery(GET_ALL_HABITS, {
         fetchPolicy: "network-only",
-        onCompleted: (data) => {
+        onCompleted: (data: any) => {
             console.log(data)
         }
     })

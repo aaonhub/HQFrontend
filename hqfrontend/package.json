@@ -1,6 +1,7 @@
 {
   "name": "hqfrontend",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.9.5",

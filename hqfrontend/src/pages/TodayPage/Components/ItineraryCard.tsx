@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Typography, Card, CardContent, Input, IconButton, Box, CardHeader } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Card, CardContent, Input, IconButton, Box, CardHeader } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useMutation, useQuery } from '@apollo/client'
 import { EventInput } from '@fullcalendar/core'

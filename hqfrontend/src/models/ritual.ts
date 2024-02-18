@@ -183,7 +183,7 @@ export function updateRitualHistoryWithRepeatRituals(
 				entryID: '',  // Will be generated in the addEntry method
 				completedItems: [],  // Assuming you'll populate this later
 				type: 'R',  // Repeat schedule
-				startTime: repeatRitual.schedule.timeOfDay,
+				startTime: null,
 				completedTime: null,  // Assuming you'll populate this later
 				status: RitualStatus.Unstarted  // Initially set to Unstarted
 			};

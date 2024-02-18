@@ -81,7 +81,7 @@ export function ritualsToSimpleItems(ritualEntries: RitualEntry[], rituals: any)
 			title: correspondingRitual ? correspondingRitual.title : 'notfound', // Retrieve from the Ritual object
 			type: 'ritual',
 			startTime: entry.startTime ? entry.startTime.toString() : "",
-			startDate: correspondingRitual ? correspondingRitual.schedule.start_date : '',  // Retrieve from the Ritual object
+			startDate: '',  // Retrieve from the Ritual object
 			ritualID: entry.ritualID,
 		};
 	});

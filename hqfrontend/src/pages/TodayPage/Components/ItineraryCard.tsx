@@ -126,12 +126,6 @@ const ItineraryCard: React.FC = () => {
 				});
 			})
 
-			// Filter out rituals that are not daily
-			const filteredRituals = rituals.filter((ritual: any) => {
-				return ritual.schedule.frequency === "DAILY";
-			});
-
-
 			// 3. Initialize and populate RitualHistoryManager
 			const updatedRitualHistory = ritualHistory
 			data.ritualHistory && data.ritualHistory.data &&
@@ -143,7 +137,7 @@ const ItineraryCard: React.FC = () => {
 
 			// 5. Update ritual history with repeat rituals
 			// Make sure that updateRitualHistoryWithRepeatRituals returns updated rituals
-			const updatedRituals = updateRitualHistoryWithRepeatRituals(filteredRituals, ritualHistory, localDate);
+			const updatedRituals = updateRitualHistoryWithRepeatRituals(rituals, ritualHistory, localDate);
 
 
 			// 6. Convert to simple items

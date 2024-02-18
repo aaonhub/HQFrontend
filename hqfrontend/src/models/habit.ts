@@ -60,15 +60,19 @@ export const GET_HABITS_DUE_TODAY = gql`
 			active
 			length
 			countToday
-			schedule{
+			schedules {
 				id
-				frequency
-				daysOfTheWeek
-				daysOfTheMonth
-				daysOfTheYear
+				status
+				visibility
+				timeOfDay
 				startDate
 				endDate
-				timeOfDay
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
 			}
 		}
 	}
@@ -83,12 +87,19 @@ export const GET_ALL_HABITS = gql`
 			countToday
 			length
 			countToday
-			schedule{
+			schedules {
 				id
+				status
+				visibility
 				timeOfDay
-				frequency
 				startDate
 				endDate
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
 			}
 		}
 	}

@@ -67,6 +67,20 @@ export const ITINERARY_QUERY = gql`
 			active
 			countToday
 			length
+			schedules {
+				id
+				status
+				visibility
+				timeOfDay
+				startDate
+				endDate
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
+			}
 		}
 		rituals{
 			id

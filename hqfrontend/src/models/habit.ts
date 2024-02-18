@@ -34,15 +34,19 @@ export const GET_HABIT = gql`
 			active
 			length
 			countToday
-			schedule{
+			schedules {
 				id
-				frequency
-				daysOfTheWeek
-				daysOfTheMonth
-				daysOfTheYear
+				status
+				visibility
+				timeOfDay
 				startDate
 				endDate
-				timeOfDay
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
 			}
 		}
 	}

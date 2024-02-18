@@ -14,7 +14,7 @@ import { DELETE_HABIT } from '../models/habit';
 
 // Models
 import Habit from '../models/habit';
-import Schedule, { Frequency } from '../models/schedule';
+import Schedule from '../models/schedule';
 
 
 interface EditHabitDialogProps {
@@ -25,41 +25,29 @@ interface EditHabitDialogProps {
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) => {
 	const { setSnackbar } = useGlobalContext();
 
-	const emptySchedule = new Schedule({
-		frequency: 'DAILY',
-		daysOfTheWeek: [],
-		daysOfTheMonth: [],
-		dayOfTheYear: [],
-		startDate: '',
-		endDate: null,
-		timeOfDay: '',
-	});
-	const tempHabit = new Habit({
-		id: '',
-		title: '',
-		active: false,
-		length: '',
-		schedule: emptySchedule,
-		countToday: 0,
-	});
-
-	const [newHabit, setNewHabit] = useState<Habit>(tempHabit);
+	const [newHabit, setNewHabit] = useState<Habit | null>(null);
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-	useQuery(GET_HABIT, {
+	const { loading, error, data, refetch } = useQuery(GET_HABIT, {
 		variables: { habitId: habitId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
 
+			const habit = data.getHabit;
+
 			// Create Schedule
 			const schedule = new Schedule({
-				frequency: data.getHabit.schedule.frequency,
-				daysOfTheWeek: data.getHabit.schedule.daysOfTheWeek,
-				daysOfTheMonth: data.getHabit.schedule.daysOfTheMonth,
-				dayOfTheYear: data.getHabit.schedule.daysOfTheYear,
-				startDate: data.getHabit.schedule.startDate,
-				endDate: data.getHabit.schedule.endDate,
-				timeOfDay: data.getHabit.schedule.timeOfDay,
+				status: habit.schedules.status,
+				visibility: habit.schedules.visibility,
+				timeOfDay: habit.schedules.timeOfDay,
+				startDate: habit.schedules.startDate,
+				endDate: habit.schedules.endDate,
+				timezone: habit.schedules.timezone,
+				recurrenceRule: habit.schedules.recurrenceRule,
+				exclusionDates: habit.schedules.exclusionDates,
+				reminderBeforeEvent: habit.schedules.reminderBeforeEvent,
+				description: habit.schedules.description,
+				priority: habit.schedules.priority
 			})
 
 			// Create Habit
@@ -75,6 +63,10 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 			setNewHabit(newHabit)
 		}
 	});
+
+	if (!newHabit) {
+		return <div>Loading...</div>; // or any other loading indicator
+	  }
 
 	// Delete Habit
 	const [deleteHabit] = useMutation(DELETE_HABIT);
@@ -107,10 +99,6 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		setNewHabit({ ...newHabit, active: e.target.checked });
 	};
 
-	const handleFrequencyChange = (e: SelectChangeEvent) => {
-		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, frequency: e.target.value as Frequency } });
-	};
-
 	const handleTimeOfDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, timeOfDay: e.target.value } });
 	};
@@ -133,6 +121,9 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 			}
 		});
 	};
+
+
+	
 
 
 	return (
@@ -160,22 +151,6 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 						/>
 					} label="Active" sx={{ paddingBottom: 2 }} />
 
-					{/* Frequency */}
-					<FormControl fullWidth sx={{ paddingBottom: 2 }}>
-						<InputLabel>New Frequency</InputLabel>
-						<Select
-							labelId="demo-simple-select-label"
-							id="demo-simple-select"
-							value={newHabit.schedule.frequency ? newHabit.schedule.frequency : "DAILY"}
-							label="Age"
-							onChange={handleFrequencyChange}
-						>
-							<MenuItem value={"NONE"}>None</MenuItem>
-							<MenuItem value={"DAILY"}>Daily</MenuItem>
-							{/* <MenuItem value={"WEEKLY"}>Weekly</MenuItem>
-							<MenuItem value={"MONTHLY"}>Monthly</MenuItem> */}
-						</Select>
-					</FormControl>
 
 					{/* Start Time */}
 					<TextField

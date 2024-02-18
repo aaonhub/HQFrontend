@@ -1,28 +1,35 @@
-export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'RITUALONLY'
+export type Status = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+export type Visibility = 'PRIVATE' | 'PUBLIC' | 'SHARED';
 
 class Schedule {
-	frequency: Frequency | '';
-	daysOfTheWeek: Array<string>;
-	daysOfTheMonth: Array<number>;
-	dayOfTheYear: Array<number>;
-	startDate: string;
-	endDate: Date | null;
-	timeOfDay: string;
-	// length: string;
+    status: Status;
+    visibility: Visibility;
+    timeOfDay: string | null; 
+    startDate: string; 
+    endDate: string | null; 
+    timezone: string;
+    recurrenceRule: string | null; 
+    exclusionDates: string; 
+    reminderBeforeEvent: string | null; 
+    description: string | null;
+    priority: number;
 
-	constructor(
-		{ frequency, daysOfTheWeek, daysOfTheMonth, dayOfTheYear, startDate, endDate, timeOfDay }:
-			{ frequency: Frequency | '', daysOfTheWeek: Array<string>, daysOfTheMonth: Array<number>, dayOfTheYear: Array<number>, startDate: string, endDate: Date | null, timeOfDay: string }
-	) {
-		this.frequency = frequency;
-		this.daysOfTheWeek = daysOfTheWeek;
-		this.daysOfTheMonth = daysOfTheMonth;
-		this.dayOfTheYear = dayOfTheYear;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.timeOfDay = timeOfDay;
-		// this.length = length;
-	}
+    constructor(
+        { status, visibility, timeOfDay, startDate, endDate, timezone, recurrenceRule, exclusionDates, reminderBeforeEvent, description, priority }:
+        { status: Status, visibility: Visibility, timeOfDay: string | null, startDate: string, endDate: string | null, timezone: string, recurrenceRule: string | null, exclusionDates: string, reminderBeforeEvent: string | null, description: string | null, priority: number }
+    ) {
+        this.status = status;
+        this.visibility = visibility;
+        this.timeOfDay = timeOfDay;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.timezone = timezone;
+        this.recurrenceRule = recurrenceRule;
+        this.exclusionDates = exclusionDates;
+        this.reminderBeforeEvent = reminderBeforeEvent;
+        this.description = description;
+        this.priority = priority;
+    }
 }
 
-export default Schedule
+export default Schedule;

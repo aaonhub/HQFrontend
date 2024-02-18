@@ -39,11 +39,11 @@ export function TodayBadge() {
                 if (date < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
                     pastDueEvents++;
                 } else
-                    if (habit.schedule.timeOfDay < currentLocalTime() && !habit.completedToday) {
+                    if (habit.schedules.timeOfDay < currentLocalTime() && !habit.completedToday) {
                         if (!habit.length) {
                             pastDueEvents++;
                         } else {
-                            if (addLengthToTime(habit.schedule.timeOfDay, habit.length) > currentLocalTime()) {
+                            if (addLengthToTime(habit.schedules.timeOfDay, habit.length) > currentLocalTime()) {
                                 currentEvents++;
                             } else {
                                 pastDueEvents++;

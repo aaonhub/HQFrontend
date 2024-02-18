@@ -40,13 +40,17 @@ const HabitsPage: React.FC = () => {
 
 				// Create Schedule
 				const schedule = new Schedule({
-					frequency: habit.schedule.frequency,
-					daysOfTheWeek: habit.schedule.daysOfTheWeek,
-					daysOfTheMonth: habit.schedule.daysOfTheMonth,
-					dayOfTheYear: habit.schedule.daysOfTheYear,
-					startDate: habit.schedule.startDate,
-					endDate: habit.schedule.endDate,
-					timeOfDay: habit.schedule.timeOfDay,
+					status: habit.schedules.status,
+					visibility: habit.schedules.visibility,
+					timeOfDay: habit.schedules.timeOfDay,
+					startDate: habit.schedules.startDate,
+					endDate: habit.schedules.endDate,
+					timezone: habit.schedules.timezone,
+					recurrenceRule: habit.schedules.recurrenceRule,
+					exclusionDates: habit.schedules.exclusionDates,
+					reminderBeforeEvent: habit.schedules.reminderBeforeEvent,
+					description: habit.schedules.description,
+					priority: habit.schedules.priority
 				})
 
 				// Create Habit

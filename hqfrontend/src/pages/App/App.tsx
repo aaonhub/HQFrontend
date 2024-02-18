@@ -71,11 +71,11 @@ function App(): JSX.Element {
 	useAuth(setLoggedIn, setGlobalProfile);
 
 	// Settings
-	useQuery(GET_SETTINGS, {
+	const { loading, error, data } = useQuery(GET_SETTINGS, {
 		onCompleted: (data) => {
 			new SettingsObject({
 				habitOrder: data.settings.habitOrder,
-				hiddenSidebarItems: JSON.parse(data.settings.hiddenSidebarItems),
+				hiddenSidebarItems: data.settings.hiddenSidebarItems,
 				id: data.settings.id,
 				itineraryOrder: data.settings.itineraryOrder,
 				owner: data.settings.owner,

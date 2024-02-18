@@ -61,15 +61,6 @@ export default SettingsObject;
 
 
 // Queries
-export const GET_ITINERARY_ORDER = gql`
-	query {
-		settings{
-			id
-			itineraryOrder
-		}
-	}
-`
-
 export const GET_SETTINGS = gql`
 	query {
 		settings{
@@ -96,7 +87,7 @@ export const UPDATE_SETTINGS = gql`
 	mutation UpdateSetting(
 		$theme: String, 
 		$stickyNote: String,
-		$hiddenSidebarItems: String,
+		$hiddenSidebarItems: JSONString,
 		$itineraryOrder: String,
 		$masterListOrder: String,
 		$projectOrder: String

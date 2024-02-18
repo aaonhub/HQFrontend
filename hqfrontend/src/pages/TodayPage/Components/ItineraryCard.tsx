@@ -68,6 +68,8 @@ const ItineraryCard: React.FC = () => {
 		},
 		onCompleted: (data) => {
 
+			console.log(data)
+
 			// Set inbox items
 			const inboxItems = data.toDoItemsByStartDate.map((toDoItems: any) => {
 				return new InboxItem({

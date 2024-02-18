@@ -8,7 +8,7 @@ import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 import { useMutation, useQuery } from '@apollo/client';
 
 // Queries and Mutations
-import { GET_HABIT } from '../models/habit';
+import { GET_HABIT, createEmptyHabit } from '../models/habit';
 import { UPDATE_HABIT } from '../models/habit';
 import { DELETE_HABIT } from '../models/habit';
 
@@ -25,7 +25,7 @@ interface EditHabitDialogProps {
 const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) => {
 	const { setSnackbar } = useGlobalContext();
 
-	const [newHabit, setNewHabit] = useState<Habit | null>(null);
+	const [newHabit, setNewHabit] = useState<Habit>(createEmptyHabit());
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
 	const { loading, error, data, refetch } = useQuery(GET_HABIT, {
@@ -64,9 +64,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		}
 	});
 
-	if (!newHabit) {
-		return <div>Loading...</div>; // or any other loading indicator
-	  }
+
 
 	// Delete Habit
 	const [deleteHabit] = useMutation(DELETE_HABIT);
@@ -80,6 +78,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 			}
 		})
 	}
+
 
 	const handleDeleteClick = () => {
 		setOpenConfirmDelete(true);
@@ -100,7 +99,8 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 	};
 
 	const handleTimeOfDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, timeOfDay: e.target.value } });
+		const timeOfDay = e.target.value || '';
+		setNewHabit({ ...newHabit, schedule: { ...newHabit.schedule, timeOfDay: timeOfDay } });
 	};
 
 	const [updateHabit] = useMutation(UPDATE_HABIT, {
@@ -110,20 +110,20 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		},
 		onError: (error) => console.log(error.networkError),
 	});
-	const handleSaveClick = () => {
-		updateHabit({
-			variables: {
-				id: habitId,
-				Title: newHabit.title,
-				Active: newHabit.active,
-				Frequency: newHabit.schedule.frequency,
-				TimeOfDay: newHabit.schedule.timeOfDay,
-			}
-		});
-	};
+	// const handleSaveClick = () => {
+	// 	updateHabit({
+	// 		variables: {
+	// 			id: habitId,
+	// 			Title: newHabit.title,
+	// 			Active: newHabit.active,
+	// 			Frequency: newHabit.schedule.frequency,
+	// 			TimeOfDay: newHabit.schedule.timeOfDay,
+	// 		}
+	// 	});
+	// };
 
 
-	
+
 
 
 	return (
@@ -157,19 +157,20 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 						id="time"
 						label="Time of Day"
 						type="time"
-						value={newHabit.schedule.timeOfDay}
+						// Use an empty string if timeOfDay is null
+						value={newHabit.schedule.timeOfDay || ''}
 						onChange={handleTimeOfDayChange}
 						InputLabelProps={{
 							shrink: true,
 						}}
 					/>
-
+					
 				</FormGroup>
 			</DialogContent>
 
 			<DialogActions>
 				<Button onClick={onClose}>Cancel</Button>
-				<Button onClick={handleSaveClick}>Save</Button>
+				{/* <Button onClick={handleSaveClick}>Save</Button> */}
 				<Button onClick={handleDeleteClick} color="error">Delete</Button>
 			</DialogActions>
 

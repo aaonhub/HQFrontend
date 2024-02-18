@@ -25,6 +25,29 @@ class Habit {
 export default Habit
 
 
+export function createEmptyHabit(): Habit {
+	return {
+		id: '',
+		title: '',
+		active: false,
+		length: '',
+		schedule: new Schedule({
+			status: 'ACTIVE', // Assuming 'ACTIVE' as a default value
+			visibility: 'PRIVATE', // Assuming 'PRIVATE' as a default value
+			timeOfDay: null,
+			startDate: '',
+			endDate: null,
+			timezone: '', // You might want to set a default timezone
+			recurrenceRule: null,
+			exclusionDates: '',
+			reminderBeforeEvent: null,
+			description: null,
+			priority: 0, // Assuming a neutral priority
+		}),
+		countToday: 0,
+	};
+}
+
 // Queries
 export const GET_HABIT = gql`
 	query($habitId: ID!){

@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -15,6 +11,7 @@ import { DELETE_HABIT } from '../models/habit';
 // Models
 import Habit from '../models/habit';
 import Schedule from '../models/schedule';
+import EditScheduleDialog from './EditScheduleDialog';
 
 
 interface EditHabitDialogProps {
@@ -27,8 +24,9 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 	const [newHabit, setNewHabit] = useState<Habit>(createEmptyHabit());
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+	const [openEditSchedule, setOpenEditSchedule] = useState(false);
 
-	const { loading, error, data, refetch } = useQuery(GET_HABIT, {
+	const { loading, error, data } = useQuery(GET_HABIT, {
 		variables: { habitId: habitId },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
@@ -37,17 +35,17 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 			// Create Schedule
 			const schedule = new Schedule({
-				status: habit.schedules.status,
-				visibility: habit.schedules.visibility,
-				timeOfDay: habit.schedules.timeOfDay,
-				startDate: habit.schedules.startDate,
-				endDate: habit.schedules.endDate,
-				timezone: habit.schedules.timezone,
-				recurrenceRule: habit.schedules.recurrenceRule,
-				exclusionDates: habit.schedules.exclusionDates,
-				reminderBeforeEvent: habit.schedules.reminderBeforeEvent,
-				description: habit.schedules.description,
-				priority: habit.schedules.priority
+				status: habit.schedules[0].status,
+				visibility: habit.schedules[0].visibility,
+				timeOfDay: habit.schedules[0].timeOfDay,
+				startDate: habit.schedules[0].startDate,
+				endDate: habit.schedules[0].endDate,
+				timezone: habit.schedules[0].timezone,
+				recurrenceRule: habit.schedules[0].recurrenceRule,
+				exclusionDates: habit.schedules[0].exclusionDates,
+				reminderBeforeEvent: habit.schedules[0].reminderBeforeEvent,
+				description: habit.schedules[0].description,
+				priority: habit.schedules[0].priority,
 			})
 
 			// Create Habit
@@ -110,20 +108,19 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		},
 		onError: (error) => console.log(error.networkError),
 	});
-	// const handleSaveClick = () => {
-	// 	updateHabit({
-	// 		variables: {
-	// 			id: habitId,
-	// 			Title: newHabit.title,
-	// 			Active: newHabit.active,
-	// 			Frequency: newHabit.schedule.frequency,
-	// 			TimeOfDay: newHabit.schedule.timeOfDay,
-	// 		}
-	// 	});
-	// };
+	const handleSaveClick = () => {
+		updateHabit({
+			variables: {
+				id: habitId,
+				Title: newHabit.title,
+				Active: newHabit.active,
+				TimeOfDay: newHabit.schedule.timeOfDay,
+			}
+		});
+	};
 
 
-
+	if (loading) return <p>Loading...</p>;
 
 
 	return (
@@ -164,13 +161,16 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 							shrink: true,
 						}}
 					/>
-					
+
+					{/* Edit Schedule Button */}
+					<Button onClick={() => setOpenEditSchedule(true)}>Edit Schedule</Button>
+
 				</FormGroup>
 			</DialogContent>
 
 			<DialogActions>
 				<Button onClick={onClose}>Cancel</Button>
-				{/* <Button onClick={handleSaveClick}>Save</Button> */}
+				<Button onClick={handleSaveClick}>Save</Button>
 				<Button onClick={handleDeleteClick} color="error">Delete</Button>
 			</DialogActions>
 
@@ -183,6 +183,12 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 					<Button onClick={handleConfirmDelete} color="error">Yes</Button>
 				</DialogActions>
 			</Dialog>
+
+
+			{/* Edit Schedule Dialog */}
+			{openEditSchedule && 
+				<EditScheduleDialog id={data.getHabit.schedules[0].id} handleClose={() => setOpenEditSchedule(false)} />
+			}
 
 
 		</Dialog>

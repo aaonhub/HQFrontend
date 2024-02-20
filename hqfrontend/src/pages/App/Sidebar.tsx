@@ -236,6 +236,7 @@ function MenuItem({ item: { id, title, link, notifications, icon }, onClick, sel
 			onClick={() => onClick(id)}
 			style={{ color: theme.palette.text.primary }} // This line sets the text color, which 'currentColor' in SVG can refer to
 			dense={true}
+			sx={{ '&:hover': { borderRadius: 0 } }} 
 		>
 			{
 				icon &&
@@ -254,6 +255,7 @@ function MenuItem({ item: { id, title, link, notifications, icon }, onClick, sel
 					<Badge
 						color="primary"
 						badgeContent={notifications[0]}
+						style={{ marginRight: 8 }}
 					/>
 				)
 			}
@@ -262,6 +264,7 @@ function MenuItem({ item: { id, title, link, notifications, icon }, onClick, sel
 					<Badge
 						color="secondary"
 						badgeContent={notifications[1]}
+						style={{ marginRight: 8 }}
 					/>
 				)
 			}

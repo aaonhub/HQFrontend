@@ -134,14 +134,21 @@ function App(): JSX.Element {
 						transition: 'width 0.2s',
 						flexShrink: 0, // Prevents the sidebar from shrinking
 						height: '100vh', // Make the sidebar full height
+						position: 'fixed', // Fix sidebar's position relative to the viewport
 					}}>
 						<Sidebar />
 					</Box>
 
 					{/* Content */}
-					<Box sx={{ flexGrow: 1, flexShrink: 1, overflow: 'auto' }}> {/* Add overflow: 'auto' */}
+					<Box sx={{
+						flexGrow: 1,
+						flexShrink: 1,
+						overflow: 'auto',
+						paddingLeft: '240px', // Ensure this matches the sidebar's width
+						width: `calc(100% - 240px)`,
+					}}> {/* Add overflow: 'auto' */}
 						<Box sx={{ p: 3 }}>
-							<ContentRoutes />
+							<ContentRoutes />	
 						</Box>
 					</Box>
 

@@ -150,6 +150,9 @@ export const christmasTheme = createTheme({
 						// on hover border rounded
 						borderRadius: '10px',
 					},
+					'&$selected': {
+						borderRadius: '10px',
+					},
 				},
 			},
 		},

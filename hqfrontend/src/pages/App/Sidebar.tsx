@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useGlobalContext } from './GlobalContextProvider';
 import { DailyReviewBadge, LogBadge, TodayBadge } from './Badges';
 import logo from '../../utils/logo.svg';
-import { Container } from '@mui/system';
-import { ListItem, ListItemIcon, ListItemText, Badge, Link as MuiLink } from '@mui/material';
+import { Box, Container } from '@mui/system';
+import { ListItem, ListItemIcon, ListItemText, Badge, Link as MuiLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { useTheme } from "@mui/material"
@@ -138,52 +138,75 @@ export default function Sidebar() {
 
 
 	return (
-		<Container sx={{
-			height: '100vh',
-			padding: 0,
-			display: 'flex', // Ensures the flex container to organize children
-			flexDirection: 'column', // Stack items vertically
-			backgroundColor: theme.palette.background.paper,
-			overflow: 'auto' // Adds scroll to Sidebar if content overflows
-		}}>
+		// <Container sx={{
+		// 	height: '100vh',
+		// 	padding: 0,
+		// 	display: 'flex', // Ensures the flex container to organize children
+		// 	flexDirection: 'column', // Stack items vertically
+		// 	backgroundColor: theme.palette.background.paper,
+		// 	overflow: 'auto' // Adds scroll to Sidebar if content overflows
+		// }}>
+		<div
+			style={{
+				height: '100vh',
+				padding: 0,
+				display: 'flex', // Ensures the flex container to organize children
+				flexDirection: 'column', // Stack items vertically
+				backgroundColor: theme.palette.background.paper,
+				overflow: 'auto' // Adds scroll to Sidebar if content overflows
+			}}
+		>
 
-			<div>
-				<img src={logo} alt="My Logo" width={40} height={40} />
-				<div>HQ</div>
-			</div>
-			{sidebarItems.map((group, index) => (
-				<React.Fragment key={index}>
-					{group.map((item) => (
-						<MenuItem
-							key={item.id}
-							item={item}
-							onClick={setSelected}
-							selected={selected}
-						/>
-					))}
-				</React.Fragment>
-			))}
-
-
-
-			{/* Profile Display */}
-			<div>
-				<div>
-					{/* <Image path="mock_faces_8" className="w-10 h-10" /> */}
-					<div>
-						{globalProfile ? globalProfile.codename : "Log In"}
-					</div>
-					<div />
-					{/* <Icon
-						path="res-react-dash-options"
-						className="block sm:hidden xl:block w-3 h-3"
-					/> */}
-				</div>
-			</div>
+			<Box sx={{
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				p: 2, // Adjust padding as needed
+			}}>
+				<img src={logo} alt="My Logo" style={{ width: 40, height: 40 }} />
+				<Typography variant="h6" sx={{ ml: 1 }}>HQ</Typography>
+			</Box>
 
 
+			<Box sx={{ flexGrow: 1 }}>
+				{sidebarItems[0].map((item) => (
+					<MenuItem
+						key={item.id}
+						item={item}
+						onClick={setSelected}
+						selected={selected}
+					/>
+				))}
+			</Box>
 
-		</Container>
+			<Box>
+				{sidebarItems[1].map((item) => (
+					<MenuItem
+						key={item.id}
+						item={item}
+						onClick={setSelected}
+						selected={selected}
+					/>
+				))}
+			</Box>
+
+
+
+			{/* Profile Display at the bottom */}
+			<Box sx={{
+				padding: '16px', // Adjust the padding as needed
+				borderTop: '1px solid', // Optional: adds a divider line
+				borderColor: 'divider', // Use the theme's divider color
+			}}>
+				<Typography variant="body1">
+					{globalProfile ? globalProfile.codename : "Log In"}
+				</Typography>
+				{/* Add more profile details or icons here */}
+			</Box>
+
+
+		</div>
+		// </Container>
 	);
 }
 
@@ -202,6 +225,7 @@ type MenuItemProps = {
 
 function MenuItem({ item: { id, title, link, notifications, icon }, onClick, selected }: MenuItemProps) {
 	const theme = useTheme();
+	console.log(notifications);
 
 	return (
 		<ListItem
@@ -211,6 +235,7 @@ function MenuItem({ item: { id, title, link, notifications, icon }, onClick, sel
 			selected={selected === id}
 			onClick={() => onClick(id)}
 			style={{ color: theme.palette.text.primary }} // This line sets the text color, which 'currentColor' in SVG can refer to
+			dense={true}
 		>
 			{
 				icon &&
@@ -225,10 +250,19 @@ function MenuItem({ item: { id, title, link, notifications, icon }, onClick, sel
 			}
 			<ListItemText primary={title} />
 			{
-				notifications && (
-					<Badge color="primary" badgeContent={notifications}>
-						{/* Optionally include additional icons or badges here */}
-					</Badge>
+				notifications[0] && (
+					<Badge
+						color="primary"
+						badgeContent={notifications[0]}
+					/>
+				)
+			}
+			{
+				notifications[1] && (
+					<Badge
+						color="secondary"
+						badgeContent={notifications[1]}
+					/>
 				)
 			}
 		</ListItem >

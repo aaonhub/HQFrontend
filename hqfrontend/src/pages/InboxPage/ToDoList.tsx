@@ -139,8 +139,8 @@ const ToDoList: React.FC = () => {
 					variant="outlined"
 					value={newTodo}
 					onChange={handleInputChange}
-					type="search"
 					sx={{ margin: 1, width: "80%" }}
+					autoComplete="off"
 				/>
 				<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
 					<AddIcon />

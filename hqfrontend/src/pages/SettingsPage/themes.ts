@@ -97,6 +97,9 @@ export const christmasTheme = createTheme({
 		mode: "dark",
 		primary: {
 			main: "#0d5c2d", // Christmas green
+			light: "#388e3c", // Deeper green for contrast
+			dark: "#1b5e20", // Darker green for contrast
+
 		},
 		secondary: {
 			main: "#b22222", // Christmas red
@@ -120,6 +123,35 @@ export const christmasTheme = createTheme({
 		},
 		success: {
 			main: "#2e7d32", // Deeper green for success
+		},
+		common: {
+			black: "#000000", // True black
+			white: "#ffffff", // True white
+		},
+	},
+	components: {
+		// Button
+		MuiButton: {
+			styleOverrides: {
+				root: { // Apply styles to the root element of the Button
+					// Define default styles here if needed
+					'&:hover': {
+						color: '#ffffff',
+						boxShadow: '0 0 5px 1px #ffffff',
+					},
+				},
+			},
+		},
+		MuiListItem: {
+			styleOverrides: {
+				root: {
+					'&:hover': {
+						// backgroundColor: '#2e7d32',
+						// on hover border rounded
+						borderRadius: '10px',
+					},
+				},
+			},
 		},
 	},
 });

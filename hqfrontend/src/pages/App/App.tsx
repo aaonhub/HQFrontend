@@ -230,7 +230,7 @@ function SnackbarComponent(): JSX.Element {
 
 	return (
 		<Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
-			<Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+			<Alert onClose={handleSnackbarClose} severity={snackbar.severity} variant="filled">
 				{snackbar.message}
 			</Alert>
 		</Snackbar>

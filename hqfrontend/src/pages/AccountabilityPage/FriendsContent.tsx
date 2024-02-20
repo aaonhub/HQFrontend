@@ -147,7 +147,6 @@ const FriendsContent = () => {
                                 variant="outlined"
                                 fullWidth
                                 value={contactRequestName}
-                                type="search"
                                 autoComplete="off"
                                 onChange={(e) => setContactRequestName(e.target.value)}
                                 onKeyDown={(e) => {

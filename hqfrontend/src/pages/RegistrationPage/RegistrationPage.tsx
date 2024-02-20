@@ -78,7 +78,6 @@ const RegistrationPage: React.FC = () => {
 						value={values.username}
 						onChange={onChange}
 						autoComplete="off"
-						type="search"
 					/>
 					<TextField
 						fullWidth
@@ -90,7 +89,6 @@ const RegistrationPage: React.FC = () => {
 						onChange={onChange}
 						onBlur={onBlurEmail}
 						autoComplete="off"
-						type="search"
 						error={emailTouched && emailError}
 						helperText={emailTouched && emailError ? "Invalid email format" : ""}
 					/>

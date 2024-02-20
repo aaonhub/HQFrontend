@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Checkbox, FormGroup, FormControlLabel, Menu, MenuItem, IconButton } from '@mui/material';
 import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 import { useMutation, useQuery } from '@apollo/client';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 // Queries and Mutations
 import { GET_HABIT, createEmptyHabit } from '../models/habit';
@@ -25,6 +26,8 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 	const [newHabit, setNewHabit] = useState<Habit>(createEmptyHabit());
 	const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 	const [openEditSchedule, setOpenEditSchedule] = useState(false);
+	const [submenu, setSubmenu] = useState<null | HTMLElement>(null);
+
 
 	const { loading, error, data } = useQuery(GET_HABIT, {
 		variables: { habitId: habitId },
@@ -77,6 +80,14 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 		})
 	}
 
+	// Submenu
+	const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setSubmenu(event.currentTarget);
+	};
+	const handleMenuClose = () => {
+		setSubmenu(null);
+	};
+
 
 	const handleDeleteClick = () => {
 		setOpenConfirmDelete(true);
@@ -125,7 +136,44 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 	return (
 		<Dialog open={true} onClose={onClose}>
-			<DialogTitle>Edit Habit</DialogTitle>
+			<DialogTitle>
+				Edit Habit
+
+				{/* Open Menu Icon */}
+				<IconButton
+					aria-label="menu"
+					aria-controls="menu"
+					aria-haspopup="true"
+					onClick={handleMenuOpen}
+					edge="end"
+				>
+					<MoreVertIcon />
+				</IconButton>
+				<Menu
+					id="menu"
+					anchorEl={submenu}
+					keepMounted
+					open={Boolean(submenu)}
+					onClose={handleMenuClose}
+				>
+
+					<MenuItem
+						onClick={() => {
+							handleMenuClose();
+							setOpenEditSchedule(true)
+						}}
+					>Edit</MenuItem>
+					<MenuItem
+						onClick={() => {
+							handleMenuClose();
+							handleDeleteClick();
+						}}
+					>
+						Delete
+					</MenuItem>
+				</Menu>
+			</DialogTitle>
+
 			<DialogContent>
 				<FormGroup>
 
@@ -162,16 +210,12 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 						}}
 					/>
 
-					{/* Edit Schedule Button */}
-					<Button onClick={() => setOpenEditSchedule(true)}>Edit Schedule</Button>
-
 				</FormGroup>
 			</DialogContent>
 
 			<DialogActions>
 				<Button onClick={onClose}>Cancel</Button>
 				<Button onClick={handleSaveClick}>Save</Button>
-				<Button onClick={handleDeleteClick} color="error">Delete</Button>
 			</DialogActions>
 
 			{/* Confirm deletion dialog */}
@@ -186,7 +230,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 
 			{/* Edit Schedule Dialog */}
-			{openEditSchedule && 
+			{openEditSchedule &&
 				<EditScheduleDialog id={data.getHabit.schedules[0].id} handleClose={() => setOpenEditSchedule(false)} />
 			}
 

@@ -141,6 +141,7 @@ const ToDoList: React.FC = () => {
 					onChange={handleInputChange}
 					sx={{ margin: 1, width: "80%" }}
 					autoComplete="off"
+					type='search'
 				/>
 				<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
 					<AddIcon />

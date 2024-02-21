@@ -154,6 +154,7 @@ const FriendsContent = () => {
                                         handleSendFriendRequest()
                                     }
                                 }}
+                                type='search'
                             />
                         </CardContent>
 

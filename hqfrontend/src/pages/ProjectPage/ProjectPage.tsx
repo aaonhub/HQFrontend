@@ -26,101 +26,103 @@ import { ADD_LOG } from '../../models/log'
 // Models
 import Project from '../../models/project'
 import InboxItem from '../../models/inboxitem'
+import { useGlobalContext } from '../App/GlobalContextProvider'
 
 
 const ProjectPage = () => {
 	const { projectId } = useParams()
-	const newTopProjectItemTitleRef = useRef<HTMLInputElement>(null)
-	const newBottomProjectItemTitleRef = useRef<HTMLInputElement>(null)
+	const { setSnackbar } = useGlobalContext()
+
 	const [project, setProject] = useState<Project>(new Project('', ''))
 	const [selectedInboxItem, setSelectedInboxItem] = useState<InboxItem>()
 	const [projectItemArray, setProjectItemArray] = useState<InboxItem[]>([])
+
+	const newTopProjectItemTitleRef = useRef<HTMLInputElement>(null)
+	const newBottomProjectItemTitleRef = useRef<HTMLInputElement>(null)
 
 
 	// Project Query
 	const { data, loading, error, refetch } = useQuery(GET_PROJECT_ITEMS, {
 		variables: { projectId, completed: false },
 		onCompleted: (data) => {
-			console.log(data)
-
-			// Define the project items
-			const projectItems = data.project.toDoItems?.map((item: any) =>
-				new InboxItem({
-					id: item.id,
-					title: item.title,
-					description: item.description,
-					completed: item.completed,
-					project: item.project,
-					dueDateTime: item.due_date_time ? item.due_date_time : "",
-					startDate: item.start_date,
-					startTime: item.start_time,
-					timeCompleted: item.time_completed ? new Date(item.time_completed) : null,
-				})
-			) || []
-
-			let item_order: string[] = []
-			try {
-				item_order = JSON.parse(data.project.itemOrder)
-			} catch (error) {
-				console.error('Failed to parse itemOrder:', data.project.itemOrder)
-				item_order = []
-			}
-
-			// Items with order and without
-			const orderedItems = item_order.map((itemId: string) => {
-				return projectItems.find((item: any) => item.id === itemId)
-			}).filter((item: any) => item !== undefined) as InboxItem[]
-			const unorderedItems = projectItems.filter((item: any) => !item_order.includes(item.id))
-
-			// Combine ordered and unordered items
-			const finalItems = orderedItems.concat(unorderedItems)
-
-			changeProjectItemOrder({
-				variables: {
-					id: data.project.id,
-					itemOrder: finalItems.map((item: InboxItem) => item.id),
-				},
-			})
-
-			const project: Project = {
-				id: data.project.id,
-				codename: data.project.codename,
-				to_do_items: finalItems,
-				item_order: item_order,
-			}
-
-			setProject(project)
-			project.to_do_items
-				? setProjectItemArray(finalItems)
-				: setProjectItemArray([])
+			handleDataCompleted(data)
 		},
+		onError: (error) => console.log(error.networkError),
 	})
 
-	// Tab Title
-	useEffect(() => {
-		if (data) {
-			document.title = data.project.codename ? data.project.codename + " - HQ" : "Project"
+	const handleDataCompleted = (data: any) => {
+
+		// Define the project items
+		const projectItems = data.project.toDoItems?.map((item: any) =>
+			new InboxItem({
+				id: item.id,
+				title: item.title,
+				description: item.description,
+				completed: item.completed,
+				project: item.project,
+				dueDateTime: item.due_date_time ? item.due_date_time : "",
+				startDate: item.start_date,
+				startTime: item.start_time,
+				timeCompleted: item.time_completed ? new Date(item.time_completed) : null,
+			})
+		) || []
+
+		let item_order: string[] = []
+		try {
+			item_order = JSON.parse(data.project.itemOrder)
+		} catch (error) {
+			console.error('Failed to parse itemOrder:', data.project.itemOrder)
+			item_order = []
 		}
-	}, [data]);
+
+		// Items with order and without
+		const orderedItems = item_order.map((itemId: string) => {
+			return projectItems.find((item: any) => item.id === itemId)
+		}).filter((item: any) => item !== undefined) as InboxItem[]
+		const unorderedItems = projectItems.filter((item: any) => !item_order.includes(item.id))
+
+		// Combine ordered and unordered items
+		const finalItems = orderedItems.concat(unorderedItems)
+
+		changeProjectItemOrder({
+			variables: {
+				id: data.project.id,
+				itemOrder: finalItems.map((item: InboxItem) => item.id),
+			},
+		})
+
+		const project: Project = {
+			id: data.project.id,
+			codename: data.project.codename,
+			to_do_items: finalItems,
+			item_order: item_order,
+		}
+
+		setProject(project)
+		project.to_do_items
+			? setProjectItemArray(finalItems)
+			: setProjectItemArray([])
+	}
+
+	const doRefetch = () => {
+		refetch().then(({ data }) => handleDataCompleted(data));
+	};
 
 
 	// Add Project Item
 	const [addItemToProjectAtPosition] = useMutation(CREATE_TO_DO_AND_ADD_TO_PROJECT_AT_POSITION, {
 		onError: (error) => console.log(error.networkError),
 		onCompleted: () => {
+			console.log('Project Item Added')
 			if (newTopProjectItemTitleRef.current) {
 				newTopProjectItemTitleRef.current.value = ''
 			}
 			if (newBottomProjectItemTitleRef.current) {
 				newBottomProjectItemTitleRef.current.value = ''
 			}
-		},
-		refetchQueries: [
-			{
-				query: GET_PROJECT_ITEMS,
-				variables: { projectId, completed: false },
-			},
-		],
+			setSnackbar({ open: true, message: 'Project Item Added', severity: 'success' })
+			doRefetch()
+		}
 	})
 	const handleAddProjectItemTop = (position: number) => {
 		addItemToProjectAtPosition({
@@ -146,13 +148,10 @@ const ProjectPage = () => {
 
 	// Check off to do item
 	const [completeToDoItem] = useMutation(CHECK_UNCHECK_TODO, {
+		onCompleted: () => {
+			doRefetch()
+		},
 		onError: (error) => console.log(error.networkError),
-		refetchQueries: [
-			{
-				query: GET_PROJECT_ITEMS,
-				variables: { projectId, completed: false },
-			},
-		],
 	})
 	const handleCheck = (toDoItem: InboxItem) => () => {
 		completeToDoItem({
@@ -197,7 +196,7 @@ const ProjectPage = () => {
 	// Edit to do item
 	const handleClose = () => {
 		setSelectedInboxItem(undefined)
-		refetch()
+		doRefetch()
 	}
 
 
@@ -266,7 +265,7 @@ const ProjectPage = () => {
 							toDoItem={toDoItem}
 							handleCheck={handleCheck}
 							setSelectedInboxItem={setSelectedInboxItem}
-							refetch={refetch}
+							refetch={doRefetch}
 							key={toDoItem.id}
 						/>
 					)}

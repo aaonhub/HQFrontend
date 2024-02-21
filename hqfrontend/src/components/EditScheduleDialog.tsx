@@ -62,6 +62,7 @@ const EditScheduleDialog = (props: EditScheduleDialogProps) => {
 	});
 
 
+	// Parse Data from Query
 	useEffect(() => {
 		if (!loading && data) {
 			const scheduleData = data.getSchedule;

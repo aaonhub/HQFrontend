@@ -225,7 +225,6 @@ type MenuItemProps = {
 
 function MenuItem({ item: { id, title, link, notifications, icon }, onClick, selected }: MenuItemProps) {
 	const theme = useTheme();
-	console.log(notifications);
 
 	return (
 		<ListItem

@@ -210,6 +210,40 @@ export const GET_RITUALS = gql`
 	}
 `;
 
+export const EDIT_RITUAL_DIALOG_QUERY = gql`
+	query Ritual($id: ID! $yearMonth: String!){
+		ritual(id: $id) {
+			id
+			title
+			ritualItems
+			checkedItems
+			inProgress
+			habits{
+				title
+			}
+			schedules {
+				id
+				status
+				visibility
+				timeOfDay
+				startDate
+				endDate
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
+			}
+		}
+		ritualHistory(yearMonth: $yearMonth){
+			id
+			yearMonth
+			data
+		}
+	}
+`;
+
 export const GET_RITUAL_AND_RITUAL_HISTORY = gql`
 	query($id: ID!, $yearMonth: String!){
 		ritual(id: $id) {
@@ -325,6 +359,18 @@ export const UPDATE_RITUAL_HISTORY = gql`
 				id
 				yearMonth
 				data
+			}
+		}
+	}
+`;
+
+export const EDIT_RITUAL_MUTATION = gql`
+	mutation EditRitual($id: ID!, $title: String!, $ritualItems: String!, $inProgress: Boolean, $checkedItems: String) {
+		editRitual(id: $id, title: $title, ritualItems: $ritualItems, inProgress: $inProgress, checkedItems: $checkedItems) {
+			ritual {
+				id
+				title
+				checkedItems
 			}
 		}
 	}

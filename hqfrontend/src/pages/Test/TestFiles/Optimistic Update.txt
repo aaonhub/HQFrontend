@@ -1,0 +1,31 @@
+const [markItemCompleted] = useMutation(MARK_ITEM_COMPLETED);
+
+const markCompletedOptimistic = async (itemId: string) => {
+    // Clone and update your local items state optimistically
+    const newItems = items.map(item =>
+        item.id === itemId ? { ...item, completed: true } : item
+    );
+    setItems(newItems); // Assuming 'items' and 'setItems' are your local state management
+
+    try {
+        await markItemCompleted({
+            variables: { id: itemId },
+            optimisticResponse: {
+                __typename: "Mutation",
+                markItemCompleted: {
+                    __typename: "Item",
+                    id: itemId,
+                    completed: true,
+                },
+            },
+        });
+        // The UI is already updated; no need for further action here
+    } catch (error) {
+        console.error(error);
+        // Roll back optimistic update
+        setItems(items.map(item =>
+            item.id === itemId ? { ...item, completed: false } : item
+        ));
+        // Optionally, show an error message
+    }
+};

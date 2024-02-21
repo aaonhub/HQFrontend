@@ -149,11 +149,10 @@ const ItineraryCard: React.FC = () => {
 			const orderData = JSON.parse(data.settings.itineraryOrder)
 			const orderIds = orderData.ids
 			const orderDate = orderData.date
-
-
 			setOrderIds(orderIds)
 
 
+			
 			// Combine the inbox items and habits into one array
 			const simpleHabitItems = habitsToSimpleItems(habits)
 			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)

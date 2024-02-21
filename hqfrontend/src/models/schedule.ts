@@ -4,17 +4,17 @@ export type Status = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 export type Visibility = 'PRIVATE' | 'PUBLIC' | 'SHARED';
 
 class Schedule {
-    status: Status;
-    visibility: Visibility;
+    status: Status | null;
+    visibility: Visibility | null;
     timeOfDay: string | null;
     startDate: string;
     endDate: string | null;
-    timezone: string;
+    timezone: string | null;
     recurrenceRule: string | null;
     exclusionDates: string;
     reminderBeforeEvent: string | null;
     description: string | null;
-    priority: number;
+    priority: number | null;
 
     constructor(
         { status, visibility, timeOfDay, startDate, endDate, timezone, recurrenceRule, exclusionDates, reminderBeforeEvent, description, priority }:

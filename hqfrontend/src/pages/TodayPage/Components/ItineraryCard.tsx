@@ -52,7 +52,7 @@ const ItineraryCard: React.FC = () => {
 	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
 	const [selectedRitualId, setSelectedRitualId] = useState<string | null>(null)
 	const [selectedEntryID, setSelectedEntryID] = useState<any>(null)
-	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
+	// const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [orderIds, setOrderIds] = useState<string[]>([])
 	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
 	const [events, setEvents] = useState<EventInput[] | []>([]);
@@ -502,30 +502,30 @@ const ItineraryCard: React.FC = () => {
 		}
 	})
 
-	// Use useEffect to schedule notifications for all tasks
-	useEffect(() => {
-		// Assuming 'habits' and 'inboxItems' are arrays of your tasks
-		const scheduleNotification = (item: any) => {
-			const now = new Date()
-			const date = new Date() // today's date
-			const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
-			const taskTime = new Date(dateString + 'T' + item.startTime)
+	// // Use useEffect to schedule notifications for all tasks
+	// useEffect(() => {
+	// 	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
+	// 	const scheduleNotification = (item: any) => {
+	// 		const now = new Date()
+	// 		const date = new Date() // today's date
+	// 		const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
+	// 		const taskTime = new Date(dateString + 'T' + item.startTime)
 
-			if (taskTime > now && !scheduledNotifications[item.id]) {
-				const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
-				setTimeout(() => {
-					new Notification(`Time to start item: ${item.title}`)
-				}, delay)
-				setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
-			}
-		}
+	// 		if (taskTime > now && !scheduledNotifications[item.id]) {
+	// 			const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
+	// 			setTimeout(() => {
+	// 				new Notification(`Time to start item: ${item.title}`)
+	// 			}, delay)
+	// 			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
+	// 		}
+	// 	}
 
-		if (Notification.permission !== "granted") {
-			console.error("Notification permission not granted.")
-		} else {
-			uncompletedItems.forEach(scheduleNotification)
-		}
-	}, [uncompletedItems, scheduledNotifications])
+	// 	if (Notification.permission !== "granted") {
+	// 		console.error("Notification permission not granted.")
+	// 	} else {
+	// 		uncompletedItems.forEach(scheduleNotification)
+	// 	}
+	// }, [uncompletedItems, scheduledNotifications])
 
 
 

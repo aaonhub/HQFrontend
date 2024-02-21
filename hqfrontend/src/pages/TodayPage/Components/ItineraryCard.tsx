@@ -496,11 +496,11 @@ const ItineraryCard: React.FC = () => {
 
 	// Notification Stuff
 	// Notification Request
-	Notification.requestPermission().then(function (permission) {
-		if (permission !== "granted") {
-			console.error("Notification permission not granted.")
-		}
-	})
+	// Notification.requestPermission().then(function (permission) {
+	// 	if (permission !== "granted") {
+	// 		console.error("Notification permission not granted.")
+	// 	}
+	// })
 
 	// // Use useEffect to schedule notifications for all tasks
 	// useEffect(() => {

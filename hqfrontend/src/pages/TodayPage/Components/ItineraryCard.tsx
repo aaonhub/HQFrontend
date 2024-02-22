@@ -49,14 +49,13 @@ const ItineraryCard: React.FC = () => {
 	const [selectedRitualId, setSelectedRitualId] = useState<string | null>(null)
 	const [selectedScheduleId, setSelectedScheduleId] = useState<any>(null)
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
-	const [orderIds, setOrderIds] = useState<string[]>([])
 	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
 	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const localDate = getCurrentLocalDate()
 
 
 	// Query
-	const { loading, error, data, refetch } = useQuery(ITINERARY_QUERY, {
+	const { loading, error, refetch } = useQuery(ITINERARY_QUERY, {
 		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
@@ -119,7 +118,6 @@ const ItineraryCard: React.FC = () => {
 			const orderData = JSON.parse(data.settings.itineraryOrder)
 			const orderIds = orderData.ids
 			const orderDate = orderData.date
-			setOrderIds(orderIds)
 
 
 
@@ -133,7 +131,6 @@ const ItineraryCard: React.FC = () => {
 			} else {
 				// If the order date is not today, update the order with today's date and the IDs of the uncompleted items
 				const newOrderIds = simpleItemArrayFiltered.map(item => item.id);
-				setOrderIds(newOrderIds);
 
 				// Sort uncompletedItems by startTime
 				simpleItemArrayFiltered.sort((a: any, b: any) => {

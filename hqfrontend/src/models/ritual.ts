@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 import Schedule from './schedule';
 
 
-export interface IItem {
-	itemID: string; // ID for sorting and habit ID is stored as (H + ID)
+export interface RitualItem {
+	id: string; // ID for sorting and habit ID is stored as (H + ID)
 	title: string;
 	completed: boolean;
 }
@@ -26,16 +26,16 @@ export interface RitualEntry {
 interface RitualParams {
 	ritualID: string;
 	title: string;
-	habits: IItem[];
-	ritual_items: IItem[];
+	habits: RitualItem[];
+	ritual_items: RitualItem[];
 	schedules: Schedule[];
 }
 
 export default class Ritual {
 	public ritualID: string;
 	public title: string;
-	public habits: IItem[];
-	public ritual_items: IItem[];
+	public habits: RitualItem[];
+	public ritual_items: RitualItem[];
 	public schedules: Schedule[];
 
 	constructor({
@@ -102,7 +102,7 @@ export class RitualHistoryManager {
 		// Add the entry to the entries array
 		const entries = this.ritualHistory[date].entries;
 
-		const index = entries.findIndex(e => e.ritualID === entry.ritualID);
+		const index = entries.findIndex(e => e.scheduleID === entry.scheduleID);
 
 		if (index > -1) {
 			entries[index] = entry;

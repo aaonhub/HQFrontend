@@ -15,17 +15,21 @@ import MenuItem from '@mui/material/MenuItem';
 // Components
 import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import EditRitualDialog from './EditRitualDialog'
+import { currentLocalTime, getCurrentLocalDate } from './DateFunctions'
 
 // Sounds
 import complete from '../sounds/complete.wav'
 import confirmation from '../sounds/confirmation.mp3'
 
 // Queries and mutations
-import { UPDATE_RITUAL, DELETE_RITUAL, GET_RITUAL, UPDATE_RITUAL_HISTORY, RitualHistoryManager, RitualEntry, RitualStatus, GET_RITUAL_AND_RITUAL_HISTORY } from '../models/ritual'
+import {
+	UPDATE_RITUAL,
+	DELETE_RITUAL,
+	GET_RITUAL,
+	UPDATE_RITUAL_HISTORY,
+	RitualHistoryManager, RitualEntry, RitualStatus
+} from '../models/ritual'
 import { CHECK_HABIT } from '../models/habit'
-import { currentLocalTime, getCurrentLocalDate } from './DateFunctions'
-
-
 
 
 interface RitualItem {
@@ -37,20 +41,28 @@ interface RitualItem {
 interface RitualDialogProps {
 	onClose: () => void
 	ritualId: string
-	entryDate?: string
-	scheduleId?: string
-	ritualHistory?: RitualHistoryManager
-	setRitualHistory?: (ritualHistory: RitualHistoryManager) => void
+	entryDate: string
+	scheduleId: string
+	ritualHistory: RitualHistoryManager
+	setRitualHistory: (ritualHistory: RitualHistoryManager) => void
 }
 
 
-const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate, scheduleId, ritualHistory, setRitualHistory }) => {
+const RitualDialog: React.FC<RitualDialogProps> = (props: RitualDialogProps) => {
 	const { setDebugText } = useGlobalContext()!
+
 	const [ritualTitle, setRitualTitle] = useState('')
 	const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
 	const [checkedIds, setCheckedIds] = useState<string[]>([])
-	const [editRitualDialogOpen, setEditRitualDialogOpen] = useState(false)
-	const [entry, setEntry] = useState<RitualEntry | null>(null)
+	const [editRitualDialogMenuOpen, setEditRitualDialogMenuOpen] = useState(false)
+	const [entry, setEntry] = useState<RitualEntry>({
+		ritualID: '',
+		scheduleID: '',
+		completedItems: [],
+		startTime: null,
+		completedTime: null,
+		status: RitualStatus.Unstarted
+	})
 	const [ritualHistoryManager, setRitualHistoryManager] = useState<RitualHistoryManager>(new RitualHistoryManager())
 
 
@@ -60,56 +72,49 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 
 
 	// Get ritual data
-	const queryToUse = ritualHistory ? GET_RITUAL : GET_RITUAL_AND_RITUAL_HISTORY;
-	const { loading, error, data } = useQuery(queryToUse, {
-		fetchPolicy: 'network-only',
-		variables: { id: ritualId, yearMonth: entryDate ? entryDate.slice(0, 7) : getCurrentLocalDate().slice(0, 7) },
+	const { loading, error, data } = useQuery(GET_RITUAL, {
+		variables: { id: props.ritualId, yearMonth: props.entryDate.slice(0, 7) },
 		onCompleted: (data) => {
 			// Set title
 			setRitualTitle(data.ritual.title)
 
-			// Initialize ritualHistory if not passed as a prop
-			if (!ritualHistory) {
-				const fetchedRitualHistory = new RitualHistoryManager()
-				fetchedRitualHistory.fromJson(data.ritualHistory.data)
-				setRitualHistoryManager(fetchedRitualHistory)
-			}
+			// Look for entry in ritual history
+			const entry1 = props.ritualHistory.getEntryById(props.entryDate, props.scheduleId)
 
-			// Set entry
-			if (ritualHistory && entryDate && scheduleId) {
-				const entry1 = ritualHistory.getEntryById(entryDate, scheduleId)
+			// If entry exists, set it
+			if (entry1) {
 				setEntry(entry1)
+				setCheckedIds(entry1.completedItems)
+			}
+			// Otherwise create it
+			else {
+				const ritualEntry: RitualEntry = {
+					ritualID: props.ritualId,
+					scheduleID: props.scheduleId,
+					completedItems: [],
+					startTime: null,
+					completedTime: null,
+					status: RitualStatus.Unstarted
+				};
 
-				const updatedRitualItems = JSON.parse(data.ritual.ritualItems).map((ritualItem: any) => {
-					const isChecked = entry1 ? entry1.completedItems.includes(ritualItem.id) : false;
-					return {
-						...ritualItem,
-						checked: entry1?.status === RitualStatus.Completed ? true : isChecked,
-					};
-				});
-				setRitualItems(updatedRitualItems)
-
-				// Set the checkedIds state based on the checked property of the updated ritual items
-				setCheckedIds(updatedRitualItems.filter((item: { checked: any }) => item.checked).map((item: { id: any }) => item.id))
-			} else {
-				const updatedRitualItems = JSON.parse(data.ritual.ritualItems).map((ritualItem: any) => {
-					const isChecked = data.ritual.checkedItems.includes(ritualItem.id);
-					return {
-						...ritualItem,
-						checked: isChecked,
-					};
-				});
-				setRitualItems(updatedRitualItems)
-
-				// Set the checkedIds state based on the checked property of the updated ritual items
-				setCheckedIds(updatedRitualItems.filter((item: { checked: any }) => item.checked).map((item: { id: any }) => item.id))
+				ritualHistoryManager.addOrUpdateEntry(props.entryDate, ritualEntry);  // Changed this line to use updateEntry
+				setEntry(ritualEntry)
 			}
 
+			// Set ritual items and checked state
+			const updatedRitualItems = JSON.parse(data.ritual.ritualItems).map((ritualItem: any) => {
+				const isChecked = entry1 ? entry1.completedItems.includes(ritualItem.id) : false;
+				return {
+					...ritualItem,
+					checked: entry1?.status === RitualStatus.Completed ? true : isChecked,
+				};
+			});
+			setRitualItems(updatedRitualItems)
+
+			// Set the checkedIds state based on the checked property of the updated ritual items
+			setCheckedIds(updatedRitualItems.filter((item: { checked: any }) => item.checked).map((item: { id: any }) => item.id))
 		},
-		skip: !ritualId,
 	})
-
-
 
 
 	const [updateRitual] = useMutation(UPDATE_RITUAL)
@@ -118,24 +123,21 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 	// Update ritual history
 	const [updateRitualHistory] = useMutation(UPDATE_RITUAL_HISTORY)
 	const handleUpdateRitualHistory = () => {
-		if (entry && entryDate && ritualHistory) {
-			updateRitualHistory({
-				fetchPolicy: 'no-cache',
-				variables: {
-					yearMonth: entryDate.slice(0, 7),
-					data: ritualHistory.toJson(),
-				},
-				onError: (error) => {
-					console.log(error)
-				}
-			})
-		}
+		updateRitualHistory({
+			variables: {
+				yearMonth: props.entryDate.slice(0, 7),
+				data: props.ritualHistory.toJson(),
+			},
+			onError: (error) => {
+				console.log(error)
+			}
+		})
 	}
 	const handleCompleteRitualHistory = (options: any) => {
 		updateRitualHistory({
 			...options,
 			onCompleted: () => {
-				onClose()
+				props.onClose()
 			},
 			onError: (error) => {
 				console.log(error);
@@ -147,65 +149,35 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 
 	// Complete ritual entry
 	const handleCompleteRitual = () => {
-		if (entry && entryDate && ritualHistory && setRitualHistory) {
-			const updatedRitualHistory = Object.assign(Object.create(Object.getPrototypeOf(ritualHistory)), ritualHistory);
-			updatedRitualHistory.updateEntry(entryDate, {
-				...entry,
-				completedItems: [],
-				status: RitualStatus.Completed,
-				completedTime: new Date().toISOString(),
-			});
-			setRitualHistory(updatedRitualHistory);
-			setEntry({
-				...entry,
-				completedItems: [],
-				status: RitualStatus.Completed,
-				completedTime: new Date(),
-			});
+		// Update Unscheduled Ritual
+		if (!props.scheduleId) {
 
-			handleCompleteRitualHistory({
-				variables: {
-					yearMonth: getCurrentLocalDate().slice(0, 7),
-					data: ritualHistory.toJson(),
-				},
-				onCompleted: (data: any) => {
-					console.log(data)
-				},
-				onError: (error: any) => {
-					console.log(error)
-				}
-			})
-		} else {
-
-			// Directly update the ritual otherwise
+			// Update ritual
 			updateRitual({
 				variables: {
-					id: ritualId,
+					id: props.ritualId,
 					checked_items: [],
-					status: RitualStatus.Completed,
+					status: RitualStatus.Unstarted,
 				},
 			});
-
-			// Add ritual entry
-			const updatedRitualHistory = Object.assign(Object.create(Object.getPrototypeOf(ritualHistoryManager)), ritualHistoryManager);
-			updatedRitualHistory.addEntry(getCurrentLocalDate(), {
-				ritualID: ritualId,
+		}
+		// Update Scheduled Ritual
+		else {
+			props.ritualHistory.addOrUpdateEntry(props.entryDate, {
+				ritualID: props.ritualId,
+				scheduleID: props.scheduleId,
+				startTime: entry.startTime,
 				completedItems: [],
-				type: 'I',
-				startTime: null,
-				completedTime: currentLocalTime(),
+				completedTime: new Date(),
 				status: RitualStatus.Completed,
 			});
 
-			// Add ritual entry
+
 			handleCompleteRitualHistory({
 				variables: {
 					yearMonth: getCurrentLocalDate().slice(0, 7),
-					data: updatedRitualHistory.toJson(),
+					data: props.ritualHistory.toJson(),
 				},
-				onError: (error: any) => {
-					console.log(error)
-				}
 			})
 		}
 	}
@@ -218,7 +190,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 			fetchPolicy: 'no-cache',
 			variables: {
 				habitId: habitId,
-				currentDate: entryDate ? entryDate : getCurrentLocalDate(),
+				currentDate: props.entryDate ? props.entryDate : getCurrentLocalDate(),
 				quantity: quantity,
 			},
 			onError: (error) => {
@@ -261,32 +233,29 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 		});
 		setRitualItems(updatedItems);
 
-		// Update ritual history if entry exists
-		if (entry && entryDate && ritualHistory && setRitualHistory) {
-			const updatedRitualHistory = Object.assign(Object.create(Object.getPrototypeOf(ritualHistory)), ritualHistory);
 
-			const ritualEntry: RitualEntry = {
-				ritualID: ritualId,
-				scheduleID: entry.scheduleID,
-				completedItems: newCheckedIds,
-				startTime: entry.startTime,
-				completedTime: null,
-				status: updatedItems.every((ritualItem) => ritualItem.checked)
-					? RitualStatus.Completed
-					: RitualStatus.InProgress,
-			};
-
-			updatedRitualHistory.updateEntry(entryDate, ritualEntry);  // Changed this line to use updateEntry
-			setRitualHistory(updatedRitualHistory);
-			setEntry(ritualEntry);
-		} else {
-			// Directly update the ritual otherwise
+		// Unscheduled Ritual
+		if (!props.scheduleId) {
 			await updateRitual({
 				variables: {
-					id: ritualId,
+					id: props.ritualId,
 					checkedItems: JSON.stringify(newCheckedIds),
 				},
 			});
+		}
+		// Scheduled Ritual
+		else {
+			const ritualEntry: RitualEntry = {
+				ritualID: props.ritualId,
+				scheduleID: entry.scheduleID,
+				completedItems: newCheckedIds,
+				startTime: entry.startTime ? entry.startTime : currentLocalTime(),
+				completedTime: null,
+				status: RitualStatus.InProgress,
+			};
+
+			props.ritualHistory.addOrUpdateEntry(props.entryDate, ritualEntry);
+			setEntry(ritualEntry);
 		}
 
 		// If ritual is completed, play sound and update ritual history
@@ -296,35 +265,19 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 		}
 
 		// Update ritual history
-		if (ritualHistory && setRitualHistory) {
-			handleUpdateRitualHistory()
-		}
+		handleUpdateRitualHistory()
 	};
 
 
-
-	const handleStop = () => {
-		const updatedItems = ritualItems.map((ritualItem: RitualItem) => ({
-			...ritualItem,
-			completed: false,
-		}));
-
-		updateRitual({
-			variables: {
-				id: ritualId,
-				ritualItems: JSON.stringify(updatedItems),
-			},
-		});
-	};
 
 	const [deleteRitual] = useMutation(DELETE_RITUAL);
 	const handleDelete = () => {
 		deleteRitual({
 			variables: {
-				ritualId: ritualId,
+				ritualId: props.ritualId,
 			},
 			onCompleted: () => {
-				onClose();
+				props.onClose();
 			},
 		});
 	};
@@ -346,12 +299,12 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 			{ title: 'Ritual Title', content: ritualTitle },
 			{ title: 'Ritual Items', content: JSON.stringify(ritualItems, null, 2) },
 			{ title: 'Data', content: JSON.stringify(data, null, 2) },
-			{ title: 'Entry Date', content: entryDate },
-			{ title: 'Schedule ID', content: scheduleId },
+			{ title: 'Entry Date', content: props.entryDate },
+			{ title: 'Schedule ID', content: props.scheduleId },
 			{ title: 'Entry', content: JSON.stringify(entry, null, 2) },
-			{ title: 'Ritual History', content: JSON.stringify(ritualHistory, null, 2) },
+			{ title: 'Ritual History', content: JSON.stringify(props.ritualHistory, null, 2) },
 		])
-	}, [data, ritualId, setDebugText, ritualTitle, ritualItems, entryDate, scheduleId, entry, ritualHistory])
+	}, [data, props.ritualId, setDebugText, ritualTitle, ritualItems, props.entryDate, props.scheduleId, entry, props.ritualHistory])
 
 
 
@@ -361,7 +314,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 
 
 	return (
-		<Dialog open={true} onClose={onClose}>
+		<Dialog open={true} onClose={props.onClose} fullWidth maxWidth="sm">
 
 			{/* Ritual Title */}
 			<DialogTitle>
@@ -385,7 +338,7 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 					<MenuItem
 						onClick={() => {
 							handleMenuClose();
-							setEditRitualDialogOpen(true);
+							setEditRitualDialogMenuOpen(true);
 						}}
 					>Edit</MenuItem>
 					<MenuItem
@@ -415,19 +368,16 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 
 			{/* Stop and Save Buttons */}
 			<DialogActions>
-				<Button onClick={handleStop} color="primary">
-					Stop
-				</Button>
 				<Button onClick={handleCompleteRitual} color="primary" variant="contained">
 					Complete
 				</Button>
 			</DialogActions>
 
-			{editRitualDialogOpen && (
+			{editRitualDialogMenuOpen && (
 				<EditRitualDialog
-					id={ritualId}
+					id={props.ritualId}
 					title={ritualTitle}
-					handleClose={() => setEditRitualDialogOpen(false)}
+					handleClose={() => setEditRitualDialogMenuOpen(false)}
 				/>
 			)}
 

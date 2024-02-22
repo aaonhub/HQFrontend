@@ -4,22 +4,25 @@ export type Status = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 export type Visibility = 'PRIVATE' | 'PUBLIC' | 'SHARED';
 
 class Schedule {
+    id: string;
     status: Status | null;
     visibility: Visibility | null;
     timeOfDay: string | null;
     startDate: string;
     endDate: string | null;
     timezone: string | null;
-    recurrenceRule: string | null;
+    recurrenceRule: string;
     exclusionDates: string;
     reminderBeforeEvent: string | null;
     description: string | null;
+    contentId: string;
     priority: number | null;
 
     constructor(
-        { status, visibility, timeOfDay, startDate, endDate, timezone, recurrenceRule, exclusionDates, reminderBeforeEvent, description, priority }:
-            { status: Status, visibility: Visibility, timeOfDay: string | null, startDate: string, endDate: string | null, timezone: string, recurrenceRule: string | null, exclusionDates: string, reminderBeforeEvent: string | null, description: string | null, priority: number }
+        { id, status, visibility, timeOfDay, startDate, endDate, timezone, recurrenceRule, exclusionDates, reminderBeforeEvent, description, contentId, priority }:
+            { id: string, status: Status, visibility: Visibility, timeOfDay: string | null, startDate: string, endDate: string | null, timezone: string, recurrenceRule: string, exclusionDates: string, reminderBeforeEvent: string | null, description: string | null, contentId: string, priority: number }
     ) {
+        this.id = id;
         this.status = status;
         this.visibility = visibility;
         this.timeOfDay = timeOfDay;
@@ -30,6 +33,7 @@ class Schedule {
         this.exclusionDates = exclusionDates;
         this.reminderBeforeEvent = reminderBeforeEvent;
         this.description = description;
+        this.contentId = contentId;
         this.priority = priority;
     }
 }

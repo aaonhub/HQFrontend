@@ -267,9 +267,8 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 
 			const ritualEntry: RitualEntry = {
 				ritualID: ritualId,
-				entryID: entry.entryID,
+				scheduleID: entry.scheduleID,
 				completedItems: newCheckedIds,
-				type: 'R',
 				startTime: entry.startTime,
 				completedTime: null,
 				status: updatedItems.every((ritualItem) => ritualItem.checked)

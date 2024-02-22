@@ -38,13 +38,13 @@ interface RitualDialogProps {
 	onClose: () => void
 	ritualId: string
 	entryDate?: string
-	entryID?: string
+	scheduleId?: string
 	ritualHistory?: RitualHistoryManager
 	setRitualHistory?: (ritualHistory: RitualHistoryManager) => void
 }
 
 
-const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate, entryID, ritualHistory, setRitualHistory }) => {
+const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate, scheduleId, ritualHistory, setRitualHistory }) => {
 	const { setDebugText } = useGlobalContext()!
 	const [ritualTitle, setRitualTitle] = useState('')
 	const [ritualItems, setRitualItems] = useState<RitualItem[]>([])
@@ -76,8 +76,8 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 			}
 
 			// Set entry
-			if (ritualHistory && entryDate && entryID) {
-				const entry1 = ritualHistory.getEntryById(entryDate, entryID)
+			if (ritualHistory && entryDate && scheduleId) {
+				const entry1 = ritualHistory.getEntryById(entryDate, scheduleId)
 				setEntry(entry1)
 
 				const updatedRitualItems = JSON.parse(data.ritual.ritualItems).map((ritualItem: any) => {
@@ -267,9 +267,8 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 
 			const ritualEntry: RitualEntry = {
 				ritualID: ritualId,
-				entryID: entry.entryID,
+				scheduleID: entry.scheduleID,
 				completedItems: newCheckedIds,
-				type: 'R',
 				startTime: entry.startTime,
 				completedTime: null,
 				status: updatedItems.every((ritualItem) => ritualItem.checked)
@@ -348,11 +347,11 @@ const RitualDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDat
 			{ title: 'Ritual Items', content: JSON.stringify(ritualItems, null, 2) },
 			{ title: 'Data', content: JSON.stringify(data, null, 2) },
 			{ title: 'Entry Date', content: entryDate },
-			{ title: 'Entry ID', content: entryID },
+			{ title: 'Schedule ID', content: scheduleId },
 			{ title: 'Entry', content: JSON.stringify(entry, null, 2) },
 			{ title: 'Ritual History', content: JSON.stringify(ritualHistory, null, 2) },
 		])
-	}, [data, ritualId, setDebugText, ritualTitle, ritualItems, entryDate, entryID, entry, ritualHistory])
+	}, [data, ritualId, setDebugText, ritualTitle, ritualItems, entryDate, scheduleId, entry, ritualHistory])
 
 
 

@@ -1,10 +1,9 @@
 import { gql } from '@apollo/client';
 import Schedule from './schedule';
-import { v4 as uuidv4 } from 'uuid';
 
 
 export interface IItem {
-	ritualID: string;
+	itemID: string; // ID for sorting and habit ID is stored as (H + ID)
 	title: string;
 	completed: boolean;
 }
@@ -17,9 +16,8 @@ export enum RitualStatus {
 
 export interface RitualEntry {
 	ritualID: string
-	entryID: string
+	scheduleID: string
 	completedItems: any[]
-	type: string
 	startTime: string | null
 	completedTime: Date | null
 	status: RitualStatus
@@ -30,7 +28,7 @@ interface RitualParams {
 	title: string;
 	habits: IItem[];
 	ritual_items: IItem[];
-	schedule: Schedule;
+	schedules: Schedule[];
 }
 
 export default class Ritual {
@@ -38,20 +36,20 @@ export default class Ritual {
 	public title: string;
 	public habits: IItem[];
 	public ritual_items: IItem[];
-	public schedule: Schedule;
+	public schedules: Schedule[];
 
 	constructor({
 		ritualID,
 		title,
 		habits,
 		ritual_items,
-		schedule
+		schedules
 	}: RitualParams) {
 		this.ritualID = ritualID;
 		this.title = title;
 		this.habits = habits;
 		this.ritual_items = ritual_items;
-		this.schedule = schedule;
+		this.schedules = schedules;
 	}
 }
 
@@ -78,9 +76,9 @@ export class RitualHistoryManager {
 		return result;
 	}
 
-	doesRitualEntryExist(date: string, ritualID: string, type: string): boolean {
+	doesRitualEntryExist(date: string, scheduleId: string): boolean {
 		const entries = this.ritualHistory[date]?.entries || [];
-		return entries.some(entry => entry.ritualID === ritualID && entry.type === type);
+		return entries.some(entry => entry.scheduleID === scheduleId);
 	}
 
 	getRitualsByCompletion(date: string): { completed: RitualEntry[], unstartedOrInProgress: RitualEntry[] } {
@@ -94,18 +92,17 @@ export class RitualHistoryManager {
 		};
 	}
 
-	addEntry(date: string, entry: RitualEntry): void {
+	addOrUpdateEntry(date: string, entry: RitualEntry): void {
 
+		// If there are no entries for this date, create a new entry
 		if (!this.ritualHistory[date]) {
 			this.ritualHistory[date] = { entries: [] };
 		}
 
+		// Add the entry to the entries array
 		const entries = this.ritualHistory[date].entries;
 
-		// Generate a short unique ID for the entry
-		entry.entryID = uuidv4();  // <-- Updated this
-
-		const index = entries.findIndex(e => e.ritualID === entry.ritualID && e.type === entry.type);
+		const index = entries.findIndex(e => e.ritualID === entry.ritualID);
 
 		if (index > -1) {
 			entries[index] = entry;
@@ -114,28 +111,12 @@ export class RitualHistoryManager {
 		}
 	}
 
-	updateEntry(date: string, entry: RitualEntry): void {
-		if (!this.ritualHistory[date]) {
-			console.error('No entries for this date');
-			return;
-		}
 
-		const entries = this.ritualHistory[date].entries;
-
-		const index = entries.findIndex(e => e.ritualID === entry.ritualID && e.entryID === entry.entryID);
-
-		if (index > -1) {
-			entries[index] = entry;
-		} else {
-			console.error('No entry with this ID found');
-		}
-	}
-
-	getEntryById(date: string, entryID: string): RitualEntry | null {
+	getEntryById(date: string, scheduleID: string): RitualEntry | null {
 		if (this.ritualHistory[date]) {
 			const entries = this.ritualHistory[date].entries;
 			for (let entry of entries) {
-				if (entry.entryID === entryID) {
+				if (entry.scheduleID === scheduleID) {
 					return entry;
 				}
 			}
@@ -155,10 +136,6 @@ export class RitualHistoryManager {
 		}
 	}
 
-	printRitualHistory(): void {
-		console.log(this.ritualHistory);
-	}
-
 	getRitualEntriesForDate(date: string): RitualEntry[] {
 		return this.ritualHistory[date]?.entries || [];
 	}
@@ -166,30 +143,29 @@ export class RitualHistoryManager {
 
 
 // Adds repeat rituals to the ritual history for the given date
-export function updateRitualHistoryWithRepeatRituals(
-	repeatRituals: Ritual[],
+export function generateRitualEntry(
 	ritualHistoryManager: RitualHistoryManager,
+	ritualId: string,
+	scheduleId: string,
 	date: string
 ): RitualEntry[] {
 
-	for (const repeatRitual of repeatRituals) {
-		// Use the new method to check if this repeat ritual is already in the history for today
-		const existsInHistory = ritualHistoryManager.doesRitualEntryExist(date, repeatRitual.ritualID, 'R');
+	// Use the new method to check if this repeat ritual is already in the history for today
+	const existsInHistory = ritualHistoryManager.doesRitualEntryExist(date, scheduleId);
 
-		if (!existsInHistory) {
-			// If not, add it as a new entry to the history
-			const newEntry: RitualEntry = {
-				ritualID: repeatRitual.ritualID,
-				entryID: '',  // Will be generated in the addEntry method
-				completedItems: [],  // Assuming you'll populate this later
-				type: 'R',  // Repeat schedule
-				startTime: null,
-				completedTime: null,  // Assuming you'll populate this later
-				status: RitualStatus.Unstarted  // Initially set to Unstarted
-			};
+	if (!existsInHistory) {
+		// If not, add it as a new entry to the history
+		const newEntry: RitualEntry = {
+			ritualID: ritualId,
+			scheduleID: scheduleId,
+			completedItems: [],
+			startTime: null,
+			completedTime: null,
+			status: RitualStatus.Unstarted
+		};
 
-			ritualHistoryManager.addEntry(date, newEntry);
-		}
+		ritualHistoryManager.addOrUpdateEntry(date, newEntry);
+
 	}
 
 	// Retrieve the updated RitualEntries for the given date and return

@@ -10,6 +10,7 @@ interface HabitManagerDialogProps {
 
 
 const HabitManagerDialog = ({ handleClose }: HabitManagerDialogProps) => {
+    
 
     const { data, loading, error, refetch } = useQuery(GET_ALL_HABITS, {
         fetchPolicy: "network-only",
@@ -50,6 +51,8 @@ const HabitManagerDialog = ({ handleClose }: HabitManagerDialogProps) => {
                     Cancel
                 </Button>
             </DialogActions>
+
+            
 
         </Dialog>
     )

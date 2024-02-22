@@ -14,16 +14,13 @@ import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
 import { habitToEvent, toDoItemToEvent } from '../Functions/ItineraryFunctions'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
-import { updateRitualHistoryWithRepeatRituals } from '../../../models/ritual'
+import { generateRitualEntry } from '../../../models/ritual'
 import { RitualHistoryManager } from '../../../models/ritual'
 import RitualDialog from '../../../components/RitualDialog'
 import Schedule from '../../../models/schedule'
 
 // Models
-import Habit from "../../../models/habit"
-import InboxItem from "../../../models/inboxitem"
-import Ritual from "../../../models/ritual"
-import SimpleItem, { habitsToSimpleItems, inboxItemsToSimpleItems, ritualsToSimpleItems } from "../../../models/simpleitem"
+import SimpleItem from "../../../models/simpleitem"
 
 // Queries 
 import { ITINERARY_QUERY } from '../../../models/inboxitem'
@@ -46,13 +43,12 @@ const ItineraryCard: React.FC = () => {
 	const [inputValue, setInputValue] = useState('')
 	const [uncompletedItems, setUncompletedItems] = useState<SimpleItem[]>([])
 	const [completedItems, setCompletedItems] = useState<SimpleItem[]>([])
-	const [simpleItems, setSimpleItems] = useState<any[]>([])
 	const [expanded, setExpanded] = useState(false)
 	const [selectedInboxItemId, setSelectedInboxItemId] = useState<string | null>(null)
 	const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null)
 	const [selectedRitualId, setSelectedRitualId] = useState<string | null>(null)
-	const [selectedEntryID, setSelectedEntryID] = useState<any>(null)
-	// const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
+	const [selectedScheduleId, setSelectedScheduleId] = useState<any>(null)
+	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [orderIds, setOrderIds] = useState<string[]>([])
 	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
 	const [events, setEvents] = useState<EventInput[] | []>([]);
@@ -68,81 +64,55 @@ const ItineraryCard: React.FC = () => {
 		},
 		onCompleted: (data) => {
 
-			// Set inbox items
-			const inboxItems = data.toDoItemsByStartDate.map((toDoItems: any) => {
-				return new InboxItem({
-					id: toDoItems.id,
+			const simpleItems: SimpleItem[] = [];
+
+			// Add inbox items
+			data.toDoItemsByStartDate.map((toDoItems: any) => {
+				simpleItems.push({
+					id: "i" + toDoItems.id,
+					itemId: toDoItems.id,
 					title: toDoItems.title,
-					description: toDoItems.description,
-					completed: toDoItems.completed,
-					project: toDoItems.project,
-					dueDateTime: toDoItems.dueDateTime,
-					startDate: toDoItems.startDate,
+					completedToday: toDoItems.completed,
+					type: 'inbox',
 					startTime: toDoItems.startTime,
-					timeCompleted: new Date(toDoItems.timeCompleted),
-					length: toDoItems.length,
 				});
 			});
 
-
-			// Set habit items
-			const habits = data.habitsDueToday.map((habit: any) => {
-
-				const schedule = new Schedule({
-					status: habit.schedules.status,
-					visibility: habit.schedules.visibility,
-					timeOfDay: habit.schedules.timeOfDay,
-					startDate: habit.schedules.startDate,
-					endDate: habit.schedules.endDate,
-					timezone: habit.schedules.timezone,
-					recurrenceRule: habit.schedules.recurrenceRule,
-					exclusionDates: habit.schedules.exclusionDates,
-					reminderBeforeEvent: habit.schedules.reminderBeforeEvent,
-					description: habit.schedules.description,
-					priority: habit.schedules.priority
-				})
-
-				return new Habit({
-					id: habit.id,
+			// Add habit items
+			data.habitsDueToday.map((habit: any) => {
+				simpleItems.push({
+					id: habit.id + "h",
+					itemId: habit.id,
 					title: habit.title,
-					active: habit.active,
-					length: habit.length,
-					schedule: schedule,
-					countToday: habit.countToday,
+					completedToday: habit.countToday > 0,
+					type: 'habit',
+					startTime: habit.schedules.timeOfDay,
 				});
 			})
 
 
-			// Set rituals
-			const rituals = data.rituals.map((ritual: any) => {
-				return new Ritual({
-					ritualID: ritual.id,
-					title: ritual.title,
-					habits: ritual.habits,
-					ritual_items: ritual.ritual_items,
-					schedule: ritual.schedule
-				});
-			})
 
 			// 3. Initialize and populate RitualHistoryManager
 			const updatedRitualHistory = ritualHistory
 			data.ritualHistory && data.ritualHistory.data &&
 				updatedRitualHistory.fromJson(data.ritualHistory.data)
 
-
 			// 4. Update state
 			setRitualHistory(updatedRitualHistory);
 
-			// 5. Update ritual history with repeat rituals
-			// Make sure that updateRitualHistoryWithRepeatRituals returns updated rituals
-			const updatedRituals = updateRitualHistoryWithRepeatRituals(rituals, ritualHistory, localDate);
 
-
-			// 6. Convert to simple items
-			const simpleRitualItems = ritualsToSimpleItems(updatedRituals, data.rituals)
-
-
-
+			// Set rituals
+			data.ritualSchedulesDueToday.map((schedule: any) => {
+				generateRitualEntry(ritualHistory, schedule.objectId, schedule.id, localDate);
+				simpleItems.push({
+					id: schedule.id,
+					itemId: schedule.objectId,
+					title: schedule.relatedObjectTitle,
+					completedToday: false,
+					type: 'ritual',
+					startTime: schedule.timeOfDay,
+				});
+			})
 
 
 			// Set order
@@ -152,17 +122,8 @@ const ItineraryCard: React.FC = () => {
 			setOrderIds(orderIds)
 
 
-			
-			// Combine the inbox items and habits into one array
-			const simpleHabitItems = habitsToSimpleItems(habits)
-			const simpleInboxItems = inboxItemsToSimpleItems(inboxItems)
 
-			const combinedArray = [...simpleInboxItems, ...simpleHabitItems, ...simpleRitualItems]
-			setSimpleItems(combinedArray)
-
-
-
-			const simpleItemArrayFiltered = combinedArray.filter((simpleItem: any) => {
+			const simpleItemArrayFiltered = simpleItems.filter((simpleItem: SimpleItem) => {
 				return !simpleItem.completedToday
 			})
 
@@ -188,7 +149,7 @@ const ItineraryCard: React.FC = () => {
 
 
 
-			const simpleItemArrayCompleted = combinedArray.filter((simpleItem: any) => {
+			const simpleItemArrayCompleted = simpleItems.filter((simpleItem: any) => {
 				return simpleItem.completedToday
 			})
 			setCompletedItems(simpleItemArrayCompleted)
@@ -197,10 +158,10 @@ const ItineraryCard: React.FC = () => {
 
 
 			// Calendar Stuff
-			const newInboxEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
-			const newHabitEvents = habits.map(habitToEvent).filter(Boolean)
-			const newEvents = [...newInboxEvents, ...newHabitEvents]
-			setEvents(newEvents)
+			// const newInboxEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
+			// const newHabitEvents = habits.map(habitToEvent).filter(Boolean)
+			// const newEvents = [...newInboxEvents, ...newHabitEvents]
+			// setEvents(newEvents)
 
 
 
@@ -488,7 +449,7 @@ const ItineraryCard: React.FC = () => {
 	}
 	const handleCloseRitual: any = () => {
 		setSelectedRitualId(null)
-		setSelectedEntryID(null)
+		setSelectedScheduleId(null)
 	}
 
 
@@ -496,36 +457,36 @@ const ItineraryCard: React.FC = () => {
 
 	// Notification Stuff
 	// Notification Request
-	// Notification.requestPermission().then(function (permission) {
-	// 	if (permission !== "granted") {
-	// 		console.error("Notification permission not granted.")
-	// 	}
-	// })
+	Notification.requestPermission().then(function (permission) {
+		if (permission !== "granted") {
+			console.error("Notification permission not granted.")
+		}
+	})
 
-	// // Use useEffect to schedule notifications for all tasks
-	// useEffect(() => {
-	// 	// Assuming 'habits' and 'inboxItems' are arrays of your tasks
-	// 	const scheduleNotification = (item: any) => {
-	// 		const now = new Date()
-	// 		const date = new Date() // today's date
-	// 		const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
-	// 		const taskTime = new Date(dateString + 'T' + item.startTime)
+	// Use useEffect to schedule notifications for all tasks
+	useEffect(() => {
+		// Assuming 'habits' and 'inboxItems' are arrays of your tasks
+		const scheduleNotification = (item: any) => {
+			const now = new Date()
+			const date = new Date() // today's date
+			const dateString = date.toISOString().split('T')[0] // get the date string in the format of "yyyy-mm-dd"
+			const taskTime = new Date(dateString + 'T' + item.startTime)
 
-	// 		if (taskTime > now && !scheduledNotifications[item.id]) {
-	// 			const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
-	// 			setTimeout(() => {
-	// 				new Notification(`Time to start item: ${item.title}`)
-	// 			}, delay)
-	// 			setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
-	// 		}
-	// 	}
+			if (taskTime > now && !scheduledNotifications[item.id]) {
+				const delay = taskTime.getTime() - now.getTime() // Convert dates to milliseconds before subtracting
+				setTimeout(() => {
+					new Notification(`Time to start item: ${item.title}`)
+				}, delay)
+				setScheduledNotifications(prevState => ({ ...prevState, [item.id]: true }))
+			}
+		}
 
-	// 	if (Notification.permission !== "granted") {
-	// 		console.error("Notification permission not granted.")
-	// 	} else {
-	// 		uncompletedItems.forEach(scheduleNotification)
-	// 	}
-	// }, [uncompletedItems, scheduledNotifications])
+		if (Notification.permission !== "granted") {
+			console.error("Notification permission not granted.")
+		} else {
+			uncompletedItems.forEach(scheduleNotification)
+		}
+	}, [uncompletedItems, scheduledNotifications])
 
 
 
@@ -572,7 +533,7 @@ const ItineraryCard: React.FC = () => {
 						setSelectedInboxItemId={setSelectedInboxItemId}
 						setSelectedHabitId={setSelectedHabitId}
 						setSelectedRitualId={setSelectedRitualId}
-						setSelectedEntryID={setSelectedEntryID}
+						setSelectedScheduleId={setSelectedScheduleId}
 						handleCheckItem={handleCheckItem}
 					/>
 				) : (
@@ -606,7 +567,7 @@ const ItineraryCard: React.FC = () => {
 									setSelectedInboxItemId={setSelectedInboxItemId}
 									setSelectedHabitId={setSelectedHabitId}
 									setSelectedRitualId={setSelectedRitualId}
-									setSelectedEntryID={setSelectedEntryID}
+									setSelectedScheduleId={setSelectedScheduleId}
 									handleCheckItem={handleCheckItem}
 								/>
 							) : (
@@ -628,7 +589,7 @@ const ItineraryCard: React.FC = () => {
 				<RitualDialog
 					onClose={handleCloseRitual}
 					ritualId={selectedRitualId}
-					entryID={selectedEntryID}
+					scheduleId={selectedScheduleId}
 					entryDate={getCurrentLocalDate()}
 					ritualHistory={ritualHistory}
 					setRitualHistory={setRitualHistory}

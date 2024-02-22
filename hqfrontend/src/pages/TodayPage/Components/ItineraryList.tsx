@@ -19,12 +19,12 @@ interface ItineraryListProps {
 	setSelectedInboxItemId: any
 	setSelectedHabitId: any
 	setSelectedRitualId: any
-	setSelectedEntryID: any
+	setSelectedScheduleId: any
 	handleCheckItem: any
 }
 
 
-const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelectedInboxItemId, setSelectedHabitId, setSelectedRitualId, setSelectedEntryID, handleCheckItem }) => {
+const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelectedInboxItemId, setSelectedHabitId, setSelectedRitualId, setSelectedScheduleId, handleCheckItem }) => {
 	const [id] = useState(uuidv4());
 
 	const theme = useTheme();
@@ -138,15 +138,15 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 									key={item.id}
 									disablePadding
 									onClick={() => {
-										if ("i" === item.id.slice(-1)) {
-											setSelectedInboxItemId(item.id.slice(0, -1))
+										if (item.type === "inbox") {
+											setSelectedInboxItemId(item.itemId)
 										}
-										if ("h" === item.id.slice(-1)) {
-											setSelectedHabitId(item.id.slice(0, -1))
+										if (item.type === "habit") {
+											setSelectedHabitId(item.itemId)
 										}
 										if (item.type === "ritual") {
-											setSelectedRitualId(item.ritualID)
-											setSelectedEntryID(item.id.slice(0, -1))
+											setSelectedRitualId(item.itemId)
+											setSelectedScheduleId(item.id)
 										}
 									}}
 									sx={{

@@ -82,14 +82,44 @@ export const ITINERARY_QUERY = gql`
 				priority
 			}
 		}
-		rituals{
+		ritualsDueToday(date: $Today) {
 			id
 			title
+			schedules {
+				id
+				status
+				visibility
+				timeOfDay
+				startDate
+				endDate
+				timezone
+				recurrenceRule
+				exclusionDates
+				reminderBeforeEvent
+				description
+				priority
+			}
 		}
 		ritualHistory(yearMonth: $YearMonth){
 			id
 			yearMonth
 			data
+		}
+		ritualSchedulesDueToday(date: $Today) {
+			id
+			status
+			visibility
+			timeOfDay
+			startDate
+			endDate
+			timezone
+			recurrenceRule
+			exclusionDates
+			reminderBeforeEvent
+			description
+			relatedObjectTitle
+			objectId
+			priority
 		}
 		settings{
 			id

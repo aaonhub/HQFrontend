@@ -103,11 +103,12 @@ const ItineraryCard: React.FC = () => {
 			// Set rituals
 			data.ritualSchedulesDueToday.map((schedule: any) => {
 				generateRitualEntry(ritualHistory, schedule.objectId, schedule.id, localDate);
+				const entry = ritualHistory.getEntryById(localDate, schedule.id)
 				simpleItems.push({
 					id: schedule.id,
 					itemId: schedule.objectId,
 					title: schedule.relatedObjectTitle,
-					completedToday: false,
+					completedToday: entry?.status === 'Completed',
 					type: 'ritual',
 					startTime: schedule.timeOfDay,
 				});
@@ -447,6 +448,7 @@ const ItineraryCard: React.FC = () => {
 	const handleCloseRitual: any = () => {
 		setSelectedRitualId(null)
 		setSelectedScheduleId(null)
+		refetch()
 	}
 
 

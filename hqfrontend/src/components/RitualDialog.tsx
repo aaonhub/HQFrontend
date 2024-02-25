@@ -73,18 +73,20 @@ const RitualDialog: React.FC<RitualDialogProps> = (props: RitualDialogProps) => 
 
 	// Get ritual data
 	const { loading, error, data } = useQuery(GET_RITUAL, {
-		variables: { id: props.ritualId, yearMonth: props.entryDate.slice(0, 7) },
+		variables: { id: props.ritualId },
 		onCompleted: (data) => {
 			// Set title
 			setRitualTitle(data.ritual.title)
 
-			// Look for entry in ritual history
-			const entry1 = props.ritualHistory.getEntryById(props.entryDate, props.scheduleId)
+			let entry1: RitualEntry | null = null
 
 			// If entry exists, set it
-			if (entry1) {
-				setEntry(entry1)
-				setCheckedIds(entry1.completedItems)
+			if (props.entryDate && props.ritualHistory && props.scheduleId) {
+				entry1 = props.ritualHistory.getEntryById(props.entryDate, props.scheduleId)
+				if (entry1) {
+					setEntry(entry1)
+					setCheckedIds(entry1.completedItems)
+				}
 			}
 			// Otherwise create it
 			else {
@@ -96,6 +98,8 @@ const RitualDialog: React.FC<RitualDialogProps> = (props: RitualDialogProps) => 
 					completedTime: null,
 					status: RitualStatus.Unstarted
 				};
+
+				entry1 = ritualEntry
 
 				ritualHistoryManager.addOrUpdateEntry(props.entryDate, ritualEntry);  // Changed this line to use updateEntry
 				setEntry(ritualEntry)
@@ -265,7 +269,9 @@ const RitualDialog: React.FC<RitualDialogProps> = (props: RitualDialogProps) => 
 		}
 
 		// Update ritual history
-		handleUpdateRitualHistory()
+		if (props.scheduleId) {
+			handleUpdateRitualHistory()
+		}
 	};
 
 

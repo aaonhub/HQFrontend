@@ -12,12 +12,10 @@ import { useGlobalContext } from '../../App/GlobalContextProvider'
 import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
 import EditHabitDialog from '../../../components/EditHabitDialog'
-import { habitToEvent, toDoItemToEvent } from '../Functions/ItineraryFunctions'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
 import { generateRitualEntry } from '../../../models/ritual'
 import { RitualHistoryManager } from '../../../models/ritual'
 import RitualDialog from '../../../components/RitualDialog'
-import Schedule from '../../../models/schedule'
 
 // Models
 import SimpleItem from "../../../models/simpleitem"
@@ -51,6 +49,8 @@ const ItineraryCard: React.FC = () => {
 	const [scheduledNotifications, setScheduledNotifications] = useState<Record<string, boolean>>({})
 	const [ritualHistory, setRitualHistory] = useState<RitualHistoryManager>(new RitualHistoryManager())
 	const [events, setEvents] = useState<EventInput[] | []>([]);
+	const [prevUncompletedItems, setPrevUncompletedItems] = useState<SimpleItem[]>([]);
+
 	const localDate = getCurrentLocalDate()
 
 
@@ -62,6 +62,7 @@ const ItineraryCard: React.FC = () => {
 			YearMonth: localDate.slice(0, 7),
 		},
 		onCompleted: (data) => {
+			console.log(localDate)
 
 			const simpleItems: SimpleItem[] = [];
 
@@ -212,7 +213,6 @@ const ItineraryCard: React.FC = () => {
 
 	// Update Order
 	const [updateItineraryOrder] = useMutation(UPDATE_SETTINGS)
-	const [prevUncompletedItems, setPrevUncompletedItems] = useState<SimpleItem[]>([]);
 
 	useEffect(() => {
 		if (uncompletedItems.length > 0 && !isEqual(uncompletedItems, prevUncompletedItems)) {

@@ -62,7 +62,6 @@ const ItineraryCard: React.FC = () => {
 			YearMonth: localDate.slice(0, 7),
 		},
 		onCompleted: (data) => {
-			console.log(localDate)
 
 			const simpleItems: SimpleItem[] = [];
 

@@ -44,7 +44,6 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 		},
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			console.log(data)
 			const scheduleData = data.ritual.schedules[0];
 			setValue('timeOfDay', scheduleData.timeOfDay || '');
 			setValue('description', scheduleData.description || '');

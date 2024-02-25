@@ -10,7 +10,7 @@ const RitualPage = () => {
 	useEffect(() => {
 		document.title = "Rituals - HQ";
 	}, []);
-	
+
 	const [open, setOpen] = useState(false)
 	const [openRitualDialog, setOpenRitualDialog] = useState(false)
 	const [selectedRitual, setSelectedRitual] = useState('')
@@ -51,7 +51,7 @@ const RitualPage = () => {
 
 			{/* Dialog */}
 			{open && <NewRitualDialog open={open} onClose={() => { setOpen(false); refetch() }} />}
-			{selectedRitual && <RitualDialog onClose={() => { setOpenRitualDialog(false); refetch(); setSelectedRitual('') }} ritualId={selectedRitual} />}
+			<RitualDialog ritualId={selectedRitual} />
 		</Box>
 	)
 }

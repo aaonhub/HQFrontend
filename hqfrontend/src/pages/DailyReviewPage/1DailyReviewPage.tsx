@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import './DailyReviewPage.css'
 import { Container, Typography, Grid } from '@mui/material'
 import { useQuery } from '@apollo/client'
 

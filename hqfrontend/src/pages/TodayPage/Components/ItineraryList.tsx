@@ -161,7 +161,6 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 										style={{
 											width: 5,
 											height: '100%',
-											backgroundColor: "black",
 											marginRight: 1,
 										}}
 									/>

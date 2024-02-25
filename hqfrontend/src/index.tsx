@@ -5,6 +5,7 @@ import App from './pages/App/App';
 import { ApolloClient, InMemoryCache, from, ApolloProvider, HttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { GlobalContextProvider } from './pages/App/GlobalContextProvider';
+import { NextUIProvider } from "@nextui-org/react";
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
 	if (graphQLErrors)
@@ -42,7 +43,11 @@ root.render(
 	<ApolloProvider client={client}>
 		<React.StrictMode>
 			<GlobalContextProvider>
-				<App />
+				<NextUIProvider>
+					<main className="dark text-foreground bg-background">
+						<App />
+					</main>
+				</NextUIProvider>
 			</GlobalContextProvider>
 		</React.StrictMode>
 	</ApolloProvider >

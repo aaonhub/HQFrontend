@@ -71,7 +71,6 @@ const ProjectToDoItem = ((props: ProjectToDoItemProps) => {
 				disablePadding
 				style={{
 					marginBottom: 4,
-					backgroundColor: "black",
 				}}
 			>
 				<ListItemButton role={undefined} dense>

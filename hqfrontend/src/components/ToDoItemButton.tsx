@@ -35,7 +35,6 @@ const ToDoItemButton = (props: ToDoItemButtonProps) => {
                 style={{
                     width: 5,
                     height: '100%',
-                    backgroundColor: "black",
                     marginRight: 1,
                 }}
             />

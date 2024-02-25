@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Box, CssBaseline, Snackbar } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import ThemeProvider from '../SettingsPage/ThemeContext'
 import Sidebar from './Sidebar'
-import './App.css'
 
 // Globals
 import { useGlobalContext } from '../App/GlobalContextProvider';
@@ -123,46 +121,44 @@ function App(): JSX.Element {
 
 
 	return (
-		<ThemeProvider>
-			<Router>
-				<Box sx={{ display: 'flex', overflow: 'hidden' }}>
-					<CssBaseline />
+		<Router>
+			<Box sx={{ display: 'flex', overflow: 'hidden' }}>
+				<CssBaseline />
 
-					{/* Sidebar */}
-					<Box sx={{
-						width: '240px', // Specify a fixed width for the sidebar
-						transition: 'width 0.2s',
-						flexShrink: 0, // Prevents the sidebar from shrinking
-						height: '100vh', // Make the sidebar full height
-						position: 'fixed', // Fix sidebar's position relative to the viewport
-					}}>
-						<Sidebar />
-					</Box>
-
-					{/* Content */}
-					<Box sx={{
-						flexGrow: 1,
-						flexShrink: 1,
-						overflow: 'auto',
-						paddingLeft: '240px', // Ensure this matches the sidebar's width
-						width: `calc(100% - 240px)`,
-					}}> {/* Add overflow: 'auto' */}
-						<Box sx={{ p: 3 }}>
-							<ContentRoutes />	
-						</Box>
-					</Box>
-
-					{/* Snackbar */}
-					<SnackbarComponent />
-
-					{/* Constant Input at Bottom */}
-					{showCommandLine &&
-						<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
-					}
+				{/* Sidebar */}
+				<Box sx={{
+					width: '240px', // Specify a fixed width for the sidebar
+					transition: 'width 0.2s',
+					flexShrink: 0, // Prevents the sidebar from shrinking
+					height: '100vh', // Make the sidebar full height
+					position: 'fixed', // Fix sidebar's position relative to the viewport
+				}}>
+					<Sidebar />
 				</Box>
-				{debugPanelVisible && <DebugPanel />}
-			</Router>
-		</ThemeProvider>
+
+				{/* Content */}
+				<Box sx={{
+					flexGrow: 1,
+					flexShrink: 1,
+					overflow: 'auto',
+					paddingLeft: '240px', // Ensure this matches the sidebar's width
+					width: `calc(100% - 240px)`,
+				}}> {/* Add overflow: 'auto' */}
+					<Box sx={{ p: 3 }}>
+						<ContentRoutes />
+					</Box>
+				</Box>
+
+				{/* Snackbar */}
+				<SnackbarComponent />
+
+				{/* Constant Input at Bottom */}
+				{showCommandLine &&
+					<CommandLine setShowCommandLine={setShowCommandLine} commandInputRef={commandInputRef} />
+				}
+			</Box>
+			{debugPanelVisible && <DebugPanel />}
+		</Router>
 	);
 
 }

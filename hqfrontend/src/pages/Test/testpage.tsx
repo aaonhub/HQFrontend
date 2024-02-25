@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Box, Button, Container, Divider, } from '@mui/material';
+import { Box, Container, Divider, } from '@mui/material';
 
 import ReactDNDTest from './TestFiles/ReactDNDTest';
 import SortableList from './TestFiles/SortableList';
 import DraggableTest from './TestFiles/DraggableTest';
 import BingoBoard from './TestFiles/BingoBoard';
+import {Button, ButtonGroup} from "@nextui-org/react";
 
 
 const Test = () => {

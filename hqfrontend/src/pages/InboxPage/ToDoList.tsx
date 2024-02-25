@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
 import {
 	Box, Card, CardContent,

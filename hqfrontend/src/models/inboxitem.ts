@@ -348,6 +348,34 @@ export const UPDATE_TODO = gql`
 	}
 `;
 
+export const UPDATE_TODO_TIME = gql`
+	mutation updateToDoTime($ID: ID!, $Completed: Boolean!) {
+		updateToDoItem(
+			completed: $Completed, 
+			id: $ID,
+			length: $Length,
+			startTime: $StartTime
+		) {
+			toDoItem {
+				id
+				title
+				completed
+				project {
+					id
+					codename
+				}
+				dueDateTime
+				description
+				startDate
+				startTime
+				timeCompleted
+				length
+				masterList
+			}
+		}
+	}
+`;
+
 export const DELETE_TODO = gql`
 	mutation deleteToDoItem($id: ID!) {
 		deleteToDoItem(id: $id) {

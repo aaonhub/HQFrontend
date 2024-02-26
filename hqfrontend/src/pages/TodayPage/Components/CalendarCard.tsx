@@ -4,7 +4,7 @@ import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import { getHourBeforeCurrentTime } from '../Functions/ItineraryFunctions'
 
 // Mutations
-import { UPDATE_TODO } from '../../../models/inboxitem'
+import { UPDATE_TODO, UPDATE_TODO_TIME } from '../../../models/inboxitem'
 
 // Full Calendar
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -69,7 +69,7 @@ const CalendarCard = (props: CalendarCardProps) => {
 
 
     // Calendar Stuff
-    const [updateInboxItem] = useMutation(UPDATE_TODO)
+    const [updateInboxItem] = useMutation(UPDATE_TODO_TIME)
 
     // Calendar Logic
     // const handleEventChange = debounce((changeInfo) => {

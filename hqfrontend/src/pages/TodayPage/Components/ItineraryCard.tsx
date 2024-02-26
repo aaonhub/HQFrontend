@@ -15,7 +15,7 @@ import EditHabitDialog from '../../../components/EditHabitDialog'
 import { sortObjectsByIds } from '../../../components/MiscFunctions'
 import { generateRitualEntry } from '../../../models/ritual'
 import { RitualHistoryManager } from '../../../models/ritual'
-import RitualDialog from '../../../components/RitualDialog'
+import TodayRitualDialog from './TodayRitualDialog'
 
 // Models
 import SimpleItem from "../../../models/simpleitem"
@@ -584,14 +584,15 @@ const ItineraryCard: React.FC = () => {
 			{selectedInboxItemId && <EditInboxItemDialog handleClose={handleCloseInbox} inboxItemId={selectedInboxItemId} />}
 			{selectedHabitId && <EditHabitDialog onClose={handleCloseHabit} habitId={selectedHabitId} />}
 			{selectedRitualId &&
-				<RitualDialog
+				<TodayRitualDialog
 					onClose={handleCloseRitual}
 					ritualId={selectedRitualId}
-					scheduleId={selectedScheduleId}
 					entryDate={getCurrentLocalDate()}
+					scheduleId={selectedScheduleId}
 					ritualHistory={ritualHistory}
 					setRitualHistory={setRitualHistory}
-				/>}
+				/>
+			}
 
 
 		</Card>

@@ -5,7 +5,7 @@ import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import { Controller, useForm } from 'react-hook-form'
 
 // Qureries and mutations
-import { EDIT_RITUAL_DIALOG_QUERY, UPDATE_RITUAL } from '../models/ritual'
+import { DELETE_RITUAL, EDIT_RITUAL_DIALOG_QUERY, UPDATE_RITUAL } from '../models/ritual'
 import { GET_RITUAL } from '../models/ritual'
 import { getCurrentLocalDate } from './DateFunctions'
 import { UPDATE_SCHEDULE } from '../models/schedule'
@@ -88,6 +88,19 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 
 
 	const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+
+	const [deleteRitual] = useMutation(DELETE_RITUAL);
+	const handleDelete = () => {
+		deleteRitual({
+			variables: {
+				ritualId: props.id,
+			},
+			onCompleted: () => {
+				props.handleClose();
+			},
+		});
+	};
 
 
 	const [updateRitual] = useMutation(UPDATE_RITUAL, {

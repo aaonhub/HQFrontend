@@ -16,7 +16,7 @@ export enum RitualStatus {
 
 export interface RitualEntry {
 	ritualID: string
-	scheduleID: string
+	scheduleID?: string
 	completedItems: any[]
 	startTime: string | null
 	completedTime: Date | null
@@ -306,7 +306,7 @@ export const CREATE_RITUAL = gql`
 `;
 
 export const UPDATE_RITUAL = gql`
-	mutation ($id: ID!, $title: String, $habits: [ID], $ritualItems: String, $inProgress: Boolean, $checkedItems: String) {
+	mutation ($id: ID!, $title: String, $habits: [ID], $ritualItems: JSONString, $inProgress: Boolean, $checkedItems: JSONString) {
 		updateRitual(id: $id, title: $title, habits: $habits, ritualItems: $ritualItems, inProgress: $inProgress checkedItems: $checkedItems) {
 			ritual {
 				id

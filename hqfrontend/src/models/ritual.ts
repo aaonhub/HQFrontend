@@ -187,7 +187,7 @@ export const GET_RITUALS = gql`
 `;
 
 export const EDIT_RITUAL_DIALOG_QUERY = gql`
-	query Ritual($id: ID! $yearMonth: String!){
+	query Ritual($id: ID!){
 		ritual(id: $id) {
 			id
 			title
@@ -211,11 +211,6 @@ export const EDIT_RITUAL_DIALOG_QUERY = gql`
 				description
 				priority
 			}
-		}
-		ritualHistory(yearMonth: $yearMonth){
-			id
-			yearMonth
-			data
 		}
 	}
 `;

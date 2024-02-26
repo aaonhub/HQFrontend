@@ -3,16 +3,19 @@ import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Di
 import { useMutation, useQuery } from '@apollo/client'
 import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import { Controller, useForm } from 'react-hook-form'
+import { getCurrentLocalDate } from './DateFunctions'
 
 // Qureries and mutations
 import { DELETE_RITUAL, EDIT_RITUAL_DIALOG_QUERY, UPDATE_RITUAL } from '../models/ritual'
 import { GET_RITUAL } from '../models/ritual'
-import { getCurrentLocalDate } from './DateFunctions'
 import { UPDATE_SCHEDULE } from '../models/schedule'
 
 
 interface IFormInput {
 	title: string;
+	ritualItems: string;
+
+	// Schedule
 	id: string;
 	repeat: string;
 	schedule: string;
@@ -21,7 +24,7 @@ interface IFormInput {
 	reminderBeforeEvent: string;
 	description: string;
 	objectId: string;
-	selectedDays: { [key: string]: boolean }; // Added for day selection
+	selectedDays: { [key: string]: boolean };
 }
 
 interface EditRitualDialogProps {
@@ -44,6 +47,9 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 		},
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
+			setValue('title', data.ritual.title);
+			console.log(data.ritual.title)
+
 			const scheduleData = data.ritual.schedules[0];
 			setValue('timeOfDay', scheduleData.timeOfDay || '');
 			setValue('description', scheduleData.description || '');
@@ -125,6 +131,7 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 			variables: {
 				id: props.id,
 				title: watch('title'),
+				checkedItems: data.ritual.checkedItems,
 			},
 			onCompleted: () => setRitualUpdated(true),
 		});
@@ -210,6 +217,7 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 								defaultValue=""
 								render={({ field }) => (
 									<TextField
+										{...field}
 										margin="dense"
 										id="title"
 										label="Ritual Title"

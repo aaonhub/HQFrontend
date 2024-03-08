@@ -35,11 +35,11 @@ const HabitsPage: React.FC = () => {
 		variables: { today: today, },
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
-			console.log(data)
 			const habits = data.habitsDueToday.map((habit: any) => {
 
 				// Create Schedule
 				const schedule = new Schedule({
+					id: habit.schedules.id,
 					status: habit.schedules.status,
 					visibility: habit.schedules.visibility,
 					timeOfDay: habit.schedules.timeOfDay,
@@ -50,6 +50,7 @@ const HabitsPage: React.FC = () => {
 					exclusionDates: habit.schedules.exclusionDates,
 					reminderBeforeEvent: habit.schedules.reminderBeforeEvent,
 					description: habit.schedules.description,
+					contentId: habit.schedules.contentId,
 					priority: habit.schedules.priority
 				})
 

@@ -32,16 +32,18 @@ export function createEmptyHabit(): Habit {
 		active: false,
 		length: '',
 		schedule: new Schedule({
+			id: '',
 			status: 'ACTIVE', // Assuming 'ACTIVE' as a default value
 			visibility: 'PRIVATE', // Assuming 'PRIVATE' as a default value
 			timeOfDay: null,
 			startDate: '',
 			endDate: null,
 			timezone: '', // You might want to set a default timezone
-			recurrenceRule: null,
+			recurrenceRule: '',
 			exclusionDates: '',
 			reminderBeforeEvent: null,
 			description: null,
+			contentId: '',
 			priority: 0, // Assuming a neutral priority
 		}),
 		countToday: 0,

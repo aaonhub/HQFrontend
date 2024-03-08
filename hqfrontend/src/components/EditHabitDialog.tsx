@@ -38,6 +38,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 			// Create Schedule
 			const schedule = new Schedule({
+				id: habit.schedules[0].id,
 				status: habit.schedules[0].status,
 				visibility: habit.schedules[0].visibility,
 				timeOfDay: habit.schedules[0].timeOfDay,
@@ -48,6 +49,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 				exclusionDates: habit.schedules[0].exclusionDates,
 				reminderBeforeEvent: habit.schedules[0].reminderBeforeEvent,
 				description: habit.schedules[0].description,
+				contentId: habit.schedules[0].contentId,
 				priority: habit.schedules[0].priority,
 			})
 
@@ -62,7 +64,8 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 			})
 
 			setNewHabit(newHabit)
-		}
+		},
+		onError: (error) => console.log(error.networkError),
 	});
 
 
@@ -132,6 +135,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 
 
 	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error</p>;
 
 
 	return (

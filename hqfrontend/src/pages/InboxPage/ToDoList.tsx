@@ -1,18 +1,22 @@
 import React, { useState, useCallback } from 'react';
 import './ToDoList.css';
 import { useQuery, useMutation } from '@apollo/client';
-import {
-	Box, Card, CardContent,
-	IconButton, Fab, Typography,
-	TextField, CardActions, Grid
-} from '@mui/material';
+
+import Typography from '@mui/joy/Typography';
+import IconButton from '@mui/joy/IconButton';
+import Grid from '@mui/joy/Grid';
+import CardContent from '@mui/joy/CardContent';
+import Card from '@mui/joy/Card';
+import Input from '@mui/joy/Input';
+import Box from '@mui/joy/Box';
 import Masonry from '@mui/lab/Masonry';
+import CardActions from '@mui/joy/CardActions';
+import Button from '@mui/joy/Button';
 
 // Icons
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 
 // Components
 import EditInboxItemDialog from '../../components/EditToDoItemDialog';
@@ -74,7 +78,7 @@ const ToDoList: React.FC = () => {
 		onError: (error) => console.log(error.networkError),
 		refetchQueries: [{ query: GET_INBOX_TODOS }],
 	});
-	const handleDelete = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+	const handleDelete = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
 		event.stopPropagation();
 		deleteTodo({
 			variables: { id },
@@ -90,7 +94,7 @@ const ToDoList: React.FC = () => {
 		refetchQueries: [{ query: GET_INBOX_TODOS }],
 		onError: (error) => console.log(error.networkError),
 	});
-	const handleComplete = (event: React.MouseEvent<HTMLButtonElement>, toDoItem: InboxItem) => {
+	const handleComplete = (event: React.MouseEvent<HTMLAnchorElement>, toDoItem: InboxItem) => {
 		event.stopPropagation();
 		completeTodo({
 			variables: {
@@ -133,19 +137,21 @@ const ToDoList: React.FC = () => {
 				onSubmit={handleSubmit}
 				sx={{ width: "100%", display: "flex", justifyContent: "left" }}
 			>
-				<TextField
+				<Input
 					id="outlined-basic"
-					label="Add To Do"
+					placeholder="Add To Do"
 					variant="outlined"
 					value={newTodo}
 					onChange={handleInputChange}
-					sx={{ margin: 1, width: "80%" }}
+					sx={{
+						margin: 1,
+						width: "100%",
+						"--Input-minHeight": "50px"
+					}}
 					autoComplete="off"
 					type='search'
+					endDecorator={<Button type="submit" color="primary">Add</Button>}
 				/>
-				<Fab color="primary" aria-label="add" type="submit" sx={{ margin: 1 }}>
-					<AddIcon />
-				</Fab>
 			</Box>
 
 
@@ -161,25 +167,31 @@ const ToDoList: React.FC = () => {
 						<CardContent sx={{
 							overflow: 'hidden',
 							maxHeight: 250,
-							paddingBottom: '40px',
-							marginBottom: '64px'
 						}}>
 							<Typography component="div" sx={{ wordWrap: 'break-word' }}>
 								{item.title}
 							</Typography>
 
-							<Typography variant="body2" color="text.secondary">
+							<Typography level="body-sm" color="primary">
 								{item.description}
 							</Typography>
 						</CardContent>
 
-						<CardActions className="card-actions" sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+						<CardActions>
 
 							<IconButton onClick={(event) => handleComplete(event, item)}>
 								{item.completed ? <CheckIcon /> : <CloseIcon />}
 							</IconButton>
 
-							<IconButton onClick={(event) => handleDelete(event, item.id)}>
+							<IconButton
+								className="delete-button"
+								onClick={(event) => handleDelete(event, item.id)}
+								sx={{
+									'&:hover': {
+										color: 'red',
+									},
+								}}
+							>
 								<DeleteIcon />
 							</IconButton>
 

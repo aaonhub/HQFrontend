@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
-import { Box, Typography, TextField, List, Container } from '@mui/material'
+import { Box, Typography, TextField, Container } from '@mui/material'
 import { ReactSortable, SortableEvent } from "react-sortablejs"
+import List from '@mui/joy/List';
 
 // Components
 import EditInboxItemDialog from '../../components/EditToDoItemDialog'
@@ -21,7 +22,6 @@ import {
 import {
 	CHECK_UNCHECK_TODO,
 } from '../../models/inboxitem'
-import { ADD_LOG } from '../../models/log'
 
 // Models
 import Project from '../../models/project'
@@ -193,7 +193,6 @@ const ProjectPage = () => {
 
 
 
-
 	// Edit to do item
 	const handleClose = () => {
 		setSelectedInboxItem(undefined)
@@ -202,14 +201,11 @@ const ProjectPage = () => {
 
 
 
-
-
-
 	if (loading) { return <div>Loading...</div> }
 	if (error) { return <div>Error! {error.message}</div> }
 
 	return (
-		<Container maxWidth="xl">
+		<Container>
 
 			{/* Title */}
 			<Box sx={{ display: 'flex', marginBottom: 2 }}>
@@ -261,7 +257,7 @@ const ProjectPage = () => {
 						onEnd={handleProjectItemOrderChangeComplete}
 					>
 						{projectItemArray.map((toDoItem) =>
-							<ContextMenuTrigger>
+							<ContextMenuTrigger key={toDoItem.id}>
 								<ProjectToDoItem
 									toDoItem={toDoItem}
 									handleCheck={handleCheck}
@@ -288,7 +284,7 @@ const ProjectPage = () => {
 						Reload
 					</ContextMenuItem>
 				</ContextMenuContent>
-				
+
 			</ContextMenu>
 
 

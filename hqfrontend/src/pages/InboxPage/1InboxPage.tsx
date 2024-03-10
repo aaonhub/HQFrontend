@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
-import { Container, Typography, Box, Paper, useTheme } from '@mui/material';
+import { Container, Typography, Paper, useTheme } from '@mui/material';
+import Box from '@mui/joy/Box';
+
 
 // Components
 import ToDoList from './ToDoList';

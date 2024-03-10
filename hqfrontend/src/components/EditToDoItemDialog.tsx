@@ -5,7 +5,6 @@ import {
 	DialogContent,
 	DialogTitle,
 	TextField,
-	Button,
 	Box,
 	Checkbox,
 	FormControlLabel,
@@ -15,6 +14,8 @@ import {
 	InputLabel,
 	Grid
 } from "@mui/material"
+import Button from '@mui/joy/Button';
+import ButtonGroup from '@mui/joy/ButtonGroup';
 import { useMutation, useQuery } from "@apollo/client"
 
 // Components
@@ -439,18 +440,21 @@ const EditInboxItemDialog = React.memo(({ handleClose, inboxItemId }: ProjectToD
 			</DialogContent>
 
 			<DialogActions>
-				<Button onClick={() => handleDelete()} color="error">
-					Delete
-				</Button>
-				<Button onClick={() => handleClose()} color="primary">
-					Cancel
-				</Button>
-				<Button onClick={() => handleSave()} color="primary">
-					Save
-				</Button>
-			</DialogActions>
 
-		</Dialog>
+				<ButtonGroup>
+					<Button onClick={() => handleDelete()} color="danger">
+						Delete
+					</Button>
+					<Button onClick={() => handleClose()} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={() => handleSave()} color="primary">
+						Save
+					</Button>
+				</ButtonGroup>
+			</DialogActions >
+
+		</Dialog >
 	)
 })
 

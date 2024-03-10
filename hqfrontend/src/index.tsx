@@ -5,6 +5,16 @@ import App from './pages/App/App';
 import { ApolloClient, InMemoryCache, from, ApolloProvider, HttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { GlobalContextProvider } from './pages/App/GlobalContextProvider';
+import '@fontsource/inter';
+import {
+	experimental_extendTheme as materialExtendTheme,
+	Experimental_CssVarsProvider as MaterialCssVarsProvider,
+	THEME_ID as MATERIAL_THEME_ID,
+} from '@mui/material/styles';
+import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const materialTheme = materialExtendTheme();
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
 	if (graphQLErrors)
@@ -42,7 +52,12 @@ root.render(
 	<ApolloProvider client={client}>
 		<React.StrictMode>
 			<GlobalContextProvider>
-				<App />
+				<MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode="dark">
+					<JoyCssVarsProvider defaultMode="dark">
+						<CssBaseline enableColorScheme />
+						<App />
+					</JoyCssVarsProvider>
+				</MaterialCssVarsProvider>
 			</GlobalContextProvider>
 		</React.StrictMode>
 	</ApolloProvider >

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { ThemeContext } from './ThemeContext';
+// import { ThemeContext } from './ThemeContext';
 import { FormControl, InputLabel, MenuItem, Select, TextField, Box, Typography, Button, Divider } from '@mui/material';
 import { useMutation, gql } from '@apollo/client';
 import SidebarSettings from './SidebarSettings';
@@ -32,7 +32,7 @@ const SettingsPage = () => {
 		document.title = "Settings - HQ";
 	}, []);
 
-	const { currentTheme, setTheme } = useContext(ThemeContext);
+	// const { currentTheme, setTheme } = useContext(ThemeContext);
 	const { setLoggedIn, globalProfile, setGlobalProfile, setSnackbar } = useGlobalContext()
 	const [codeName, setCodeName] = useState<string>(globalProfile.codename || '');
 	const [refreshTokenDeleted, setRefreshTokenDeleted] = useState<boolean>(false);
@@ -97,9 +97,9 @@ const SettingsPage = () => {
 		}
 	});
 
-	const handleChange = (event: any) => {
-		setTheme(event.target.value);
-	};
+	// const handleChange = (event: any) => {
+	// 	setTheme(event.target.value);
+	// };
 
 	const handleChangeCodeName = (event: any) => {
 		updateProfile({
@@ -120,7 +120,7 @@ const SettingsPage = () => {
 			<Divider />
 
 			{/* Set Theme */}
-			<Box mb={2}>
+			{/* <Box mb={2}>
 				<FormControl variant="outlined">
 					<InputLabel>Theme</InputLabel>
 					<Select
@@ -134,7 +134,7 @@ const SettingsPage = () => {
 						<MenuItem value="christmas">Christmas</MenuItem>
 					</Select>
 				</FormControl>
-			</Box>
+			</Box> */}
 
 			<Divider />
 

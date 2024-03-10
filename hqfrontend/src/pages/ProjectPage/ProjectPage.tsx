@@ -27,6 +27,7 @@ import { ADD_LOG } from '../../models/log'
 import Project from '../../models/project'
 import InboxItem from '../../models/inboxitem'
 import { useGlobalContext } from '../App/GlobalContextProvider'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@radix-ui/react-context-menu'
 
 
 const ProjectPage = () => {
@@ -246,31 +247,49 @@ const ProjectPage = () => {
 			/>
 
 
-
-
 			{/* To-Do Items */}
-			<List sx={{ width: '100%', marginBottom: 2 }}>
-				<ReactSortable
-					list={projectItemArray}
-					setList={setProjectItemArray}
-					group="groupName"
-					animation={50}
-					delayOnTouchOnly={true}
-					delay={1}
-					swapThreshold={.9}
-					onEnd={handleProjectItemOrderChangeComplete}
-				>
-					{projectItemArray.map((toDoItem) =>
-						<ProjectToDoItem
-							toDoItem={toDoItem}
-							handleCheck={handleCheck}
-							setSelectedInboxItem={setSelectedInboxItem}
-							refetch={doRefetch}
-							key={toDoItem.id}
-						/>
-					)}
-				</ReactSortable>
-			</List>
+			<ContextMenu>
+				<List sx={{ width: '100%', marginBottom: 2 }}>
+					<ReactSortable
+						list={projectItemArray}
+						setList={setProjectItemArray}
+						group="groupName"
+						animation={50}
+						delayOnTouchOnly={true}
+						delay={1}
+						swapThreshold={.9}
+						onEnd={handleProjectItemOrderChangeComplete}
+					>
+						{projectItemArray.map((toDoItem) =>
+							<ContextMenuTrigger>
+								<ProjectToDoItem
+									toDoItem={toDoItem}
+									handleCheck={handleCheck}
+									setSelectedInboxItem={setSelectedInboxItem}
+									refetch={doRefetch}
+									key={toDoItem.id}
+								/>
+							</ContextMenuTrigger>
+						)}
+					</ReactSortable>
+				</List>
+
+				<ContextMenuContent className="w-64">
+					{/* Back */}
+					<ContextMenuItem>
+						Back
+					</ContextMenuItem>
+					{/* Forward */}
+					<ContextMenuItem disabled>
+						Forward
+					</ContextMenuItem>
+					{/* Reload */}
+					<ContextMenuItem>
+						Reload
+					</ContextMenuItem>
+				</ContextMenuContent>
+				
+			</ContextMenu>
 
 
 
@@ -305,7 +324,7 @@ const ProjectPage = () => {
 
 
 
-		</Container>
+		</Container >
 	)
 }
 

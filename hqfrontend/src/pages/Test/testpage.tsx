@@ -5,6 +5,8 @@ import ReactDNDTest from './TestFiles/ReactDNDTest';
 import SortableList from './TestFiles/SortableList';
 import DraggableTest from './TestFiles/DraggableTest';
 import BingoBoard from './TestFiles/BingoBoard';
+import ContextMenuDemo from './TestFiles/ContextMenuDemo';
+import ProjectContextMenu from './TestFiles/ProjectContextMenu';
 
 
 const Test = () => {
@@ -17,6 +19,8 @@ const Test = () => {
 				<Button onClick={() => setCurrentView('dragtest')}>Draggable Test</Button>
 				<Button onClick={() => setCurrentView('sortable')}>Sortable Test</Button>
 				<Button onClick={() => setCurrentView('bingo')}>Bingo Test</Button>
+				<Button onClick={() => setCurrentView('contextmenu')}>Context Menu Test</Button>
+				<Button onClick={() => setCurrentView('projectcontextmenu')}>Project Context Menu Test</Button>
 			</Box>
 
 			<Divider
@@ -31,6 +35,8 @@ const Test = () => {
 				{currentView === 'sortable' && <SortableList />}
 				{currentView === 'dragtest' && <DraggableTest />}
 				{currentView === 'bingo' && <BingoBoard />}
+				{currentView === 'contextmenu' && <ContextMenuDemo />}
+				{currentView === 'projectcontextmenu' && <ProjectContextMenu />}
 			</Box>
 
 		</Container>

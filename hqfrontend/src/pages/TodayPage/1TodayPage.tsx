@@ -27,23 +27,23 @@ const TodayPage = () => {
 					</Typography>
 				</Grid>
 
-				<Grid item xs={4}>
+				<Grid item xs={12} md={6} lg={4}>
 					<CalendarCard />
 				</Grid>
 
-				<Grid item xs={4}>
+				<Grid item xs={12} md={6} lg={4}>
 					<ItineraryCard />
 				</Grid>
 
-				<Grid item xs={4}>
+				<Grid item xs={12} md={6} lg={4}>
 					<MasterListCard />
 				</Grid>
 
-				<Grid item xs={6}>
+				<Grid item xs={12} md={6} lg={6}>
 					<AccountabilityToDoListDisplay />
 				</Grid>
 
-				<Grid item xs={6}>
+				<Grid item xs={12} md={6} lg={6}>
 					<StickyNote />
 				</Grid>
 

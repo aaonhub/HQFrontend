@@ -35,15 +35,20 @@ const MasterList = () => {
     const { loading, error, refetch } = useQuery(MASTER_LIST_QUERY, {
         fetchPolicy: "network-only",
         onCompleted: (data) => {
-            const masterListItems = data.masterListItems;
-            const masterListOrder = JSON.parse(data.settings.masterListOrder);
-            const sortedList = sortObjectsByIds(masterListItems, masterListOrder);
-            setList(sortedList);
+            handleQueryCompleted(data)
         },
         onError: (error) => {
             console.log(error);
         }
     });
+
+
+    const handleQueryCompleted = (data: any) => {
+        const masterListItems = data.masterListItems;
+        const masterListOrder = JSON.parse(data.settings.masterListOrder);
+        const sortedList = sortObjectsByIds(masterListItems, masterListOrder);
+        setList(sortedList);
+    }
 
 
     // Update Master List Order
@@ -111,7 +116,9 @@ const MasterList = () => {
             onCompleted: () => {
                 setInputValue('')
                 setSnackbar({ message: "Added to Master List", open: true, severity: "success" })
-                refetch()
+                refetch().then(({ data }) => {
+                    handleQueryCompleted(data);
+                });
             },
             onError: (error) => {
                 console.log(error)

@@ -32,6 +32,7 @@ const TodayPage = () => {
 	return (
 		<Container maxWidth="xl">
 			<Grid container>
+
 				{/* Date Display */}
 				<Grid item xs={12}>
 					<Typography variant="h4" sx={{ paddingBottom: 2 }}>
@@ -44,21 +45,33 @@ const TodayPage = () => {
 						</IconButton>
 					</Typography>
 				</Grid>
+
+				{/* Calendar */}
 				<Grid item xs={12} md={6} lg={4}>
 					<CalendarCard selectedDate={dateToYYYYMMDD(selectedDate)} />
 				</Grid>
+
+				{/* Itinerary */}
 				<Grid item xs={12} md={6} lg={4}>
 					<ItineraryCard selectedDate={dateToYYYYMMDD(selectedDate)} />
 				</Grid>
+
+				{/* Master List */}
 				<Grid item xs={12} md={6} lg={4}>
 					<MasterListCard />
 				</Grid>
+
+				{/* Accountability To Do List */}
 				<Grid item xs={12} md={6} lg={6}>
 					<AccountabilityToDoListDisplay selectedDate={dateToYYYYMMDD(selectedDate)} />
 				</Grid>
+
+				{/* Sticky Note */}
 				<Grid item xs={12} md={6} lg={6}>
 					<StickyNote />
 				</Grid>
+
+
 			</Grid>
 		</Container>
 	);

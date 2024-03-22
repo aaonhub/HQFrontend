@@ -35,7 +35,11 @@ type ItemType = {
 	checked: boolean;
 };
 
-const ItineraryCard: React.FC = () => {
+interface ItineraryCardProps {
+	selectedDate?: string;
+}
+
+export const ItineraryCard = (props: ItineraryCardProps) => {
 	const { setSnackbar, todayBadges, setTodayBadges, setDebugText } = useGlobalContext()
 
 	const [inputValue, setInputValue] = useState('')
@@ -51,158 +55,158 @@ const ItineraryCard: React.FC = () => {
 	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const [prevUncompletedItems, setPrevUncompletedItems] = useState<SimpleItem[]>([]);
 
-	const localDate = getCurrentLocalDate()
+	const localDate = props.selectedDate || getCurrentLocalDate()
+	console.log(props.selectedDate)
+	console.log(getCurrentLocalDate())
 
 
 	// Query
-	const { loading, error, refetch } = useQuery(ITINERARY_QUERY, {
+	const { data, loading, error, refetch } = useQuery(ITINERARY_QUERY, {
 		fetchPolicy: 'network-only',
 		variables: {
 			Today: localDate,
 			YearMonth: localDate.slice(0, 7),
 		},
 		onCompleted: (data) => {
-
-			const simpleItems: SimpleItem[] = [];
-
-			// Add inbox items
-			data.toDoItemsByStartDate.map((toDoItems: any) => {
-				simpleItems.push({
-					id: "i" + toDoItems.id,
-					itemId: toDoItems.id,
-					title: toDoItems.title,
-					completedToday: toDoItems.completed,
-					type: 'inbox',
-					startTime: toDoItems.startTime,
-				});
-			});
-
-			// Add habit items
-			data.habitsDueToday.map((habit: any) => {
-				simpleItems.push({
-					id: habit.id + "h",
-					itemId: habit.id,
-					title: habit.title,
-					completedToday: habit.countToday > 0,
-					type: 'habit',
-					startTime: habit.schedules.timeOfDay,
-				});
-			})
-
-
-
-			// 3. Initialize and populate RitualHistoryManager
-			const updatedRitualHistory = ritualHistory
-			data.ritualHistory && data.ritualHistory.data &&
-				updatedRitualHistory.fromJson(data.ritualHistory.data)
-
-			// 4. Update state
-			setRitualHistory(updatedRitualHistory);
-
-
-			// Set rituals
-			data.ritualSchedulesDueToday.map((schedule: any) => {
-				generateRitualEntry(ritualHistory, schedule.objectId, schedule.id, localDate);
-				const entry = ritualHistory.getEntryById(localDate, schedule.id)
-				simpleItems.push({
-					id: schedule.id,
-					itemId: schedule.objectId,
-					title: schedule.relatedObjectTitle,
-					completedToday: entry?.status === 'Completed',
-					type: 'ritual',
-					startTime: schedule.timeOfDay,
-				});
-			})
-
-
-			// Set order
-			const orderData = JSON.parse(data.settings.itineraryOrder)
-			const orderIds = orderData.ids
-			const orderDate = orderData.date
-
-
-
-			const simpleItemArrayFiltered = simpleItems.filter((simpleItem: SimpleItem) => {
-				return !simpleItem.completedToday
-			})
-
-			if (orderDate === getCurrentLocalDate() && orderIds.length > 0) {
-				const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds);
-				setUncompletedItems(sortedArray as SimpleItem[]);
-			} else {
-				// If the order date is not today, update the order with today's date and the IDs of the uncompleted items
-				const newOrderIds = simpleItemArrayFiltered.map(item => item.id);
-
-				// Sort uncompletedItems by startTime
-				simpleItemArrayFiltered.sort((a: any, b: any) => {
-					const aTime = a.startTime || '';
-					const bTime = b.startTime || '';
-					if (aTime < bTime) return -1;
-					if (aTime > bTime) return 1;
-					return 0;
-				});
-				setUncompletedItems(simpleItemArrayFiltered);
-			}
-
-
-
-
-			const simpleItemArrayCompleted = simpleItems.filter((simpleItem: any) => {
-				return simpleItem.completedToday
-			})
-			setCompletedItems(simpleItemArrayCompleted)
-
-
-
-
-			// Calendar Stuff
-			// const newInboxEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
-			// const newHabitEvents = habits.map(habitToEvent).filter(Boolean)
-			// const newEvents = [...newInboxEvents, ...newHabitEvents]
-			// setEvents(newEvents)
-
-
-
+			handleQueryCompleted(data);
 		},
 		onError: (error) => {
 			console.log(error);
 		},
 	})
 
+	const handleQueryCompleted = (data: any) => {
+
+		console.log("running oncomplete")
+
+		const simpleItems: SimpleItem[] = [];
+
+		// Add inbox items
+		data.toDoItemsByStartDate.map((toDoItems: any) => {
+			simpleItems.push({
+				id: "i" + toDoItems.id,
+				itemId: toDoItems.id,
+				title: toDoItems.title,
+				completedToday: toDoItems.completed,
+				type: 'inbox',
+				startTime: toDoItems.startTime,
+			});
+		});
+
+		// Add habit items
+		data.habitsDueToday.map((habit: any) => {
+			simpleItems.push({
+				id: habit.id + "h",
+				itemId: habit.id,
+				title: habit.title,
+				completedToday: habit.countToday > 0,
+				type: 'habit',
+				startTime: habit.schedules.timeOfDay,
+			});
+		})
+
+
+
+		// 3. Initialize and populate RitualHistoryManager
+		const updatedRitualHistory = ritualHistory
+		data.ritualHistory && data.ritualHistory.data &&
+			updatedRitualHistory.fromJson(data.ritualHistory.data)
+
+		// 4. Update state
+		setRitualHistory(updatedRitualHistory);
+
+
+		// Set rituals
+		data.ritualSchedulesDueToday.map((schedule: any) => {
+			generateRitualEntry(ritualHistory, schedule.objectId, schedule.id, localDate);
+			const entry = ritualHistory.getEntryById(localDate, schedule.id)
+			simpleItems.push({
+				id: schedule.id,
+				itemId: schedule.objectId,
+				title: schedule.relatedObjectTitle,
+				completedToday: entry?.status === 'Completed',
+				type: 'ritual',
+				startTime: schedule.timeOfDay,
+			});
+		})
+
+
+		// Set order
+		const orderData = JSON.parse(data.settings.itineraryOrder)
+		const orderIds = orderData.ids
+		const orderDate = orderData.date
+
+
+
+		const simpleItemArrayFiltered = simpleItems.filter((simpleItem: SimpleItem) => {
+			return !simpleItem.completedToday
+		})
+
+		if (orderDate === getCurrentLocalDate() && orderIds.length > 0) {
+			const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds);
+			setUncompletedItems(sortedArray as SimpleItem[]);
+		} else {
+			// If the order date is not today, update the order with today's date and the IDs of the uncompleted items
+			const newOrderIds = simpleItemArrayFiltered.map(item => item.id);
+
+			// Sort uncompletedItems by startTime
+			simpleItemArrayFiltered.sort((a: any, b: any) => {
+				const aTime = a.startTime || '';
+				const bTime = b.startTime || '';
+				if (aTime < bTime) return -1;
+				if (aTime > bTime) return 1;
+				return 0;
+			});
+			setUncompletedItems(simpleItemArrayFiltered);
+		}
+
+
+
+		const simpleItemArrayCompleted = simpleItems.filter((simpleItem: any) => {
+			return simpleItem.completedToday
+		})
+		setCompletedItems(simpleItemArrayCompleted)
+
+
+
+		// Calendar Stuff
+		// const newInboxEvents = inboxItems.map(toDoItemToEvent).filter(Boolean);
+		// const newHabitEvents = habits.map(habitToEvent).filter(Boolean)
+		// const newEvents = [...newInboxEvents, ...newHabitEvents]
+		// setEvents(newEvents)
+
+	};
+
 
 
 	// Debug Panel
-	// useEffect(() => {
-	// 	setDebugText([
-	// 		{ title: "Today's Date", content: localDate },
-	// 		{ title: "Order Ids", content: JSON.stringify(orderIds, null, 2) },
-	// 		{ title: "Current Time", content: currentLocalTime() },
-	// 		{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
-	// 		{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
-	// 		{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
-	// 		{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
-	// 		{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
-	// 		{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
-	// 		{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
-	// 		{ title: "Data", content: JSON.stringify(data, null, 2) },
-	// 		{ title: "SimpleItems", content: JSON.stringify(simpleItems, null, 2) },
-	// 		{ title: "Ritual History", content: JSON.stringify(ritualHistory, null, 2) },
-	// 	])
-	// }, [
-	// 	setDebugText,
-	// 	localDate,
-	// 	todayBadges,
-	// 	uncompletedItems,
-	// 	completedItems,
-	// 	expanded,
-	// 	selectedInboxItemId,
-	// 	selectedHabitId,
-	// 	scheduledNotifications,
-	// 	orderIds,
-	// 	data,
-	// 	simpleItems,
-	// 	ritualHistory,
-	// ])
+	useEffect(() => {
+		setDebugText([
+			{ title: "Today's Date", content: localDate },
+			{ title: "Current Time", content: currentLocalTime() },
+			{ title: "Today's Badges", content: JSON.stringify(todayBadges, null, 2) },
+			{ title: "Uncompleted Items", content: JSON.stringify(uncompletedItems, null, 2) },
+			{ title: "Completed Items", content: JSON.stringify(completedItems, null, 2) },
+			{ title: "Expanded", content: JSON.stringify(expanded, null, 2) },
+			{ title: "Selected Inbox Item Id", content: JSON.stringify(selectedInboxItemId, null, 2) },
+			{ title: "Selected Habit Id", content: JSON.stringify(selectedHabitId, null, 2) },
+			{ title: "Scheduled Notifications", content: JSON.stringify(scheduledNotifications, null, 2) },
+			{ title: "Data", content: JSON.stringify(data, null, 2) },
+			{ title: "Ritual History", content: JSON.stringify(ritualHistory, null, 2) },
+		])
+	}, [
+		setDebugText,
+		localDate,
+		todayBadges,
+		uncompletedItems,
+		completedItems,
+		expanded,
+		selectedInboxItemId,
+		selectedHabitId,
+		scheduledNotifications,
+		data,
+		ritualHistory,
+	])
 
 
 
@@ -249,13 +253,15 @@ const ItineraryCard: React.FC = () => {
 		addTodoToToday({
 			variables: {
 				title: inputValue,
-				startDate: getCurrentLocalDate(),
+				startDate: localDate,
 				Completed: false,
 			},
 			onCompleted: () => {
 				setInputValue('')
 				setSnackbar({ message: "To Do Item Added", open: true, severity: "success" })
-				refetch()
+				refetch().then(({ data }) => {
+					handleQueryCompleted(data);
+				});
 			}
 		})
 	}
@@ -324,7 +330,10 @@ const ItineraryCard: React.FC = () => {
 					severity: "success"
 				})
 				updateBadge(habit)
-				refetch()
+
+				refetch().then(({ data }) => {
+					handleQueryCompleted(data);
+				});
 			}
 		})
 
@@ -335,8 +344,7 @@ const ItineraryCard: React.FC = () => {
 	const handleCheckToDo = async (todo: any) => {
 		await checkToDo({
 			variables: {
-				// get rid of the h at the end of the id
-				id: todo.id.slice(0, -1),
+				id: todo.itemId,
 				Completed: !todo.completedToday,
 			},
 			onCompleted: () => {
@@ -346,6 +354,9 @@ const ItineraryCard: React.FC = () => {
 					severity: "success"
 				})
 				updateBadge(todo)
+				refetch().then(({ data }) => {
+					handleQueryCompleted(data);
+				});
 			}
 		})
 	}
@@ -447,7 +458,10 @@ const ItineraryCard: React.FC = () => {
 	const handleCloseRitual: any = () => {
 		setSelectedRitualId(null)
 		setSelectedScheduleId(null)
-		refetch()
+
+		refetch().then(({ data }) => {
+			handleQueryCompleted(data);
+		});
 	}
 
 

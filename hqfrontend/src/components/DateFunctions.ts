@@ -70,8 +70,8 @@ function getOrdinalSuffix(i: number) {
 	}
 	return i + "th";
 }
-export function getCustomLocalDate() {
-	let currentDate = new Date();
+export function getCustomLocalDate(date: Date = new Date()) {
+	let currentDate = new Date(date);
 	if (currentDate.getHours() < 3) {
 		currentDate.setDate(currentDate.getDate() - 1);
 	}

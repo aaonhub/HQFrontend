@@ -9,6 +9,7 @@ import { GET_ACCOUNTABILITIES, GET_ACCOUNTABILITY_DATA } from '../../../models/a
 
 
 interface AccountabilityToDoListDisplayProps {
+    selectedDate?: string;
 }
 
 

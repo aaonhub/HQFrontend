@@ -16,6 +16,7 @@ import { useMutation } from "@apollo/client";
 interface CalendarCardProps {
     // events: any;
     // setEvents: any;
+    selectedDate?: string;
 }
 
 

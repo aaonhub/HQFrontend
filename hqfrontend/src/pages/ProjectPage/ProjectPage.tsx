@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import { Box, Typography, TextField, List, Container } from '@mui/material'
@@ -21,7 +21,6 @@ import {
 import {
 	CHECK_UNCHECK_TODO,
 } from '../../models/inboxitem'
-import { ADD_LOG } from '../../models/log'
 
 // Models
 import Project from '../../models/project'

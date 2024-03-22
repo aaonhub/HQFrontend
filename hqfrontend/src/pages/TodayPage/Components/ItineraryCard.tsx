@@ -56,8 +56,6 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 	const [prevUncompletedItems, setPrevUncompletedItems] = useState<SimpleItem[]>([]);
 
 	const localDate = props.selectedDate || getCurrentLocalDate()
-	console.log(props.selectedDate)
-	console.log(getCurrentLocalDate())
 
 
 	// Query
@@ -285,7 +283,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 				await addTodoToToday({
 					variables: {
 						title: line,
-						startDate: getCurrentLocalDate(),
+						startDate: localDate,
 						Completed: false,
 					},
 				})
@@ -397,7 +395,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 		const completedTasks = completedItems.length + 1
 		updateDailyCompletionPercentage({
 			variables: {
-				Date: getCurrentLocalDate(),
+				Date: localDate,
 				TotalTasks: totalTasks,
 				CompletedTasks: completedTasks,
 				TasksList: jsonString,
@@ -601,7 +599,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 				<TodayRitualDialog
 					onClose={handleCloseRitual}
 					ritualId={selectedRitualId}
-					entryDate={getCurrentLocalDate()}
+					entryDate={localDate}
 					scheduleId={selectedScheduleId}
 					ritualHistory={ritualHistory}
 					setRitualHistory={setRitualHistory}

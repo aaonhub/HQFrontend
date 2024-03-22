@@ -155,6 +155,13 @@ const MasterList = () => {
         }
     }
 
+    const handleClose = () => {
+        setSelectedToDoItem(null);
+        refetch().then(({ data }) => {
+            handleQueryCompleted(data);
+        });
+    }
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -221,7 +228,7 @@ const MasterList = () => {
 
             {selectedToDoItem && (
                 <EditInboxItemDialog
-                    handleClose={() => setSelectedToDoItem(null)}
+                    handleClose={handleClose}
                     inboxItemId={selectedToDoItem}
                 />
             )}

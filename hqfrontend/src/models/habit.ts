@@ -133,8 +133,8 @@ export const GET_ALL_HABITS = gql`
 
 // Mutations
 export const ADD_HABIT = gql`
-	mutation createHabit($Title: String!, $Active: Boolean!, $Frequency: String!, $StartDate: String!) {
-		createHabit(title: $Title, active: $Active, frequency: $Frequency, startDate: $StartDate ) {
+	mutation createHabit($Title: String!, $Active: Boolean!, $RecurrenceRule: String!) {
+		createHabit(title: $Title, active: $Active, recurrenceRule: $RecurrenceRule){
 			habit {
 				id
 				title

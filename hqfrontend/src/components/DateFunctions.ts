@@ -1,14 +1,19 @@
 
 export function getCurrentLocalDate() {
 	const now = new Date();
-	if (now.getHours() < 6) {
-		now.setDate(now.getDate() - 1);
-	}
+
 	const year = now.getFullYear();
 	const month = String(now.getMonth() + 1).padStart(2, '0');
 	const day = String(now.getDate()).padStart(2, '0');
 
 	return `${year}-${month}-${day}`;
+}
+
+
+export function getCurrentLocalDateObject(): Date {
+	const now = new Date();
+	now.setHours(0, 0, 0, 0); // Set time to midnight
+	return now;
 }
 
 

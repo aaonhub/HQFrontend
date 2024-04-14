@@ -4,7 +4,8 @@ import { useMutation } from '@apollo/client';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Select, FormControl, InputLabel, Snackbar, Fab, Box } from '@mui/material';
 import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { getCurrentLocalDate } from '../../components/DateFunctions';
+import { getCurrentLocalDateObject } from '../../components/DateFunctions';
+import { RRule, Frequency } from 'rrule'; // Import RRule and Frequency from rrule package
 
 // Queries and Mutations
 import { ADD_HABIT } from '../../models/habit';
@@ -18,7 +19,7 @@ interface AddHabitPopupProps {
 
 const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 	const [title, setTitle] = useState('');
-	const [frequency, setFrequency] = useState('DAILY');
+	const [frequency, setFrequency] = useState(Frequency.DAILY); // Use Frequency enum from rrule
 	const [addHabit, { error }] = useMutation(ADD_HABIT);
 
 	const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -30,16 +31,24 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 	};
 
 	const handleSubmit = async () => {
+		const recurrenceRule = new RRule({
+			freq: frequency,
+			dtstart: getCurrentLocalDateObject(),
+		}).toString(); // Generate recurrence rule string using rrule
+
+		console.log(title);
+		console.log(true);
+		console.log(recurrenceRule);
+
 		await addHabit({
 			variables: {
 				Title: title,
 				Active: true,
-				Frequency: frequency,
-				StartDate: getCurrentLocalDate(),
+				RecurrenceRule: recurrenceRule, // Use the generated recurrence rule
 			},
 			onCompleted: () => {
 				onClose();
-			}
+			},
 		});
 	};
 
@@ -60,17 +69,11 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 				<Box mb={2}>
 					<FormControl fullWidth margin="dense" variant="outlined">
 						<InputLabel id="frequency-select-label">Frequency</InputLabel>
-						<Select
-							labelId="frequency-select-label"
-							id="frequency-select"
-							value={frequency}
-							label="Frequency"
-							onChange={handleFrequencyChange}
-						>
-							<MenuItem value="DAILY">Daily</MenuItem>
-							{/* <MenuItem value="WEEKLY">Weekly</MenuItem>
-							<MenuItem value="MONTHLY">Monthly</MenuItem>
-							<MenuItem value="YEARLY">Yearly</MenuItem> */}
+						<Select labelId="frequency-select-label" id="frequency-select" value={frequency} label="Frequency" onChange={handleFrequencyChange}>
+							<MenuItem value={Frequency.DAILY}>Daily</MenuItem>
+							<MenuItem value={Frequency.WEEKLY}>Weekly</MenuItem>
+							<MenuItem value={Frequency.MONTHLY}>Monthly</MenuItem>
+							<MenuItem value={Frequency.YEARLY}>Yearly</MenuItem>
 						</Select>
 					</FormControl>
 				</Box>

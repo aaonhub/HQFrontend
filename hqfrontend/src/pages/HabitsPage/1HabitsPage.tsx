@@ -68,6 +68,9 @@ const HabitsPage: React.FC = () => {
 			});
 			setHabits(habits);
 		},
+		onError: (error) => {
+			console.error(error);
+		}
 	});
 
 

@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/client';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Select, FormControl, InputLabel, Snackbar, Fab, Box } from '@mui/material';
 import { Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { getCurrentLocalDateObject } from '../../components/DateFunctions';
 import { RRule, Frequency } from 'rrule'; // Import RRule and Frequency from rrule package
 
 // Queries and Mutations
@@ -33,7 +32,6 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 	const handleSubmit = async () => {
 		const recurrenceRule = new RRule({
 			freq: frequency,
-			dtstart: getCurrentLocalDateObject(),
 		}).toString(); // Generate recurrence rule string using rrule
 
 		console.log(title);

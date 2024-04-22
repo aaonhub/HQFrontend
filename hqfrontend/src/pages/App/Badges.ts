@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getCurrentLocalDate, currentLocalTime, addLengthToTime, getCurrentLocalDateUnadjusted } from '../../components/DateFunctions';
+import { currentYYYYMMDD, currentLocalTime, addLengthToTime } from '../../components/DateFunctions';
 import { useQuery } from '@apollo/client';
 import { useGlobalContext } from './GlobalContextProvider';
 
@@ -9,7 +9,7 @@ import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 import { GET_TO_DO_LIST_ITEMS_BY_START_DATE } from '../../models/inboxitem';
 import { LAST_LOG_TIME } from '../../models/log';
 
-const date = getCurrentLocalDate()
+const date = currentYYYYMMDD()
 
 // Today Badge
 export function TodayBadge() {
@@ -36,7 +36,7 @@ export function TodayBadge() {
             let pastDueEvents: any = 0;
 
             habitsData.habitsDueToday.forEach((habit: any) => {
-                if (date < getCurrentLocalDateUnadjusted() && !habit.completedToday) {
+                if (date < currentYYYYMMDD() && !habit.completedToday) {
                     pastDueEvents++;
                 } else
                     if (habit.schedules.timeOfDay < currentLocalTime() && !habit.completedToday) {
@@ -55,7 +55,7 @@ export function TodayBadge() {
 
             // go through to do list items and see how many are past their start time
             toDoListData.toDoItemsByStartDate.forEach((item: any) => {
-                if (date < getCurrentLocalDateUnadjusted() && !item.completed) {
+                if (date < currentYYYYMMDD() && !item.completed) {
                     pastDueEvents++;
                 } else
                     if (item.startTime < currentLocalTime() && !item.completed) {
@@ -94,7 +94,7 @@ export function DailyReviewBadge() {
     const { data } = useQuery(GET_DAILY_REVIEW_BY_DATE, {
         fetchPolicy: 'network-only',
         variables: {
-            date: getCurrentLocalDate(),
+            date: currentYYYYMMDD(),
         },
     });
 

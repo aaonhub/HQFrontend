@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Checkbox, List, ListItem, ListItemText, Typography, useTheme } from '@mui/material'
 import { Draggable } from '@fullcalendar/interaction'
 import { v4 as uuidv4 } from 'uuid';
-import { addLengthToTime, currentLocalTime, getCurrentLocalDate, getCurrentLocalDateUnadjusted } from '../../../components/DateFunctions';
+import { addLengthToTime, currentLocalTime, currentYYYYMMDD } from '../../../components/DateFunctions';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { ReactSortable, SortableEvent } from 'react-sortablejs'
 import EventIcon from '@mui/icons-material/Event';
@@ -90,14 +90,12 @@ const ItineraryList: React.FC<ItineraryListProps> = ({ list, setList, setSelecte
 						// Border color
 						let color = "grey"
 						if (!item.startDate) {
-							item.startDate = getCurrentLocalDate()
+							item.startDate = currentYYYYMMDD()
 						}
 
-						if (item.startDate < getCurrentLocalDateUnadjusted()) {
+						if (item.startDate < currentYYYYMMDD()) {
 							color = "red"
-						} else if (!item.startTime) {
-							color = "grey"
-						} else if (item.completedToday) {
+						} else if (!item.startTime || item.completedToday) {
 							color = "grey"
 						} else
 							if (item.startTime < currentLocalTime()) {

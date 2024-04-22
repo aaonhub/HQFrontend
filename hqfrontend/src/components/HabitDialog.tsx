@@ -23,7 +23,7 @@ import confirmation from '../sounds/confirmation.mp3'
 // Queries and mutations
 import { UPDATE_RITUAL, DELETE_RITUAL, GET_RITUAL, UPDATE_RITUAL_HISTORY, RitualHistoryManager, RitualEntry, RitualStatus, GET_RITUAL_AND_RITUAL_HISTORY } from '../models/ritual'
 import { CHECK_HABIT } from '../models/habit'
-import { currentLocalTime, getCurrentLocalDate } from './DateFunctions'
+import { currentLocalTime, currentYYYYMMDD } from './DateFunctions'
 
 
 
@@ -63,7 +63,7 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 	const queryToUse = ritualHistory ? GET_RITUAL : GET_RITUAL_AND_RITUAL_HISTORY;
 	const { loading, error, data } = useQuery(queryToUse, {
 		fetchPolicy: 'network-only',
-		variables: { id: ritualId, yearMonth: entryDate ? entryDate.slice(0, 7) : getCurrentLocalDate().slice(0, 7) },
+		variables: { id: ritualId, yearMonth: entryDate ? entryDate.slice(0, 7) : currentYYYYMMDD().slice(0, 7) },
 		onCompleted: (data) => {
 			// Set title
 			setRitualTitle(data.ritual.title)
@@ -165,7 +165,7 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 
 			handleCompleteRitualHistory({
 				variables: {
-					yearMonth: getCurrentLocalDate().slice(0, 7),
+					yearMonth: currentYYYYMMDD().slice(0, 7),
 					data: ritualHistory.toJson(),
 				},
 				onCompleted: (data: any) => {
@@ -188,7 +188,7 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 
 			// Add ritual entry
 			const updatedRitualHistory = Object.assign(Object.create(Object.getPrototypeOf(ritualHistoryManager)), ritualHistoryManager);
-			updatedRitualHistory.addEntry(getCurrentLocalDate(), {
+			updatedRitualHistory.addEntry(currentYYYYMMDD(), {
 				ritualID: ritualId,
 				completedItems: [],
 				type: 'I',
@@ -200,7 +200,7 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 			// Add ritual entry
 			handleCompleteRitualHistory({
 				variables: {
-					yearMonth: getCurrentLocalDate().slice(0, 7),
+					yearMonth: currentYYYYMMDD().slice(0, 7),
 					data: updatedRitualHistory.toJson(),
 				},
 				onError: (error: any) => {
@@ -218,7 +218,7 @@ const HabitDialog: React.FC<RitualDialogProps> = ({ onClose, ritualId, entryDate
 			fetchPolicy: 'no-cache',
 			variables: {
 				habitId: habitId,
-				currentDate: entryDate ? entryDate : getCurrentLocalDate(),
+				currentDate: entryDate ? entryDate : currentYYYYMMDD(),
 				quantity: quantity,
 			},
 			onError: (error) => {

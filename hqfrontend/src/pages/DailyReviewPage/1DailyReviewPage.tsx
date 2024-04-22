@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client'
 import DisplayDailyReview from './2DisplayDailyReview'
 import EditDailyReview from './2EditDailyReview'
 import DailyReviewList from './2DailyReviewList'
-import { getCurrentLocalDate } from '../../components/DateFunctions'
+import { currentYYYYMMDD } from '../../components/DateFunctions'
 
 // Queries and Mutations
 import { GET_DAILY_REVIEWS, GET_DAILY_REVIEW_BY_DATE } from '../../models/dailyreview'
@@ -21,7 +21,7 @@ const DailyReviewPage = () => {
 		document.title = "Reviews - HQ";
 	}, []);
 	
-	const [today, setToday] = useState(getCurrentLocalDate())
+	const [today, setToday] = useState(currentYYYYMMDD())
 	const [editMode, setEditMode] = useState(false)
 	const [dailyReview, setDailyReview] = useState<DailyReview>(new DailyReview({
 		id: '',

@@ -1,6 +1,6 @@
 import { EventInput } from "@fullcalendar/core";
 import InboxItem from "../../../models/inboxitem";
-import { getCurrentLocalDate } from "../../../components/DateFunctions";
+import { currentYYYYMMDD } from "../../../components/DateFunctions";
 import Habit from "../../../models/habit";
 
 
@@ -55,7 +55,7 @@ export function habitToEvent(habit: Habit): EventInput | null {
     
     const startTime = habit.schedule.timeOfDay
     const length = habit.length ? habit.length : '01:00'
-    const date = getCurrentLocalDate()
+    const date = currentYYYYMMDD()
 
     if (!startTime || !length) {
         return null

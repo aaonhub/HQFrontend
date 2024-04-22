@@ -28,7 +28,7 @@ import {
     RitualHistoryManager, RitualEntry, RitualStatus
 } from '@/models/ritual'
 import { CHECK_HABIT } from '@/models/habit'
-import { currentLocalTime, getCurrentLocalDate } from '@/components/DateFunctions'
+import { currentLocalTime, currentYYYYMMDD } from '@/components/DateFunctions'
 
 
 interface RitualItem {
@@ -163,7 +163,7 @@ const TodayRitualDialog: React.FC<TodayRitualDialogProps> = (props: TodayRitualD
 
         handleCompleteRitualHistory({
             variables: {
-                yearMonth: getCurrentLocalDate().slice(0, 7),
+                yearMonth: currentYYYYMMDD().slice(0, 7),
                 data: props.ritualHistory.toJson(),
             },
         })
@@ -177,7 +177,7 @@ const TodayRitualDialog: React.FC<TodayRitualDialogProps> = (props: TodayRitualD
             fetchPolicy: 'no-cache',
             variables: {
                 habitId: habitId,
-                currentDate: props.entryDate ? props.entryDate : getCurrentLocalDate(),
+                currentDate: props.entryDate ? props.entryDate : currentYYYYMMDD(),
                 quantity: quantity,
             },
             onError: (error) => {

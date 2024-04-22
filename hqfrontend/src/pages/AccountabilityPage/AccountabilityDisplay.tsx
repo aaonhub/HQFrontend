@@ -8,7 +8,7 @@ import { GET_ACCOUNTABILITY, GET_ACCOUNTABILITY_DATA } from '../../models/accoun
 import { ACCEPT_ACCOUNTABILITY_INVITE } from "../../models/accountability"
 import { useState } from 'react';
 import UpdateAccountabilityDialog from './UpdateAccountabilityDialog';
-import { getCurrentLocalDate } from '../../components/DateFunctions';
+import { currentYYYYMMDD } from '../../components/DateFunctions';
 
 
 // User color assignment - add more colors as required
@@ -114,7 +114,7 @@ const AccountabilityDisplay = ({ id }: { id: string }) => {
 		}
 	})
 
-	const today = getCurrentLocalDate()
+	const today = currentYYYYMMDD()
 	const todayTasksArray = data?.monthlyCompletionPercentages.filter((record: { date: any; }) => record.date === today) || [];
 
 

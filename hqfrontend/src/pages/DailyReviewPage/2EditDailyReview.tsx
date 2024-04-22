@@ -9,7 +9,7 @@ import DailyReview from '../../models/dailyreview';
 // Queries and Mutations
 import { UPDATE_DAILY_REVIEW } from '../../models/dailyreview'
 import { CREATE_DAILY_REVIEW } from '../../models/dailyreview'
-import { getCurrentLocalDate } from '../../components/DateFunctions';
+import { currentYYYYMMDD } from '../../components/DateFunctions';
 
 
 interface EditDailyReviewProps {
@@ -95,7 +95,7 @@ const EditDailyReview: React.FC<EditDailyReviewProps> = ({ dailyReview, setDaily
 					date: today,
 				},
 			});
-			if (getCurrentLocalDate() === today) setDailyReviewBadges([false, false])
+			if (currentYYYYMMDD() === today) setDailyReviewBadges([false, false])
 		}
 		refetch()
 	}, [dailyReview.id, updateDailyReview, createDailyReview, today, setDailyReviewBadges, refetch]);

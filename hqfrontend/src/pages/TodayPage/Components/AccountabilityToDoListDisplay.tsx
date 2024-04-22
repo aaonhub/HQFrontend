@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { Card, CardContent, Checkbox, Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useGlobalContext } from '../../App/GlobalContextProvider';
 import { useState } from 'react';
-import { getCurrentLocalDate } from '../../../components/DateFunctions';
+import { currentYYYYMMDD } from '../../../components/DateFunctions';
 
 // Queries
 import { GET_ACCOUNTABILITIES, GET_ACCOUNTABILITY_DATA } from '../../../models/accountability';
@@ -41,7 +41,7 @@ const AccountabilityToDoListDisplay = (props: AccountabilityToDoListDisplayProps
         setSelectedSquad(event.target.value as string);
     };
 
-    const today = getCurrentLocalDate()
+    const today = currentYYYYMMDD()
     const todayTasksArray = accountabilityData?.monthlyCompletionPercentages.filter((record: { date: any; }) => record.date === today) || [];
     const sortedTodayTasksArray = todayTasksArray.sort((a: any, b: any) => {
         if (a.profile.codename === globalProfile.codename) return -1;

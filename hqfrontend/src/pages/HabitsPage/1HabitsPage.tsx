@@ -10,7 +10,7 @@ import { GET_HABITS_DUE_TODAY } from '../../models/habit';
 // Components
 import HabitList from './HabitList';
 import AddHabitPopup from './AddHabitPopUp';
-import { getCurrentLocalDate } from '../../components/DateFunctions';
+import { currentYYYYMMDD } from '../../components/DateFunctions';
 
 // Models
 import Habit from '../../models/habit';
@@ -26,7 +26,7 @@ const HabitsPage: React.FC = () => {
 	}, []);
 
 	const [habits, setHabits] = useState<Habit[]>([])
-	const [today, setToday] = useState(getCurrentLocalDate())
+	const [today, setToday] = useState(currentYYYYMMDD())
 	const [open, setOpen] = useState(false)
 	const [habitManagerDialogOpen, setHabitManagerDialogOpen] = useState(false)
 
@@ -103,7 +103,7 @@ const HabitsPage: React.FC = () => {
 	};
 
 	const goToToday = () => {
-		setToday(getCurrentLocalDate());
+		setToday(currentYYYYMMDD());
 	};
 
 
@@ -122,7 +122,7 @@ const HabitsPage: React.FC = () => {
 			{/* Date Display */}
 			<Box mt={4} mb={4}>
 				<Typography variant="h5" align="center">
-					{today === getCurrentLocalDate() ? "Today, " + today : today}
+					{today === currentYYYYMMDD() ? "Today, " + today : today}
 				</Typography>
 			</Box>
 

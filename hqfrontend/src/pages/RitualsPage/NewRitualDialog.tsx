@@ -11,7 +11,7 @@ import { Box, Grid, MenuItem, Select, Typography } from '@mui/material'
 
 // Components
 import SearchBar from './SearchBar'
-import { getCurrentLocalDate } from '../../components/DateFunctions'
+import { currentYYYYMMDD } from '../../components/DateFunctions'
 
 // Queries and Mutations
 import { CREATE_RITUAL } from '../../models/ritual'
@@ -49,7 +49,7 @@ const NewRitualDialog: React.FC<RitualDialogProps> = ({ open, onClose }) => {
 				ritualItems: JSON.stringify(ritualItems),
 				habits: habits.map((habit) => habit.id),
 				frequency: frequency,
-				start_date: getCurrentLocalDate(),
+				start_date: currentYYYYMMDD(),
 			},
 		});
 	};

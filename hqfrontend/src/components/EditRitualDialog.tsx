@@ -3,7 +3,7 @@ import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Di
 import { useMutation, useQuery } from '@apollo/client'
 import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import { Controller, useForm } from 'react-hook-form'
-import { getCurrentLocalDate } from './DateFunctions'
+import { currentYYYYMMDD } from './DateFunctions'
 
 // Qureries and mutations
 import { DELETE_RITUAL, EDIT_RITUAL_DIALOG_QUERY, UPDATE_RITUAL } from '../models/ritual'
@@ -43,7 +43,7 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 	const { data } = useQuery(EDIT_RITUAL_DIALOG_QUERY, {
 		variables: {
 			id: props.id,
-			yearMonth: getCurrentLocalDate().slice(0, 7),
+			yearMonth: currentYYYYMMDD().slice(0, 7),
 		},
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
@@ -159,7 +159,7 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 				recurrenceRule: recurrenceRule,
 			},
 			onCompleted: () => setScheduleUpdated(true),
-			refetchQueries: [{ query: EDIT_RITUAL_DIALOG_QUERY, variables: { id: props.id, yearMonth: getCurrentLocalDate().slice(0, 7), } }]
+			refetchQueries: [{ query: EDIT_RITUAL_DIALOG_QUERY, variables: { id: props.id, yearMonth: currentYYYYMMDD().slice(0, 7), } }]
 		});
 	};
 

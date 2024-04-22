@@ -13,7 +13,7 @@ import { MASTER_LIST_QUERY } from "../../../models/inboxitem";
 // Mutations
 import { CHECK_UNCHECK_TODO } from "../../../models/inboxitem";
 import { UPDATE_SETTINGS } from "../../../models/settings";
-import { getCurrentLocalDate } from "../../../components/DateFunctions";
+import { currentYYYYMMDD } from "../../../components/DateFunctions";
 import { ADD_TODO_TO_MASTER_LIST } from "../../../models/inboxitem";
 
 
@@ -145,7 +145,7 @@ const MasterList = () => {
                 await addTodoToMasterList({
                     variables: {
                         title: line,
-                        startDate: getCurrentLocalDate(),
+                        startDate: currentYYYYMMDD(),
                         Completed: false,
                     },
                 })

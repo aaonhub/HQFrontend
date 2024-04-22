@@ -1,5 +1,5 @@
 import { Badge, Box, Button, Grid, List, ListItem, ListItemText, Typography } from '@mui/material'
-import { formatDateWithWeekday, getCurrentLocalDate } from '../../components/DateFunctions'
+import { formatDateWithWeekday, currentYYYYMMDD } from '../../components/DateFunctions'
 import { format, sub } from 'date-fns';
 import { useGlobalContext } from '../../pages/App/GlobalContextProvider';
 
@@ -18,7 +18,7 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 
 
 	const goToToday = () => {
-		setToday(getCurrentLocalDate())
+		setToday(currentYYYYMMDD())
 	};
 
 	const getRecentDates = () => {
@@ -41,7 +41,7 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 				{/* Date Display */}
 				<Box mt={4} mb={4}>
 					<Typography variant="h5" align="center">
-						{today === getCurrentLocalDate() ? "Today, " + today : today}
+						{today === currentYYYYMMDD() ? "Today, " + today : today}
 					</Typography>
 				</Box>
 
@@ -65,7 +65,7 @@ const DailyReviewList: React.FC<DailyReviewListProps> = ({ today, setToday, edit
 						{getRecentDates().map((date) => {
 							const dailyReview = data.dailyReviews.find((review: any) => review.date === date);
 							const dateString = formatDateWithWeekday(date);
-							const isCurrentDay = date === getCurrentLocalDate();
+							const isCurrentDay = date === currentYYYYMMDD();
 							const showBadge = isCurrentDay && dailyReviewBadges[1] === 1;
 
 							return (

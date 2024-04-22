@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 // Components
 import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import EditRitualDialog from './EditRitualDialog'
-import { getCurrentLocalDate } from './DateFunctions'
+import { currentYYYYMMDD } from './DateFunctions'
 
 // Sounds
 import complete from '../sounds/complete.wav'
@@ -103,7 +103,7 @@ const RitualDialog: React.FC<RitualDialogProps> = (props: RitualDialogProps) => 
 			fetchPolicy: 'no-cache',
 			variables: {
 				habitId: habitId,
-				currentDate: getCurrentLocalDate(),
+				currentDate: currentYYYYMMDD(),
 				quantity: quantity,
 			},
 			onError: (error) => {

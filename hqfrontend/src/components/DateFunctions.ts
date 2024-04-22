@@ -1,23 +1,5 @@
 
-export function getCurrentLocalDate() {
-	const now = new Date();
-
-	const year = now.getFullYear();
-	const month = String(now.getMonth() + 1).padStart(2, '0');
-	const day = String(now.getDate()).padStart(2, '0');
-
-	return `${year}-${month}-${day}`;
-}
-
-
-export function getCurrentLocalDateObject(): Date {
-	const now = new Date();
-	now.setHours(0, 0, 0, 0); // Set time to midnight
-	return now;
-}
-
-
-export function getCurrentLocalDateUnadjusted() {
+export function currentYYYYMMDD() {
 	const now = new Date();
 	const year = now.getFullYear();
 	const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -25,6 +7,7 @@ export function getCurrentLocalDateUnadjusted() {
 
 	return `${year}-${month}-${day}`;
 }
+
 
 export function currentLocalTime() {
 	const now = new Date();
@@ -33,6 +16,19 @@ export function currentLocalTime() {
 	const seconds = String(now.getSeconds()).padStart(2, '0');
 	return `${hours}:${minutes}:${seconds}`;
 }
+
+
+export function offsetDate(date = Date, offsetDays = 0) {
+	const now = new Date();
+	now.setDate(now.getDate() - offsetDays);
+
+	const year = now.getFullYear();
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const day = String(now.getDate()).padStart(2, '0');
+
+	return `${year}-${month}-${day}`;
+}
+
 
 // Length is in "hh:mm" format
 // startTime is in "hh:mm:ss" format
@@ -77,9 +73,6 @@ function getOrdinalSuffix(i: number) {
 }
 export function getCustomLocalDate(date: Date = new Date()) {
 	let currentDate = new Date(date);
-	if (currentDate.getHours() < 3) {
-		currentDate.setDate(currentDate.getDate() - 1);
-	}
 
 	const dayWithSuffix = getOrdinalSuffix(currentDate.getDate());
 	const month = currentDate.toLocaleString(undefined, { month: 'long' });

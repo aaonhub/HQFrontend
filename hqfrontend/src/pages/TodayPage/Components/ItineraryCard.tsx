@@ -7,7 +7,7 @@ import { EventInput } from '@fullcalendar/core'
 import isEqual from 'lodash/isEqual';
 
 // Components
-import { addLengthToTime, currentLocalTime, getCurrentLocalDate } from '../../../components/DateFunctions'
+import { addLengthToTime, currentLocalTime, currentYYYYMMDD } from '../../../components/DateFunctions'
 import { useGlobalContext } from '../../App/GlobalContextProvider'
 import EditInboxItemDialog from '../../../components/EditToDoItemDialog'
 import ItineraryList from './ItineraryList'
@@ -55,7 +55,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 	const [events, setEvents] = useState<EventInput[] | []>([]);
 	const [prevUncompletedItems, setPrevUncompletedItems] = useState<SimpleItem[]>([]);
 
-	const localDate = props.selectedDate || getCurrentLocalDate()
+	const localDate = props.selectedDate || currentYYYYMMDD()
 
 
 	// Query
@@ -140,7 +140,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 			return !simpleItem.completedToday
 		})
 
-		if (orderDate === getCurrentLocalDate() && orderIds.length > 0) {
+		if (orderDate === currentYYYYMMDD() && orderIds.length > 0) {
 			const sortedArray = sortObjectsByIds(simpleItemArrayFiltered, orderIds);
 			setUncompletedItems(sortedArray as SimpleItem[]);
 		} else {
@@ -218,7 +218,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 	useEffect(() => {
 		if (uncompletedItems.length > 0 && !isEqual(uncompletedItems, prevUncompletedItems)) {
 			const ids = uncompletedItems.map((item) => item.id);
-			const date = getCurrentLocalDate();
+			const date = currentYYYYMMDD();
 			const order = JSON.stringify({ date, ids });
 
 			updateItineraryOrder({

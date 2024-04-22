@@ -7,7 +7,7 @@ import { useGlobalContext } from "./GlobalContextProvider";
 import { ADD_TODO } from "../../models/inboxitem";
 import { ADD_LOG } from "../../models/log";
 import { ADD_TODO_TO_TODAY } from "../../models/inboxitem";
-import { getCurrentLocalDate } from "../../components/DateFunctions";
+import { currentYYYYMMDD } from "../../components/DateFunctions";
 
 
 interface CommandLineProps {
@@ -153,7 +153,7 @@ const CommandLine = ({ setShowCommandLine, commandInputRef }: CommandLineProps) 
 				addToDoToToday({
 					variables: {
 						title: commandInput,
-						startDate: getCurrentLocalDate(),
+						startDate: currentYYYYMMDD(),
 						Completed: false,
 					}
 				})

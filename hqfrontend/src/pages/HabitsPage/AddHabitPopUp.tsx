@@ -34,10 +34,6 @@ const AddHabitPopup: React.FC<AddHabitPopupProps> = ({ open, onClose }) => {
 			freq: frequency,
 		}).toString(); // Generate recurrence rule string using rrule
 
-		console.log(title);
-		console.log(true);
-		console.log(recurrenceRule);
-
 		await addHabit({
 			variables: {
 				Title: title,

@@ -1,13 +1,14 @@
 import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
-import PlanSelectDropdown from './PlanSelectDropdown';
+import PlanSelectDropdown from '../Components/PlanSelectDropdown';
 
 
 interface DayPlanningProps {
+	currentView: string;
 	setCurrentView: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DayPlanning = ({ setCurrentView }: DayPlanningProps) => {
+const DayPlanning = (props: DayPlanningProps) => {
 
 
 	return (
@@ -17,7 +18,7 @@ const DayPlanning = ({ setCurrentView }: DayPlanningProps) => {
 				<Box>
 
 					{/* Plan Select Dropdown */}
-					<PlanSelectDropdown setCurrentView={setCurrentView} />
+					<PlanSelectDropdown currentView={props.currentView} setCurrentView={props.setCurrentView} />
 
 
 					<Typography variant="h6" component="h2">

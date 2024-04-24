@@ -4,11 +4,12 @@ import React, { useState } from 'react'
 
 
 interface PlanSelectDropdownProps {
+    currentView: string
     setCurrentView: React.Dispatch<React.SetStateAction<string>>
 }
 
 
-const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
+const PlanSelectDropdown = (props: PlanSelectDropdownProps) => {
     const theme = useTheme()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -21,7 +22,7 @@ const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
     }
 
     const handleMenuItemClick = (value: string) => {
-        setCurrentView(value)
+        props.setCurrentView(value)
         handleClose()
     }
 
@@ -36,9 +37,11 @@ const PlanSelectDropdown = ({ setCurrentView }: PlanSelectDropdownProps) => {
                 sx={{ textTransform: 'none' }}
             >
                 <Typography variant="h5" component="h1" sx={{ flexGrow: 1, color: theme.palette.text.primary }}>
-                    Year Planning
+                    {props.currentView === 'day' ? 'Day Planning' : props.currentView === 'week' ? 'Week Planning' : 'Year Planning'}
                 </Typography>
             </Button>
+
+            {/* Plan Select Dropdown */}
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}

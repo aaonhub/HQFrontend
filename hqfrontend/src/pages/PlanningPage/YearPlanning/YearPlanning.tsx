@@ -3,20 +3,21 @@ import React, { useEffect, useRef, useState } from 'react'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useQuery, useMutation } from '@apollo/client'
-import YearDayTitles from '../../models/daytitles'
-import { useGlobalContext } from '../App/GlobalContextProvider'
+import YearDayTitles from '../../../models/daytitles'
+import { useGlobalContext } from '../../App/GlobalContextProvider'
 import { useDraggable } from 'react-use-draggable-scroll';
 
 // Queries and Mutations
-import { GET_DAY_TITLES_BY_YEAR } from '../../models/daytitles'
-import { CREATE_DAY_TITLES } from '../../models/daytitles'
-import { UPDATE_DAY_TITLES } from '../../models/daytitles'
-import PlanSelectDropdown from './PlanSelectDropdown'
+import { GET_DAY_TITLES_BY_YEAR } from '../../../models/daytitles'
+import { CREATE_DAY_TITLES } from '../../../models/daytitles'
+import { UPDATE_DAY_TITLES } from '../../../models/daytitles'
 import MonthInputs from './MonthIput'
+import PlanSelectDropdown from '../Components/PlanSelectDropdown'
 
 
 
 interface YearPlanningProps {
+	currentView: string;
 	setCurrentView: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -36,7 +37,7 @@ function useDebounce(value: any, delay: number) {
 	return debouncedValue;
 }
 
-const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
+const YearPlanning = (props: YearPlanningProps) => {
 	const { setSnackbar } = useGlobalContext();
 
 	const [year, setYear] = useState<number>(new Date().getFullYear());
@@ -204,7 +205,7 @@ const YearPlanning = ({ setCurrentView }: YearPlanningProps) => {
 
 
 					{/* Plan Select Dropdown */}
-					<PlanSelectDropdown setCurrentView={setCurrentView} />
+					<PlanSelectDropdown currentView={props.currentView} setCurrentView={props.setCurrentView} />
 
 
 					{/* Year Select */}

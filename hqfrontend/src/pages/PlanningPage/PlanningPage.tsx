@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import DayPlanning from './DayPlanning';
-import WeekPlanning from './WeekPlanning';
-import YearPlanning from './YearPlanning';
+import DayPlanning from './DayPlanning/DayPlanning';
+import WeekPlanning from './WeekPlanning/WeekPlanning';
+import YearPlanning from './YearPlanning/YearPlanning';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const PlanningPage = () => {
@@ -40,7 +40,7 @@ const PlanningPage = () => {
 					variants={pageVariants}
 					transition={pageTransition}
 				>
-					<DayPlanning setCurrentView={setCurrentView} />
+					<DayPlanning currentView={currentView} setCurrentView={setCurrentView} />
 				</motion.div>
 			)}
 			{currentView === "week" && (
@@ -52,7 +52,7 @@ const PlanningPage = () => {
 					variants={pageVariants}
 					transition={pageTransition}
 				>
-					<WeekPlanning setCurrentView={setCurrentView} />
+					<WeekPlanning currentView={currentView} setCurrentView={setCurrentView} />
 				</motion.div>
 			)}
 			{currentView === "year" && (
@@ -64,7 +64,7 @@ const PlanningPage = () => {
 					variants={pageVariants}
 					transition={pageTransition}
 				>
-					<YearPlanning setCurrentView={setCurrentView} />
+					<YearPlanning currentView={currentView} setCurrentView={setCurrentView} />
 				</motion.div>
 			)}
 		</AnimatePresence>

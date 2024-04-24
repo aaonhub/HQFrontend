@@ -95,7 +95,7 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 				id: habit.id + "h",
 				itemId: habit.id,
 				title: habit.title,
-				completedToday: habit.countToday > 0,
+				completedToday: habit.countOnDate > 0,
 				type: 'habit',
 				startTime: habit.schedules.timeOfDay,
 			});

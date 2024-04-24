@@ -61,7 +61,7 @@ const HabitsPage: React.FC = () => {
 					active: habit.active,
 					length: habit.length,
 					schedule: schedule,
-					countToday: habit.countToday,
+					countToday: habit.countOnDate,
 				});
 
 

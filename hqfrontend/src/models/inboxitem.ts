@@ -65,7 +65,7 @@ export const ITINERARY_QUERY = gql`
 			id
 			title
 			active
-			countToday
+			countOnDate(date: $Today)
 			length
 			schedules {
 				id

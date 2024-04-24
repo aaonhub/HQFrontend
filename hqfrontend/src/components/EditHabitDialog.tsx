@@ -60,7 +60,7 @@ const EditHabitDialog: React.FC<EditHabitDialogProps> = ({ onClose, habitId }) =
 				active: data.getHabit.active,
 				length: data.getHabit.length,
 				schedule: schedule,
-				countToday: data.getHabit.countToday,
+				countToday: data.getHabit.countOnDate,
 			})
 
 			setNewHabit(newHabit)

@@ -58,7 +58,7 @@ export const GET_HABIT = gql`
 			title
 			active
 			length
-			countToday
+			countOnDate(date: $Today)
 			schedules {
 				id
 				status
@@ -84,7 +84,7 @@ export const GET_HABITS_DUE_TODAY = gql`
 			title
 			active
 			length
-			countToday
+			countOnDate(date: $today)
 			schedules {
 				id
 				status
@@ -109,9 +109,8 @@ export const GET_ALL_HABITS = gql`
 			id
 			title
 			active
-			countToday
 			length
-			countToday
+			countOnDate(date: $Today)
 			schedules {
 				id
 				status
@@ -169,7 +168,7 @@ export const CHECK_HABIT = gql`
 			habit{
 				id
 				title
-				countToday
+				countOnDate(date: $currentDate)
 			}
 		}
 	}

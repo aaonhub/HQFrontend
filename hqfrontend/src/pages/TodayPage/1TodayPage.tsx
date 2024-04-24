@@ -1,6 +1,6 @@
 import { Container, Grid, Typography, IconButton } from "@mui/material";
 import ItineraryCard from "./Components/ItineraryCard";
-import { getCustomLocalDate, yyyymmddToDate, dateToYYYYMMDD } from "../../components/DateFunctions";
+import { getCustomLocalDate, yyyymmddToDate, dateToYYYYMMDD, currentYYYYMMDD } from "../../components/DateFunctions";
 import { useEffect, useState } from "react";
 import CalendarCard from "./Components/CalendarCard";
 import AccountabilityToDoListDisplay from "./Components/AccountabilityToDoListDisplay";
@@ -15,18 +15,18 @@ const TodayPage = () => {
 		document.title = "Today - HQ";
 	}, []);
 
-	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [selectedDate, setSelectedDate] = useState(currentYYYYMMDD());
 
 	const handlePreviousDay = () => {
-		const previousDay = new Date(selectedDate);
-		previousDay.setDate(selectedDate.getDate() - 1);
-		setSelectedDate(previousDay);
+		const previousDay = yyyymmddToDate(selectedDate);
+		previousDay.setDate(previousDay.getDate() - 1);
+		setSelectedDate(dateToYYYYMMDD(previousDay));
 	};
 
 	const handleNextDay = () => {
-		const nextDay = new Date(selectedDate);
-		nextDay.setDate(selectedDate.getDate() + 1);
-		setSelectedDate(nextDay);
+		const nextDay = yyyymmddToDate(selectedDate);
+		nextDay.setDate(nextDay.getDate() + 1);
+		setSelectedDate(dateToYYYYMMDD(nextDay));
 	};
 
 	return (
@@ -39,7 +39,7 @@ const TodayPage = () => {
 						<IconButton onClick={handlePreviousDay}>
 							<ArrowBackIosIcon />
 						</IconButton>
-						{getCustomLocalDate(selectedDate)}
+						{getCustomLocalDate(yyyymmddToDate(selectedDate))}
 						<IconButton onClick={handleNextDay}>
 							<ArrowForwardIosIcon />
 						</IconButton>
@@ -48,12 +48,12 @@ const TodayPage = () => {
 
 				{/* Calendar */}
 				<Grid item xs={12} md={6} lg={4}>
-					<CalendarCard selectedDate={dateToYYYYMMDD(selectedDate)} />
+					<CalendarCard selectedDate={selectedDate} />
 				</Grid>
 
 				{/* Itinerary */}
 				<Grid item xs={12} md={6} lg={4}>
-					<ItineraryCard selectedDate={dateToYYYYMMDD(selectedDate)} />
+					<ItineraryCard selectedDate={selectedDate} />
 				</Grid>
 
 				{/* Master List */}
@@ -63,7 +63,7 @@ const TodayPage = () => {
 
 				{/* Accountability To Do List */}
 				<Grid item xs={12} md={6} lg={6}>
-					<AccountabilityToDoListDisplay selectedDate={dateToYYYYMMDD(selectedDate)} />
+					<AccountabilityToDoListDisplay selectedDate={selectedDate} />
 				</Grid>
 
 				{/* Sticky Note */}

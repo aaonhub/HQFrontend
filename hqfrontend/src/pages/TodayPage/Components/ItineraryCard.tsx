@@ -75,8 +75,6 @@ export const ItineraryCard = (props: ItineraryCardProps) => {
 
 	const handleQueryCompleted = (data: any) => {
 
-		console.log("running oncomplete")
-
 		const simpleItems: SimpleItem[] = [];
 
 		// Add inbox items

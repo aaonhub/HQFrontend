@@ -45,7 +45,7 @@ export default InboxItem;
 
 // Queries
 export const ITINERARY_QUERY = gql`
-	query($Today: Date!, $YearMonth: String!) {
+	query($Today: String!, $YearMonth: String!) {
 		toDoItemsByStartDate(Today: $Today) {
 			id
 			title
@@ -143,7 +143,7 @@ export const MASTER_LIST_QUERY = gql`
 `;
 
 export const GET_TO_DO_LIST_ITEMS_BY_START_DATE = gql`
-	query($Today: Date!) {
+	query($Today: String!) {
 		toDoItemsByStartDate(Today: $Today) {
 			id
 			title

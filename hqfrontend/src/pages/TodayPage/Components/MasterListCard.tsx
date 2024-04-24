@@ -24,11 +24,11 @@ const MasterList = () => {
     const [inputValue, setInputValue] = useState('')
 
     // Debug
-    useEffect(() => {
-        setDebugText([
-            { title: "Local Storage Settings", content: localStorage.getItem("settings") }
-        ])
-    }, [list, setDebugText])
+    // useEffect(() => {
+    //     setDebugText([
+    //         { title: "Local Storage Settings", content: localStorage.getItem("settings") }
+    //     ])
+    // }, [list, setDebugText])
 
 
     // Query

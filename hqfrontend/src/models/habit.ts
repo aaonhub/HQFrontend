@@ -78,7 +78,7 @@ export const GET_HABIT = gql`
 `
 
 export const GET_HABITS_DUE_TODAY = gql`
-	query GetHabitsDueToday($today: Date!) {
+	query GetHabitsDueToday($today: String!) {
 		habitsDueToday(date: $today) {
 			id
 			title

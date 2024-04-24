@@ -163,7 +163,7 @@ export const UPDATE_HABIT = gql`
 `
 
 export const CHECK_HABIT = gql`
-	mutation updateHabitHistory($habitId: ID!, $currentDate: Date!, $quantity: Int!) {
+	mutation updateHabitHistory($habitId: ID!, $currentDate: String!, $quantity: Int!) {
 		updateHabitHistory(habitId: $habitId, currentDate: $currentDate, quantity: $quantity) {
 			habit{
 				id

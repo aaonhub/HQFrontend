@@ -1,6 +1,8 @@
 import React from 'react';
 import { Typography, Box, Card, CardContent, List, ListItem, Divider } from '@mui/material';
 import DailyReview from '../../models/dailyreview';
+import ReactMarkdown from 'react-markdown'
+import Markdown from 'react-markdown'
 
 interface DisplayDailyReviewProps {
 	dailyReview: DailyReview;
@@ -54,9 +56,11 @@ const DisplayDailyReview: React.FC<DisplayDailyReviewProps> = ({ dailyReview }) 
 					<Typography variant="subtitle1" color="text.secondary">
 						Details:
 					</Typography>
-					<Typography variant="body1" sx={{ mt: 2 }}>
-						{details}
-					</Typography>
+
+					{/* Details */}
+					<ReactMarkdown>{details}</ReactMarkdown>
+
+
 				</Box>
 
 			</CardContent>

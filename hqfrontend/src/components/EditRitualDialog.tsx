@@ -1,14 +1,29 @@
 import { useEffect, useState } from 'react'
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import {
+	Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl,
+	FormControlLabel, FormGroup, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField,
+	Typography
+} from '@mui/material'
+
+// Icons
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
 import { useMutation, useQuery } from '@apollo/client'
 import { useGlobalContext } from '../pages/App/GlobalContextProvider'
 import { Controller, useForm } from 'react-hook-form'
+
+
 import { currentYYYYMMDD } from './DateFunctions'
 
-// Qureries and mutations
-import { DELETE_RITUAL, EDIT_RITUAL_DIALOG_QUERY, UPDATE_RITUAL } from '../models/ritual'
-import { GET_RITUAL } from '../models/ritual'
+// Qureries
+import { EDIT_RITUAL_DIALOG_QUERY } from '../models/ritual'
+
+// Mutations
+import { DELETE_RITUAL, UPDATE_RITUAL } from '../models/ritual'
 import { UPDATE_SCHEDULE } from '../models/schedule'
+import { CircleIcon } from '@radix-ui/react-icons';
 
 
 interface IFormInput {
@@ -39,16 +54,18 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 
 	const [scheduleUpdated, setScheduleUpdated] = useState(false);
 	const [ritualUpdated, setRitualUpdated] = useState(false);
+	const [ritualItems, setRitualItems] = useState<Array<{ id: string; title: string }>>([]);
 
-	const { data } = useQuery(EDIT_RITUAL_DIALOG_QUERY, {
+	const { data, loading, error } = useQuery(EDIT_RITUAL_DIALOG_QUERY, {
 		variables: {
 			id: props.id,
 			yearMonth: currentYYYYMMDD().slice(0, 7),
 		},
 		fetchPolicy: "network-only",
 		onCompleted: (data) => {
+
 			setValue('title', data.ritual.title);
-			console.log(data.ritual.title)
+			setRitualItems(JSON.parse(data.ritual.ritualItems || '[]'));
 
 			const scheduleData = data.ritual.schedules[0];
 			setValue('timeOfDay', scheduleData.timeOfDay || '');
@@ -110,6 +127,9 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 
 
 	const [updateRitual] = useMutation(UPDATE_RITUAL, {
+		onCompleted: () => {
+			setSnackbar({ open: true, message: "Ritual updated", severity: "success" });
+		},
 		onError: (error) => {
 			console.log(error)
 			setSnackbar({ open: true, message: "Error updating ritual", severity: "error" });
@@ -131,7 +151,8 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 			variables: {
 				id: props.id,
 				title: watch('title'),
-				checkedItems: data.ritual.checkedItems,
+				checkedItems: "[]",
+				ritualItems: JSON.stringify(ritualItems),
 			},
 			onCompleted: () => setRitualUpdated(true),
 		});
@@ -191,6 +212,11 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 		}
 	});
 
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error :(</p>;
+
+	console.log(ritualItems)
+
 
 
 	return (
@@ -230,7 +256,91 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 									/>
 								)}
 							/>
+
+							{/* Ritual Items */}
+							<Grid item xs={12}>
+								<Typography variant="subtitle1">Ritual Items:</Typography>
+								{ritualItems.map((item, index) => (
+									<Grid container key={item.id} alignItems="center" spacing={1}>
+										<Grid item>
+											{item.id.startsWith('h') ? (
+												<TextField
+													value={item.title}
+													onChange={(e) => {
+														const updatedItems = [...ritualItems];
+														updatedItems[index] = { ...item, title: e.target.value };
+														setRitualItems(updatedItems);
+													}}
+													margin="dense"
+													variant="outlined"
+													fullWidth
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position="start">
+																<FavoriteBorderIcon color='primary' />
+															</InputAdornment>
+														),
+													}}
+												/>
+											) : (
+												<TextField
+													value={item.title}
+													onChange={(e) => {
+														const updatedItems = [...ritualItems];
+														updatedItems[index] = { ...item, title: e.target.value };
+														setRitualItems(updatedItems);
+													}}
+													margin="dense"
+													variant="outlined"
+													fullWidth
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position="start">
+																<FavoriteBorderIcon color='error' />
+															</InputAdornment>
+														),
+													}}
+												/>
+											)}
+										</Grid>
+										<Grid item>
+											<IconButton
+												onClick={() => {
+													const updatedItems = [...ritualItems];
+													updatedItems.splice(index, 1);
+													setRitualItems(updatedItems);
+												}}
+											>
+												<DeleteIcon />
+											</IconButton>
+										</Grid>
+										{index > 0 && (
+											<Grid item>
+												<IconButton
+													onClick={() => {
+														const updatedItems = [...ritualItems];
+														const temp = updatedItems[index - 1];
+														updatedItems[index - 1] = updatedItems[index];
+														updatedItems[index] = temp;
+														setRitualItems(updatedItems);
+													}}
+												>
+													<ArrowUpwardIcon />
+												</IconButton>
+											</Grid>
+										)}
+									</Grid>
+								))}
+								<Button
+									onClick={() => setRitualItems([...ritualItems, { id: `i${Date.now()}`, title: '' }])}
+									variant="contained"
+									color="primary"
+								>
+									Add Item
+								</Button>
+							</Grid>
 						</Grid>
+
 
 
 						{/* Schedule Section */}
@@ -357,10 +467,14 @@ const EditRitualDialog = (props: EditRitualDialogProps) => {
 
 				{/* Dialog Actions */}
 				<DialogActions>
-					<Button onClick={() => props.handleClose()} color="primary">
+					<Button
+						onClick={() => props.handleClose()}
+						color="primary"
+						variant="contained"
+					>
 						Cancel
 					</Button>
-					<Button type='submit' color="primary">
+					<Button type='submit' color="primary" variant="contained">
 						Save
 					</Button>
 				</DialogActions>

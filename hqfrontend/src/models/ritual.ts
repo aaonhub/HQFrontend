@@ -301,7 +301,7 @@ export const CREATE_RITUAL = gql`
 `;
 
 export const UPDATE_RITUAL = gql`
-	mutation ($id: ID!, $title: String, $habits: [ID], $ritualItems: JSONString, $inProgress: Boolean, $checkedItems: JSONString) {
+	mutation ($id: ID!, $title: String, $habits: [ID], $ritualItems: String, $inProgress: Boolean, $checkedItems: String) {
 		updateRitual(id: $id, title: $title, habits: $habits, ritualItems: $ritualItems, inProgress: $inProgress checkedItems: $checkedItems) {
 			ritual {
 				id

@@ -148,7 +148,7 @@ function App(): JSX.Element {
 						width: `calc(100% - 240px)`,
 					}}> {/* Add overflow: 'auto' */}
 						<Box sx={{ p: 3 }}>
-							<ContentRoutes />	
+							<ContentRoutes />
 						</Box>
 					</Box>
 

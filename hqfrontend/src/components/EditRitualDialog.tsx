@@ -23,7 +23,6 @@ import { EDIT_RITUAL_DIALOG_QUERY } from '../models/ritual'
 // Mutations
 import { DELETE_RITUAL, UPDATE_RITUAL } from '../models/ritual'
 import { UPDATE_SCHEDULE } from '../models/schedule'
-import { CircleIcon } from '@radix-ui/react-icons';
 
 
 interface IFormInput {

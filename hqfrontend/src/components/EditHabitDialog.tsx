@@ -4,10 +4,14 @@ import { useGlobalContext } from '../pages/App/GlobalContextProvider';
 import { useMutation, useQuery } from '@apollo/client';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-// Queries and Mutations
-import { GET_HABIT, createEmptyHabit } from '../models/habit';
-import { UPDATE_HABIT } from '../models/habit';
-import { DELETE_HABIT } from '../models/habit';
+// Components
+import { createEmptyHabit } from '../models/habit';
+
+// Queries
+import { GET_HABIT } from '../models/habit';
+
+// Mutations
+import { UPDATE_HABIT, DELETE_HABIT } from '../models/habit';
 
 // Models
 import Habit from '../models/habit';

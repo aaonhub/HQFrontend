@@ -58,7 +58,6 @@ export const GET_HABIT = gql`
 			title
 			active
 			length
-			countOnDate(date: $Today)
 			schedules {
 				id
 				status

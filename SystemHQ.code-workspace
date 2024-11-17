@@ -1,0 +1,61 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "task.allowAutomaticTasks": "on"
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Start Frontend",
+                "type": "shell",
+                "command": "cd ${workspaceFolder}/HQFrontendV3; npm run dev",
+                "isBackground": true,
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new",
+                    "group": "development"
+                },
+                "problemMatcher": [],
+                "options": {
+                    "shell": {
+                        "executable": "powershell.exe"
+                    }
+                }
+            },
+            {
+                "label": "Start Backend",
+                "type": "shell",
+                "command": "cd ${workspaceFolder}/HQBackendV2; .\\venv\\Scripts\\activate; python manage.py runserver",
+                "isBackground": true,
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new",
+                    "group": "development"
+                },
+                "problemMatcher": [],
+                "options": {
+                    "shell": {
+                        "executable": "powershell.exe"
+                    }
+                }
+            },
+            {
+                "label": "Start Development",
+                "dependsOn": ["Start Frontend", "Start Backend"],
+                "dependsOrder": "parallel",
+                "runOptions": {
+                    "runOn": "folderOpen"
+                },
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                }
+            }
+        ]
+    }
+}
